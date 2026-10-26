@@ -33,6 +33,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--film); color: var(--graphite);
@@ -61,7 +62,7 @@ code, .mono { font-family: var(--mono); font-size: .86em; }
 main { max-width: 1120px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
 
 .thesis { padding: clamp(40px, 8vw, 88px) 0 28px; }
-.thesis h1 { font: 600 clamp(30px, 5.2vw, 58px)/1.04 var(--display); letter-spacing: -.01em; margin: 0 0 18px; max-width: 18ch; }
+.thesis h1 { font: 600 clamp(28px, 4.4vw, 50px)/1.06 var(--display); letter-spacing: -.01em; margin: 0 0 18px; max-width: 24ch; }
 .thesis h1 span { color: var(--cobalt); }
 .lede { color: var(--lead); max-width: 62ch; margin: 0; }
 
