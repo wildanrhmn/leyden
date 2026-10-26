@@ -29,6 +29,9 @@ pub struct Invoice {
 #[derive(Debug, Deserialize)]
 pub struct InvoiceStatus {
     pub paid: bool,
+    /// A payment to a hold invoice has arrived and is held, waiting for `settle`.
+    #[serde(default)]
+    pub held: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -81,7 +84,15 @@ impl Lightning {
         Ok(v["feeSats"].as_f64().unwrap_or(0.0).ceil() as u64)
     }
 
-    pub async fn create_invoice(&self, amount_sats: u64, memo: Option<&str>, description_hash: Option<&str>, expiry_secs: u64) -> Result<Invoice> {
+    /// With `payment_hash`, a hold invoice: payments to it are held until `settle`.
+    pub async fn create_invoice(
+        &self,
+        amount_sats: u64,
+        memo: Option<&str>,
+        description_hash: Option<&str>,
+        expiry_secs: u64,
+        payment_hash: Option<&str>,
+    ) -> Result<Invoice> {
         self.call(
             reqwest::Method::POST,
             "/invoice",
@@ -90,9 +101,16 @@ impl Lightning {
                 "memo": memo,
                 "descriptionHash": description_hash,
                 "expirySecs": expiry_secs,
+                "paymentHash": payment_hash,
             })),
         )
         .await
+    }
+
+    /// Reveals the preimage of a hold invoice, which takes the held payment.
+    pub async fn settle(&self, preimage: &str) -> Result<()> {
+        let _: Value = self.call(reqwest::Method::POST, "/settle", Some(json!({ "preimage": preimage }))).await?;
+        Ok(())
     }
 
     pub async fn invoice_status(&self, id: &str) -> Result<InvoiceStatus> {

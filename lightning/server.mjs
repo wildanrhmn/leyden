@@ -2,11 +2,16 @@
 //
 // A small localhost-only HTTP service that gives the Rust gateway a backend-neutral
 // Lightning interface. This implementation uses a self-custodial Spark wallet
-// (no channels, no inbound-liquidity purchase). The same five endpoints can be
-// served by phoenixd or LND without changing the gateway.
+// (no channels, no inbound-liquidity purchase). The same endpoints can be served by
+// phoenixd or LND without changing the gateway.
 //
-//   POST /invoice   {amountSats, memo?, descriptionHash?, expirySecs?} -> {id, bolt11, paymentHash}
-//   GET  /invoice/:id                                               -> {id, paid, status}
+// Given a paymentHash, /invoice creates a hold invoice: a payment to it is held, not
+// taken, until /settle reveals the preimage. If it is never settled, the payer's
+// Lightning payment times out and their sats go back to them.
+//
+//   POST /invoice   {amountSats, memo?, descriptionHash?, expirySecs?, paymentHash?} -> {id, bolt11, paymentHash}
+//   GET  /invoice/:id                                               -> {id, paid, held, status}
+//   POST /settle    {preimage}                                      -> {transferId}
 //   POST /decode    {bolt11}                                        -> {amountMsat, paymentHash, expiresAt, network}
 //   POST /fee       {bolt11}                                        -> {feeSats}
 //   POST /pay       {bolt11, maxFeeSats}                            -> {id, status}
@@ -51,18 +56,28 @@ const routes = {
   "POST /invoice": async (b) => {
     const amountSats = Number(b.amountSats);
     if (!Number.isInteger(amountSats) || amountSats <= 0) throw new HttpError(400, "amountSats");
-    const req = await wallet.createLightningInvoice({
+    const params = {
       amountSats,
       memo: b.descriptionHash ? undefined : (b.memo ?? ""),
       descriptionHash: b.descriptionHash,
       expirySeconds: b.expirySecs ?? 900,
-    });
+    };
+    const req = b.paymentHash
+      ? await wallet.createLightningHodlInvoice({ ...params, paymentHash: String(b.paymentHash) })
+      : await wallet.createLightningInvoice(params);
     return { id: req.id, bolt11: req.invoice.encodedInvoice, paymentHash: req.invoice.paymentHash };
   },
   "GET /invoice": async (_b, id) => {
     const req = await wallet.getLightningReceiveRequest(id);
     if (!req) throw new HttpError(404, "unknown invoice");
-    return { id, status: req.status, paid: RECEIVE_PAID.has(req.status) };
+    const paid = RECEIVE_PAID.has(req.status);
+    // A held payment to a hold invoice shows up as a pending transfer before any status change.
+    return { id, status: req.status, paid, held: !paid && Boolean(req.transfer) };
+  },
+  "POST /settle": async (b) => {
+    if (!/^[0-9a-f]{64}$/i.test(String(b.preimage))) throw new HttpError(400, "preimage");
+    const t = await wallet.claimHTLC(String(b.preimage).toLowerCase());
+    return { transferId: t?.id ?? null };
   },
   "POST /decode": async (b) => {
     let d;

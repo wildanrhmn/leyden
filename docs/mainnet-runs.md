@@ -58,6 +58,17 @@ A ZEC → Lightning quote for a 1,000-sat invoice, deliberately paid short.
 | Gateway detects the shortfall, does not pay the invoice | state `refunding`: "underpaid: received 30000 zat, quote was 65599 zat" |
 | Refund, 24 s later | Zcash tx `d0ee5ca35bbda1e0f14493c98b238b26c69e378d0377d8fb38d4cba511dcf9ed`, mined at 3,531,392: 0.00015 ZEC (what arrived, minus the 0.00015 ZEC network fee), memo `Leyden refund, swap 9cf3d93e` |
 
+## 6. Lightning → ZEC with a hold invoice (2026-10-26, https://leydenpay.xyz)
+
+The payer's sats are held, not taken, until the shielded ZEC has been sent.
+
+| Step | Evidence |
+|---|---|
+| Quote | 500 sats → 0.00016837 ZEC, swap `99f96476…`; the invoice is a hold invoice for a payment hash only the gateway knows |
+| Payment arrives and is held (16:14:54 UTC) | the payer's send stays `LIGHTNING_PAYMENT_INITIATED`; the gateway sees a held transfer |
+| Gateway sends the ZEC first (16:15:03) | Zcash tx `bae01061fac67226cb2196d9170a944b1d147f864f6de724d6239bd135b93a55` |
+| Gateway reveals the preimage and takes the held payment (16:15:07) | the payer's send turns `TRANSFER_COMPLETED` with preimage `9d8f6bde…0da382`; `sha256(preimage)` = the invoice's payment hash `ee8c91be…122eb7` |
+
 ## Funding (for reference)
 
 The gateway and test wallets were funded from ~$12 of ETH on Base through NEAR Intents:

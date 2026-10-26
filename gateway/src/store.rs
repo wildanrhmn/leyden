@@ -40,6 +40,8 @@ pub mod state {
     pub const REFUNDED: &str = "refunded";
     pub const AWAITING_LN: &str = "awaiting_ln";
     pub const PAYING_ZEC: &str = "paying_zec";
+    /// ZEC sent; revealing the hold invoice's preimage to take the held Lightning payment.
+    pub const SETTLING_LN: &str = "settling_ln";
     pub const COMPLETE: &str = "complete";
     pub const EXPIRED: &str = "expired";
     pub const FAILED: &str = "failed";

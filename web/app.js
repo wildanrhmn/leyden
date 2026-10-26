@@ -422,7 +422,7 @@
 
   const STEPS = {
     zec_to_ln: ["Send ZEC", "ZEC received", "Paying the invoice", "Paid"],
-    ln_to_zec: ["Pay the invoice", "Lightning paid", "Sending ZEC", "Shielded"],
+    ln_to_zec: ["Pay the invoice", "Payment held", "Sending ZEC", "Shielded"],
   };
   const FAILED = ["refunding", "refunded", "expired", "failed"];
   let pollTimer = null;
@@ -435,7 +435,7 @@
       if (s.state === "paying_ln") return 2;
       return s.received_zec ? 1 : 0;
     }
-    return s.state === "paying_zec" ? 2 : 0;
+    return { paying_zec: 2, settling_ln: 3 }[s.state] ?? 0;
   }
   const waitingForDeposit = (s) => (s.state === "awaiting_zec" && !s.received_zec) || s.state === "awaiting_ln";
 
@@ -553,13 +553,20 @@
           amount("Pay this invoice", n(s.amount_sats), "sats"),
           rows([["Invoice", short(s.invoice, 12, 6), { copy: s.invoice }], ["You receive", `${s.zec} ZEC`]]),
           actions(walletLink(`lightning:${s.invoice}`)),
-          el("p", "sv-note", "From any Lightning wallet. The ZEC is sent to your shielded address the moment it's paid."),
+          el("p", "sv-note", "From any Lightning wallet. The payment is held, not taken, until your shielded ZEC has been sent."),
         );
         break;
       case "paying_zec":
         root.append(el("div", "sv-wait"));
-        root.lastChild.append(amount("Lightning paid", s.zec, "ZEC"));
-        root.append(el("p", "sv-note", "Sending it to your shielded address…"));
+        root.lastChild.append(amount("Payment held", s.zec, "ZEC"));
+        root.append(el("p", "sv-note", "The Lightning payment is held, not taken. Your shielded ZEC goes out first; if it can't, the payment goes back to the payer automatically."));
+        break;
+      case "settling_ln":
+        root.append(
+          amount("ZEC sent", s.zec, "ZEC"),
+          rows(s.payout_txid ? [["Zcash tx", `${short(s.payout_txid, 8, 4)} ↗`, { href: explorer(s.payout_txid) }]] : []),
+          el("p", "sv-note", "Now taking the held Lightning payment."),
+        );
         break;
       case "complete":
         root.append(

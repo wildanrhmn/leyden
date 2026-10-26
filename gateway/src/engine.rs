@@ -3,6 +3,8 @@
 use std::{collections::HashMap, sync::Arc, time::Duration};
 
 use anyhow::{Result, anyhow, bail};
+use rand::{rand_core::TryRng, rngs::SysRng};
+use sha2::{Digest, Sha256};
 
 use crate::{
     ln::Lightning,
@@ -130,10 +132,22 @@ impl App {
             bail!("gateway ZEC liquidity is too low for this amount right now");
         }
 
+        // A hold invoice: only we know the preimage, so the payer's sats stay held, not taken,
+        // until the shielded ZEC has been sent. If we never settle, they go back to the payer.
+        let mut preimage = [0u8; 32];
+        SysRng.try_fill_bytes(&mut preimage).map_err(|e| anyhow!("randomness: {e:?}"))?;
+        let payment_hash = hex::encode(Sha256::digest(preimage));
+
         let now = now();
         let invoice = self
             .ln
-            .create_invoice(amount_sats, Some("Leyden: Lightning to shielded ZEC"), description_hash, self.cfg.quote_ttl_secs as u64)
+            .create_invoice(
+                amount_sats,
+                Some("Leyden: Lightning to shielded ZEC"),
+                description_hash,
+                self.cfg.quote_ttl_secs as u64,
+                Some(&payment_hash),
+            )
             .await?;
         let swap = Swap {
             id: uuid::Uuid::new_v4().simple().to_string(),
@@ -146,6 +160,7 @@ impl App {
             zec_zat,
             ln_invoice: Some(invoice.bolt11),
             ln_invoice_id: Some(invoice.id),
+            preimage: Some(hex::encode(preimage)),
             payout_address: Some(payout_address.trim().to_string()),
             payout_memo: memo,
             ..Default::default()
@@ -282,7 +297,7 @@ impl App {
             state::AWAITING_LN => {
                 let id = s.ln_invoice_id.clone().unwrap_or_default();
                 let st = self.ln.invoice_status(&id).await?;
-                if st.paid {
+                if st.paid || st.held {
                     s.state = state::PAYING_ZEC.into();
                     self.store.update(s)?;
                     self.pay_out(s).await?;
@@ -290,7 +305,21 @@ impl App {
                     s.state = state::EXPIRED.into();
                 }
             }
-            state::PAYING_ZEC => self.pay_out(s).await?,
+            state::PAYING_ZEC => {
+                // Still owed a payout (an earlier attempt failed). For a hold invoice, only send
+                // ZEC while the payment is still held: once it has timed out and gone back to
+                // the payer, there is nothing left to pay for.
+                if s.payout_txid.is_none() && s.preimage.is_some() {
+                    let st = self.ln.invoice_status(s.ln_invoice_id.as_deref().unwrap_or_default()).await?;
+                    if !st.held && !st.paid {
+                        s.state = state::FAILED.into();
+                        s.error = Some("the ZEC could not be sent in time, so the Lightning payment went back to the payer".into());
+                        return Ok(());
+                    }
+                }
+                self.pay_out(s).await?
+            }
+            state::SETTLING_LN => self.settle(s).await?,
             _ => {}
         }
         Ok(())
@@ -302,10 +331,37 @@ impl App {
             Some(m) if !m.is_empty() => format!("{m}\n— via Leyden ⚡"),
             _ => "Received over Lightning via Leyden ⚡".to_string(),
         };
-        let txid = self.wallet.send(&to, s.zec_zat as u64, Some(&memo)).await?;
-        s.payout_txid = Some(txid);
-        s.error = None;
-        s.state = state::COMPLETE.into();
+        if s.payout_txid.is_none() {
+            let txid = self.wallet.send(&to, s.zec_zat as u64, Some(&memo)).await?;
+            s.payout_txid = Some(txid);
+            s.error = None;
+        }
+        if s.preimage.is_none() {
+            // A plain invoice (swaps from before hold invoices): it was already paid.
+            s.state = state::COMPLETE.into();
+            return Ok(());
+        }
+        // Persist the payout before settling, so a crash can never send the ZEC twice.
+        s.state = state::SETTLING_LN.into();
+        self.store.update(s)?;
+        self.settle(s).await
+    }
+
+    /// Takes the held Lightning payment by revealing the hold invoice's preimage.
+    async fn settle(&self, s: &mut Swap) -> Result<()> {
+        let preimage = s.preimage.clone().ok_or_else(|| anyhow!("no preimage"))?;
+        match self.ln.settle(&preimage).await {
+            Ok(()) => s.state = state::COMPLETE.into(),
+            Err(e) => {
+                // Already settled (say, by an attempt whose reply was lost)? Then we are done.
+                let st = self.ln.invoice_status(s.ln_invoice_id.as_deref().unwrap_or_default()).await?;
+                if st.paid {
+                    s.state = state::COMPLETE.into();
+                } else {
+                    return Err(e);
+                }
+            }
+        }
         Ok(())
     }
 }

@@ -65,9 +65,18 @@ Design decisions behind that table:
 
 ### Trust model and limits
 
-This is a custodial-for-seconds swap, the same trust you give any instant-swap service or
-NEAR Intents solver. The gateway holds the ZEC between "payment confirmed" and "invoice paid"
-(or the sats between "invoice paid" and "ZEC sent"). To keep that exposure small:
+**Lightning → ZEC uses hold invoices, so the payer's sats are never at risk.** The gateway
+creates each invoice from a payment hash whose preimage only it knows. A payment to it is held,
+not taken; the gateway sends the shielded ZEC first and only then reveals the preimage to take
+the held payment. If the payout fails (no liquidity, a crash, a bug), the gateway never settles,
+the payment times out and the sats go back to the payer automatically. The payer ends up with
+the preimage as proof of payment. (It protects against the gateway failing, not against a
+gateway that settles without paying out.)
+
+**ZEC → Lightning is custodial for about a minute,** the same trust you give any instant-swap
+service: the gateway holds your ZEC between "payment confirmed" and "invoice paid". If the
+Lightning payment fails, or you pay the wrong amount, the ZEC is refunded automatically to your
+shielded address, minus the network fee. To keep the exposure small:
 
 - Amounts are capped (100–5,000 sats on the demo).
 - Quotes are priced from the public NEAR Intents price feed, with a 1% fee.
@@ -81,7 +90,7 @@ own gateway: it is a single Rust binary and a small Node process.
 
 The Lightning backend in the demo is a self-custodial [Spark](https://spark.money) wallet
 (no channels, no liquidity purchase), which adds Spark's operator trust assumptions. The
-gateway talks to it through a five-endpoint sidecar, so phoenixd or LND can be swapped in.
+gateway talks to it through a small sidecar, so phoenixd or LND can be swapped in.
 
 Other honest limits: incoming ZEC is acted on after 1 confirmation (75 s blocks today, 25 s
 after NU7); invoices without an amount are not supported; the gateway sees the visitor's IP
