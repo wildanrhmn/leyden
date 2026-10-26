@@ -1,0 +1,14 @@
+# Replace the host with your own domain. sslip.io resolves 43-134-116-188.sslip.io to that IP.
+43-134-116-188.sslip.io {
+	encode zstd gzip
+	# No access logs: the gateway should not keep a record of who visited.
+	log {
+		output discard
+	}
+	header {
+		Referrer-Policy no-referrer
+		X-Content-Type-Options nosniff
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'"
+	}
+	reverse_proxy 127.0.0.1:8080
+}

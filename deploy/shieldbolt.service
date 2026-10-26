@@ -1,0 +1,16 @@
+[Unit]
+Description=Shieldbolt gateway
+After=network-online.target shieldbolt-ln.service
+Wants=network-online.target
+Requires=shieldbolt-ln.service
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/shieldbolt
+EnvironmentFile=/home/ubuntu/.shieldbolt/env
+ExecStart=/home/ubuntu/shieldbolt/gateway/target/release/shieldbolt serve
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
