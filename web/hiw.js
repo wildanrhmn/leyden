@@ -108,15 +108,17 @@
       count(tl, nums[0], 0.05, 0.9);
       count(tl, nums[1], 1.05, 1.2);
     } else if (key === "pay-1") {
-      // Readable values, then the chain's view of them: nothing.
+      // Readable values that then dissolve, character by character, the way the memo in
+      // "Get paid" step 03 resolves, only in reverse: all a chain observer is left with.
       q("[data-redact]").forEach((el) => { el.textContent = el.dataset.redact; el.classList.remove("redacted"); });
-      tl.from(q(".cv-node"), { opacity: 0, y: 10, stagger: 0.12, duration: 0.5, ease: "power3.out" }, 0)
-        .from(q(".cv-wire"), { scaleX: 0, transformOrigin: "left", stagger: 0.12, duration: 0.5 }, 0.2);
+      tl.from(q(".cv-node"), { opacity: 0, y: 8, stagger: 0.07, duration: 0.4, ease: "power3.out" }, 0)
+        .from(q(".cv-wire"), { scaleX: 0, transformOrigin: "left", stagger: 0.07, duration: 0.35 }, 0.1);
       q("[data-redact]").forEach((el, k) => {
-        tl.to(el, { duration: 0.6, ease: "none", onStart: () => el.classList.add("redacted"),
-          scrambleText: { text: "█".repeat(el.dataset.redact.length), chars: "█▓▒░", speed: 0.6 } }, 1.0 + k * 0.22);
+        tl.fromTo(el, { scrambleText: { text: el.dataset.redact } },
+          { duration: 0.9, ease: "none", onStart: () => el.classList.add("redacted"),
+            scrambleText: { text: "█".repeat(el.dataset.redact.length), chars: "█▓▒░", revealDelay: 0.15, speed: 0.5 } }, 0.5 + k * 0.08);
       });
-      tl.from(one(".cap"), { opacity: 0, duration: 0.6 }, 1.7);
+      tl.from(one(".cap"), { opacity: 0, duration: 0.5 }, 1.2);
     } else if (key === "pay-2") {
       // Paid, then the proof: two hashes that match, character by character.
       count(tl, nums[0], 0, 0.9);
