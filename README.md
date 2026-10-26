@@ -75,8 +75,8 @@ sequenceDiagram
   L->>P: reveals the secret, takes the payment
 ```
 
-If the ZEC can't be sent, Leyden never takes the payment: it times out and the payer gets their
-sats back.
+If the ZEC can't be sent, Leyden never takes the payment: it stays locked until the hold expires,
+then goes back to the payer.
 
 ## Why it does not leak
 

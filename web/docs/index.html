@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leyden docs</title>
+<meta name="description" content="How Leyden works: paying Lightning invoices with shielded ZEC, getting paid over Lightning as shielded ZEC, Lightning addresses, fees, refunds, privacy and the API.">
+<meta name="referrer" content="no-referrer">
+<link rel="stylesheet" href="/base.css?v=20261027e">
+<link rel="stylesheet" href="/docs.css?v=20261027e">
+<link rel="icon" href="/favicon.png?v=20261027e" type="image/png">
+<link rel="apple-touch-icon" href="/brand/icon-256.png?v=20261027e">
+</head>
+<body>
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Leyden home">
+      <img src="/brand/logo.png?v=20261027e" alt="Leyden" height="36">
+    </a>
+    <nav class="nav-links" id="nav-menu" aria-label="Primary">
+      <a href="/#how">How it works</a>
+      <a href="/#privacy">Privacy</a>
+      <a href="/#proof">Proof</a>
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a class="nav-cta-menu" href="/app/">Launch app</a>
+    </nav>
+    <div class="nav-end">
+      <a class="nav-cta" href="/app/">Launch app <span class="arrow" aria-hidden="true">→</span></a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="docs">
+  <nav class="toc" aria-label="On this page">
+    <p class="toc-title">Docs</p>
+    <a href="#overview">Overview</a>
+    <a href="#pay">Pay with ZEC</a>
+    <a href="#get-paid">Get paid in ZEC</a>
+    <a href="#address">Lightning addresses</a>
+    <a href="#fees">Fees and limits</a>
+    <a href="#refunds">Refunds</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#trust">Trust</a>
+    <a href="#api">API</a>
+    <a href="#self-host">Run your own</a>
+  </nav>
+
+  <article class="doc">
+    <header class="doc-head">
+      <h1>Docs. <span>How Leyden works.</span></h1>
+      <p class="lede">Everything you need to pay, get paid and verify, without trusting a word of it.</p>
+    </header>
+
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>Leyden swaps between the Zcash shielded pool and the Bitcoin Lightning Network, in both directions. Nothing on the way through touches a transparent address or a public Bitcoin transaction.</p>
+      <p>There is no account and nothing to connect or sign. You use wallets you already have:</p>
+      <ul>
+        <li><b>A shielded Zcash wallet</b>, such as Zashi or Zodl, with a unified address (<code>u1…</code>) or a Sapling one (<code>zs1…</code>).</li>
+        <li><b>Any Lightning wallet</b>, such as Phoenix, Wallet of Satoshi or Breez.</li>
+      </ul>
+    </section>
+
+    <section id="pay">
+      <h2>Pay with ZEC</h2>
+      <p>Pay any Lightning invoice from shielded ZEC. You send ZEC; the person you're paying receives sats.</p>
+      <ol class="steps">
+        <li><b>Paste the Lightning invoice.</b> Leyden reads it on the spot and shows the amount, its description and when it expires.</li>
+        <li><b>Add a refund address.</b> Your own shielded address, used only if something goes wrong. Transparent <code>t1…</code> addresses are refused.</li>
+        <li><b>Send the exact ZEC shown</b> to the one-time address, by QR code or "Open in wallet". Every quote gets a new address, and the quote is valid for 20 minutes.</li>
+        <li><b>Leyden pays the invoice</b> after one confirmation, about a minute, and shows you the preimage: the cryptographic proof that the invoice was paid.</li>
+      </ol>
+      <p class="note">The invoice must include an amount and stay valid for at least 35 minutes, the quote's 20 minutes plus time for your payment to be mined.</p>
+    </section>
+
+    <section id="get-paid">
+      <h2>Get paid in ZEC</h2>
+      <p>Get paid by anyone with a Lightning wallet, straight into your shielded address.</p>
+      <ol class="steps">
+        <li><b>Enter the amount</b> in sats and your shielded address. You can add a memo, up to 400 characters; it arrives encrypted.</li>
+        <li><b>Share the invoice</b>, as a QR code or a link that opens their Lightning wallet.</li>
+        <li><b>The payment is held, not taken.</b> Leyden sends your shielded ZEC first, and only then takes the payment.</li>
+        <li><b>The ZEC shows up in your wallet</b> after the next block, in about a minute.</li>
+      </ol>
+      <p class="note">If the ZEC can't be sent for any reason, Leyden never takes the payment. It stays locked until the hold expires, then goes back to the payer.</p>
+    </section>
+
+    <section id="address">
+      <h2>Lightning addresses</h2>
+      <p>Claim a name and get an address like <code>you@<span data-info="domain">leydenpay.xyz</span></code>. Anyone can pay it from any Lightning wallet, and every payment lands in your shielded address as ZEC. If the payer adds a comment, up to 200 characters, it arrives as an encrypted memo.</p>
+      <ul>
+        <li>Names are 3 to 32 characters: lowercase letters, digits, <code>-</code> and <code>_</code>.</li>
+        <li>You get a <b>manage key</b> when you claim it. It's shown once, and it's the only way to delete the address later.</li>
+        <li>Each payment follows the same rules as Get paid: held, then the ZEC sent, then the payment taken.</li>
+      </ul>
+    </section>
+
+    <section id="fees">
+      <h2>Fees and limits</h2>
+      <p>Live from the gateway right now:</p>
+      <dl class="facts">
+        <div><dt>Leyden's fee</dt><dd data-info="fee">1%</dd></div>
+        <div><dt>Per swap</dt><dd data-info="range">100 – 5,000 sats</dd></div>
+        <div><dt>Zcash network fee</dt><dd data-info="netfee">0.00015 ZEC per payout or refund</dd></div>
+        <div><dt>Rate</dt><dd data-info="rate">from the NEAR Intents price list, refreshed every minute</dd></div>
+        <div><dt>Largest Pay right now</dt><dd data-info="maxpay">…</dd></div>
+        <div><dt>Largest Get paid right now</dt><dd data-info="maxget">…</dd></div>
+      </dl>
+      <p>Each swap is paid from the gateway's own balance on the other side, so the largest swap moves with what it holds. The app always shows the live limit before you commit to anything.</p>
+    </section>
+
+    <section id="refunds">
+      <h2>Refunds</h2>
+      <p>When you pay with ZEC and the swap can't finish, the ZEC is sent back to your refund address automatically, with the memo <code>Leyden refund, swap …</code>. That happens when:</p>
+      <ul>
+        <li>the Lightning payment fails,</li>
+        <li>you send less than the quote, or</li>
+        <li>your payment arrives after the quote expired.</li>
+      </ul>
+      <p>The refund is what arrived minus the Zcash network fee for sending it back. Amounts too small to refund after that fee are held for manual review. When you get paid, no refund is needed: a held payment Leyden never takes goes back to the payer when the hold expires.</p>
+    </section>
+
+    <section id="privacy">
+      <h2>Privacy</h2>
+      <table>
+        <thead><tr><th>Who</th><th>Sees</th><th>Never sees</th></tr></thead>
+        <tbody>
+          <tr><td>Zcash observers</td><td>that a shielded transaction happened</td><td>sender, recipient, amount, memo</td></tr>
+          <tr><td>Bitcoin observers</td><td>nothing: Lightning is off-chain</td><td>everything</td></tr>
+          <tr><td>Lightning routers</td><td>the amount passing through</td><td>who paid whom</td></tr>
+          <tr><td>The payee</td><td>that their invoice was paid</td><td>your Zcash address, wallet or balance</td></tr>
+          <tr><td>Leyden</td><td>the invoice, the amounts and your shielded address while the swap runs; your IP unless you use Tor</td><td>anything else; the link between both sides is erased 24 hours after the swap</td></tr>
+        </tbody>
+      </table>
+      <p>Leyden keeps no access logs, finds payments by scanning compact blocks itself rather than asking a server about transactions, and gives every quote a fresh address. The <a href="/#privacy">landing page</a> compares a real bridge transaction with a real Leyden swap.</p>
+    </section>
+
+    <section id="trust">
+      <h2>Trust</h2>
+      <ul>
+        <li><b>Paying with ZEC:</b> Leyden holds your ZEC for about a minute, between confirmation and paying the invoice, the way an instant-swap service does. Failures are refunded automatically.</li>
+        <li><b>Getting paid:</b> the hold invoice means a failure on Leyden's side can never cost the payer their sats.</li>
+        <li><b>Capped:</b> swaps are limited to small amounts while this runs as a demo.</li>
+        <li><b>Lightning</b> goes through a Spark wallet, whose operators see the gateway's Lightning payments but never the Zcash side.</li>
+        <li><b>Open source:</b> a fully trustless version isn't possible with today's Zcash and Lightning, so anyone can run their own gateway instead.</li>
+      </ul>
+      <p>Every claim here is checkable: the <a href="/#proof">receipts</a> let your browser verify real mainnet payments, and the <a href="https://github.com/wildanrhmn/leyden/blob/main/docs/mainnet-runs.md" rel="noopener">run log</a> lists every transaction.</p>
+    </section>
+
+    <section id="api">
+      <h2>API</h2>
+      <p>The app is a thin client over a small JSON API on the same domain.</p>
+      <table class="api">
+        <tbody>
+          <tr><td><code>GET /api/info</code></td><td>rate, fee, limits and live liquidity</td></tr>
+          <tr><td><code>POST /api/swaps/pay</code></td><td><code>{invoice, refund_address}</code> → a quote to pay with ZEC</td></tr>
+          <tr><td><code>POST /api/swaps/receive</code></td><td><code>{payout_address, amount_sats, memo?}</code> → a hold invoice to get paid</td></tr>
+          <tr><td><code>GET /api/swaps/{id}</code></td><td>a swap's current state</td></tr>
+          <tr><td><code>POST /api/ln-address</code></td><td><code>{name, payout_address}</code> → claims a Lightning address</td></tr>
+          <tr><td><code>DELETE /api/ln-address</code></td><td><code>{name, manage_key}</code> → deletes it</td></tr>
+        </tbody>
+      </table>
+<pre><code>curl -s https://leydenpay.xyz/api/swaps/receive \
+  -H 'content-type: application/json' \
+  -d '{"payout_address":"u1…","amount_sats":1000,"memo":"thanks"}'</code></pre>
+      <p>A swap moves through these states:</p>
+<pre><code>Pay        awaiting_zec → paying_ln → complete      or refunding → refunded
+Get paid   awaiting_ln  → paying_zec → settling_ln → complete</code></pre>
+    </section>
+
+    <section id="self-host">
+      <h2>Run your own</h2>
+      <p>Leyden is one Rust binary for the shielded wallet and the swaps, plus a small Node sidecar that speaks Lightning. You need Rust 1.89+ and Node 22+.</p>
+<pre><code>git clone https://github.com/wildanrhmn/leyden && cd leyden
+cd lightning && npm ci && node init-wallet.mjs ~/.leyden/spark.mnemonic
+cd ../gateway && cargo build --release
+./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic serve --web ../web</code></pre>
+      <p>The <a href="https://github.com/wildanrhmn/leyden" rel="noopener">repository</a> has the full setup, configuration and deployment files.</p>
+    </section>
+  </article>
+</main>
+
+<footer class="docs-foot">
+  <span>Leyden · shielded Zcash ⇄ Bitcoin Lightning</span>
+  <nav aria-label="Footer"><a href="/app/">Launch app</a><a href="/#proof">Proof</a><a href="https://github.com/wildanrhmn/leyden" rel="noopener">Source</a></nav>
+</footer>
+
+<script src="/nav.js?v=20261027e"></script>
+<script src="/vendor/gsap/gsap.min.js?v=20261027e"></script>
+<script src="/vendor/gsap/ScrollToPlugin.min.js?v=20261027e"></script>
+<script src="/docs.js?v=20261027e"></script>
+</body>
+</html>

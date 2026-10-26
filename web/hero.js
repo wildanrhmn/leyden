@@ -149,8 +149,10 @@
     draw(t);
     requestAnimationFrame(loop);
   }
+  // Phones show the swap card on its own: no particles on the left, no beam on the right.
+  const small = matchMedia("(max-width: 760px)");
   function start() {
-    if (running || reduce) return;
+    if (running || reduce || small.matches) return;
     running = true;
     last = performance.now();
     requestAnimationFrame(loop);

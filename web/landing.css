@@ -50,6 +50,7 @@
 .stats dt { font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
 
 @media (max-width: 760px) {
+  .hero .beam, .hero .veil { display: none; }
   .stats { grid-template-columns: repeat(2, 1fr); row-gap: 36px; margin-top: 64px; }
   .swapcard { margin-top: 56px; }
 }
@@ -172,6 +173,9 @@ html.motion.intro-ready .hero [data-reveal] { animation: none; }
   .hiw-stage { margin-top: 44px; }
   .hiw-visual { top: 72px; width: 100%; }
   .hiw-visual::before { content: ""; position: absolute; z-index: -1; left: -24px; right: -24px; top: -96px; bottom: -48px; background: linear-gradient(to bottom, var(--bg) 80%, rgb(5 6 10 / 0)); }
+  /* The sticky box's backing reaches up to hide the steps scrolling behind it; keep the
+     headline and the Pay / Get paid toggle above it so it can never cover them. */
+  .hiw .sec-head { position: relative; z-index: 3; }
   .hiw-steps { padding-top: 470px; }
   .hiw-steps::before, .hiw-steps::after { left: 0; top: 470px; }
   .step, .step[data-side] { width: auto; min-height: 56vh; margin: 0; padding: 40px 0 40px 24px; justify-content: flex-start; }

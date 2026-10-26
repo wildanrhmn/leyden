@@ -16,6 +16,8 @@
   const hero = document.querySelector(".hero"); // landing page only
   if (!canvas) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Phones get a calm, plain background instead (and keep their battery).
+  if (matchMedia("(max-width: 760px)").matches) return;
   const gl = !reduce && canvas.getContext("webgl2", { alpha: false, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false });
   if (!gl || !gl.getExtension("EXT_color_buffer_float")) { hero?.classList.add("no-fluid"); return; }
 

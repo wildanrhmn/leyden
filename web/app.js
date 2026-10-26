@@ -559,7 +559,7 @@
       case "paying_zec":
         root.append(el("div", "sv-wait"));
         root.lastChild.append(amount("Payment held", s.zec, "ZEC"));
-        root.append(el("p", "sv-note", "The Lightning payment is held, not taken. Your shielded ZEC goes out first; if it can't, the payment goes back to the payer automatically."));
+        root.append(el("p", "sv-note", "The Lightning payment is held, not taken. Your shielded ZEC goes out first; if it can't, the payment is never taken and goes back to the payer when the hold expires."));
         break;
       case "settling_ln":
         root.append(
