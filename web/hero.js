@@ -95,14 +95,14 @@
     }
 
     // Halo where the shielded side meets the card.
-    halo(left, y0, 160, `rgba(110, 120, 255, ${0.22 * I})`);
+    halo(left, y0, 90, `rgba(110, 120, 255, ${0.08 * I})`);
 
     // Right: Lightning. One clean beam, no particles.
     const end = right + (W - right) * ig;
-    beam(right, end, 18, `rgba(255, 194, 26, ${0.05 * I})`);
-    beam(right, end, 6, `rgba(255, 200, 60, ${0.18 * I})`);
+    beam(right, end, 12, `rgba(255, 194, 26, ${0.025 * I})`);
+    beam(right, end, 5, `rgba(255, 200, 60, ${0.12 * I})`);
     beam(right, end, 1.4, `rgba(255, 228, 150, ${0.9 * I})`);
-    halo(right, y0, 150, `rgba(255, 190, 40, ${0.25 * I})`);
+    halo(right, y0, 80, `rgba(255, 190, 40, ${0.08 * I})`);
 
     // Pulses: a bright head with a tail, running out along the beam.
     if (!reduce && t > nextPulse && ig > 0.95) {
