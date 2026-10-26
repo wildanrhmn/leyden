@@ -1,18 +1,17 @@
 "use strict";
 
-// "How it works". On wide screens the section pins while you scroll: the screen glides
-// left, right, left and each step's text takes the opposite side. On phones the screen
-// sticks at the top and steps scroll beneath it. Scenes use real data from the
-// recorded mainnet runs (docs/mainnet-runs.md).
+// "How it works". The steps scroll normally down a single line. On wide screens the
+// screen rides a sticky track and its position follows the scroll: it starts on the
+// left, flows to the right for step 02 and back to the left for step 03, so the step
+// text zig-zags on the opposite side. Scenes use real data from the recorded mainnet
+// runs (docs/mainnet-runs.md).
 (() => {
-  const section = document.querySelector(".hiw");
-  const stage = section && section.querySelector(".hiw-stage");
+  const stage = document.querySelector(".hiw-stage");
   if (!stage) return;
-  const pinEl = section.querySelector(".hiw-pin");
   const visual = stage.querySelector(".hiw-visual");
+  const list = stage.querySelector(".hiw-steps");
   const steps = [...stage.querySelectorAll(".step")];
-  const dots = [...stage.querySelectorAll(".hiw-dots button")];
-  const toggle = section.querySelector(".dir-toggle");
+  const toggle = document.querySelector(".hiw .dir-toggle");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const hasGsap = !!window.gsap;
   if (hasGsap) gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
@@ -20,10 +19,8 @@
   let dir = "pay";
   let step = -1;
   let scene = null;
-  let wide = false;
-  let pinST = null;
+  let arrived = false;
 
-  // Text sits opposite the screen: screen left on 01 and 03, right on 02.
   steps.forEach((s, i) => { s.dataset.side = i % 2 === 0 ? "right" : "left"; });
 
   for (const el of stage.querySelectorAll("[data-qr]")) {
@@ -35,60 +32,52 @@
   }
 
   const visFor = (d, i) => stage.querySelector(`.vis[data-dir="${d}"][data-step="${i}"]`);
-  const screenX = (i) => (i % 2 === 0 ? 0 : stage.clientWidth - visual.offsetWidth);
 
   function show(i, force) {
-    if (i === step && !force) return;
-    const prevStep = step;
-    const prev = prevStep >= 0 ? visFor(dir, prevStep) : null;
+    if (!arrived || (i === step && !force)) return;
+    const prev = step >= 0 ? visFor(dir, step) : null;
     step = i;
+    steps.forEach((s, k) => s.classList.toggle("on", k === i));
     const next = visFor(dir, i);
     if (scene) { scene.kill(); scene = null; }
-    dots.forEach((d, k) => d.classList.toggle("on", k === i));
+
+    const screen = visual.querySelector(".screen");
+    const h0 = screen.offsetHeight;
+    stage.querySelectorAll(".vis.cur").forEach((v) => v.classList.remove("cur"));
+    next.classList.add("cur");
 
     if (!hasGsap || reduce) {
-      steps.forEach((s, k) => s.classList.toggle("on", k === i));
       stage.querySelectorAll(".vis").forEach((v) => v.classList.toggle("on", v === next));
-      if (wide && hasGsap) gsap.set(visual, { x: screenX(i) });
-      finalState(next);
+      settle(next);
       return;
     }
-
-    // Step text: the new one slides in from its own side.
-    steps.forEach((s, k) => {
-      if (k === i) {
-        s.classList.add("on");
-        if (wide) {
-          const from = s.dataset.side === "right" ? 48 : -48;
-          gsap.fromTo(s, { x: from, opacity: 0, filter: "blur(10px)" }, { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.9, delay: prevStep < 0 ? 0 : 0.35, ease: "expo.out", clearProps: "filter" });
-        }
-      } else if (s.classList.contains("on")) {
-        if (wide) gsap.to(s, { opacity: 0, duration: 0.3, onComplete: () => s.classList.remove("on") });
-        else s.classList.remove("on");
-      }
-    });
-
-    // The screen glides to its side.
-    if (wide) gsap.to(visual, { x: screenX(i), duration: prevStep < 0 ? 0 : 1.1, ease: "expo.inOut" });
-
-    // Scene crossfade.
+    // The screen eases to the new scene's height instead of jumping.
+    next.classList.add("on");
+    const h1 = screen.offsetHeight;
+    if (h0 && h0 !== h1) gsap.fromTo(screen, { height: h0 }, { height: h1, duration: 0.6, ease: "power3.inOut", clearProps: "height" });
     if (prev && prev !== next) {
-      gsap.to(prev, { opacity: 0, scale: 0.98, filter: "blur(6px)", duration: 0.35, ease: "power2.in", onComplete: () => { prev.classList.remove("on"); gsap.set(prev, { clearProps: "all" }); } });
+      gsap.to(prev, { opacity: 0, y: -8, duration: 0.3, ease: "power2.in", onComplete: () => { prev.classList.remove("on"); gsap.set(prev, { clearProps: "all" }); } });
     }
     stage.querySelectorAll(".vis.on").forEach((v) => { if (v !== prev && v !== next) v.classList.remove("on"); });
     next.classList.add("on");
-    gsap.fromTo(next, { opacity: 0, scale: 0.98, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.7, delay: prev ? 0.3 : 0, ease: "expo.out", clearProps: "filter,scale" });
-    scene = play(next, prev ? 0.4 : 0.15);
+    gsap.fromTo(next, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, delay: prev ? 0.25 : 0, ease: "power3.out" });
+    scene = play(next, prev ? 0.35 : 0.1);
   }
 
-  // Counts a number up inside an element, keeping its <small> unit. Values are tweened as
-  // integers (zatoshis or sats) because GSAP rounds fractional tween values.
-  function count(tl, el, toInt, decimals, at, dur = 1.1) {
+  // Count a number up (tweened as an integer: GSAP rounds fractional tween values).
+  function count(tl, el, at, dur = 1.1) {
+    const to = Number(el.dataset.count), dec = Number(el.dataset.decimals || 0), sign = el.dataset.sign || "";
+    const fmt = (v) => sign + (dec ? (Math.round(v) / 10 ** dec).toFixed(dec) : Math.round(v).toLocaleString("en-US"));
     const o = { v: 0 };
-    const fmt = (v) => (decimals ? (Math.round(v) / 10 ** decimals).toFixed(decimals) : Math.round(v).toLocaleString("en-US"));
-    const prefix = el.firstChild.nodeValue.trim().startsWith("+") ? "+" : "";
-    el.firstChild.nodeValue = prefix + fmt(0) + " ";
-    tl.to(o, { v: toInt, duration: dur, ease: "expo.out", onUpdate: () => { el.firstChild.nodeValue = prefix + fmt(o.v) + " "; } }, at);
+    el.textContent = fmt(0);
+    tl.to(o, { v: to, duration: dur, ease: "expo.out", onUpdate: () => { el.textContent = fmt(o.v); } }, at);
+  }
+
+  // Wrap each character in a span, for the hash comparison.
+  function chars(el) {
+    if (!el.dataset.text) el.dataset.text = el.textContent;
+    el.innerHTML = [...el.dataset.text].map((c) => `<span class="ch">${c}</span>`).join("");
+    return [...el.querySelectorAll(".ch")];
   }
 
   function play(v, delay) {
@@ -96,76 +85,67 @@
     const key = `${v.dataset.dir}-${v.dataset.step}`;
     const q = (sel) => [...v.querySelectorAll(sel)];
     const one = (sel) => v.querySelector(sel);
+    const HEX = "0123456789abcdef";
 
     if (key === "pay-0") {
-      const panels = q(".panel");
-      const inv = one(".inv-str");
-      inv.dataset.text ||= inv.textContent;
-      tl.from(panels[0], { opacity: 0, y: -14, scale: 1.03, filter: "blur(6px)", duration: 0.7, ease: "expo.out", clearProps: "filter" }, 0)
-        .fromTo(inv, { scrambleText: { text: inv.dataset.text, chars: "0123456789abcdefghijklmnopqrstuvwxyz", speed: 1 } },
-          { duration: 0.8, scrambleText: { text: inv.dataset.text, chars: "0123456789abcdefghijklmnopqrstuvwxyz", revealDelay: 0.2, speed: 0.9 } }, 0.1)
-        .from(q(".kv div"), { opacity: 0, y: 8, stagger: 0.08, duration: 0.5, ease: "power2.out" }, 0.5)
-        .from(one(".flow-arrow"), { opacity: 0, scale: 0.6, duration: 0.45, ease: "back.out(2)" }, 0.85)
-        .from(panels[1], { opacity: 0, y: 18, duration: 0.8, ease: "expo.out" }, 1.0)
-        .from(q(".quote-panel .to > *"), { opacity: 0, y: 6, stagger: 0.07, duration: 0.45 }, 1.4);
-      count(tl, one(".quote-panel .amt"), 67778, 8, 1.05);
+      const code = one(".s-code");
+      tl.fromTo(code, { scrambleText: { text: code.dataset.scramble, chars: HEX + "lnpu", speed: 1 } },
+        { duration: 0.9, scrambleText: { text: code.dataset.scramble, chars: HEX + "lnpu", revealDelay: 0.2, speed: 0.8 } }, 0)
+        .from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.09, duration: 0.5, ease: "power2.out" }, 0.35)
+        .from(one(".s-total"), { opacity: 0, duration: 0.5 }, 0.8)
+        .from(one(".s-note"), { opacity: 0, duration: 0.6 }, 1.3);
+      count(tl, one(".s-total b"), 0.8, 1.2);
     } else if (key === "pay-1") {
       q("[data-redact]").forEach((dd) => { dd.textContent = dd.dataset.redact; dd.classList.remove("redacted"); });
-      tl.from(one(".tx-head"), { opacity: 0, y: 10, duration: 0.6, ease: "expo.out" }, 0)
-        .from(q(".ledger div"), { opacity: 0, x: -10, stagger: 0.07, duration: 0.5, ease: "power2.out" }, 0.15);
+      tl.from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.08, duration: 0.45, ease: "power2.out" }, 0);
       q("[data-redact]").forEach((dd, k) => {
-        tl.to(dd, {
-          duration: 0.8,
-          scrambleText: { text: "█".repeat(Math.min(16, dd.dataset.redact.length)), chars: "█▓▒░", speed: 0.6 },
-          ease: "none",
-          onStart: () => dd.classList.add("redacted"),
-        }, 0.9 + k * 0.16);
+        tl.to(dd, { duration: 0.7, ease: "none", onStart: () => dd.classList.add("redacted"),
+          scrambleText: { text: "█".repeat(Math.min(16, dd.dataset.redact.length)), chars: "█▓▒░", speed: 0.6 } }, 0.8 + k * 0.18);
       });
-      tl.from(q(".tiles div"), { opacity: 0, y: 12, stagger: 0.09, duration: 0.6, ease: "expo.out" }, 1.5);
+      tl.from(one(".s-line"), { opacity: 0, duration: 0.6 }, 1.6);
     } else if (key === "pay-2") {
-      tl.fromTo(one(".ring-fg"), { strokeDashoffset: 183 }, { strokeDashoffset: 0, duration: 0.9, ease: "power3.inOut" }, 0)
-        .fromTo(one(".ring-check"), { strokeDashoffset: 36 }, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" }, 0.75)
-        .from(one(".paid-hero .lbl"), { opacity: 0, x: -8, duration: 0.5 }, 0.2)
-        .from(one(".proof"), { opacity: 0, y: 14, duration: 0.7, ease: "expo.out" }, 0.7);
-      count(tl, one(".paid-hero .amt"), 1000, 0, 0.25);
-      const pre = one("[data-scramble]");
-      tl.fromTo(pre, { scrambleText: { text: pre.dataset.scramble, chars: "0123456789abcdef", speed: 1 } },
-        { duration: 1, scrambleText: { text: pre.dataset.scramble, chars: "0123456789abcdef", revealDelay: 0.25, speed: 0.8 } }, 0.8)
-        .from(one(".verified"), { opacity: 0, x: -6, duration: 0.5 }, 1.7)
-        .from(q(".tiles div"), { opacity: 0, y: 12, stagger: 0.1, duration: 0.6, ease: "expo.out" }, 1.4);
-    } else if (key === "get-0") {
-      tl.from(one(".addr-row"), { opacity: 0, y: -12, duration: 0.7, ease: "expo.out" }, 0)
-        .from(one(".inv-card"), { opacity: 0, y: 16, duration: 0.8, ease: "expo.out" }, 0.4)
-        .from(one(".qr-mini"), { scale: 0.85, opacity: 0, duration: 0.7, ease: "back.out(1.7)" }, 0.55)
-        .from(q(".inv-meta > *"), { opacity: 0, x: 8, stagger: 0.07, duration: 0.45 }, 0.7);
-      count(tl, one(".inv-meta .amt"), 600, 0, 0.7, 0.9);
-    } else if (key === "get-1") {
-      const lines = q(".fan-lines path");
-      lines.forEach((p) => { const L = p.getTotalLength(); gsap.set(p, { strokeDasharray: L, strokeDashoffset: L }); });
-      tl.from(q(".fan-wallets rect, .fan-wallets text"), { opacity: 0, x: -10, stagger: 0.05, duration: 0.45 }, 0)
-        .to(lines, { strokeDashoffset: 0, stagger: 0.08, duration: 0.8, ease: "power2.inOut" }, 0.3)
-        .from(one(".fan-node"), { opacity: 0, scale: 0.7, transformOrigin: "50% 50%", duration: 0.6, ease: "back.out(2)" }, 0.8);
-      q(".fan-pulses path").forEach((p, k) => {
-        const L = p.getTotalLength();
-        tl.fromTo(p, { strokeDashoffset: 22 }, { strokeDashoffset: -L, duration: 1.3, ease: "power1.in", repeat: -1, repeatDelay: 1.2 }, 1 + k * 0.35);
+      count(tl, one(".s-total b"), 0, 1.1);
+      const a = chars(one(".h-a")), b = chars(one(".h-b"));
+      tl.from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.09, duration: 0.45 }, 0.3);
+      // Compare the two hashes, character by character.
+      a.forEach((c, k) => {
+        tl.add(() => { c.classList.add("ok"); b[k].classList.add("ok"); }, 1.0 + k * 0.035);
       });
-      tl.from(one(".foot"), { opacity: 0, duration: 0.6 }, 0.9);
+      tl.from(one(".s-verdict"), { opacity: 0, y: 4, duration: 0.5 }, 1.0 + a.length * 0.035)
+        .from(one(".s-line"), { opacity: 0, duration: 0.6 }, ">0.1");
+    } else if (key === "get-0") {
+      tl.from(one(".s-code"), { opacity: 0, duration: 0.5 }, 0)
+        .from(one(".s-invoice"), { opacity: 0, y: 10, duration: 0.6, ease: "power3.out" }, 0.3)
+        .from(one(".qr-mini"), { opacity: 0, scale: 0.94, duration: 0.6, ease: "power3.out" }, 0.4)
+        .from(one(".s-note"), { opacity: 0, duration: 0.6 }, 1.0);
+      count(tl, one(".s-total b"), 0.5, 1);
+    } else if (key === "get-1") {
+      const hop = one(".hop"), route = one(".route");
+      tl.from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.09, duration: 0.45 }, 0)
+        .from(one(".s-note"), { opacity: 0, duration: 0.6 }, 0.7);
+      // The payment hops node to node, then starts over.
+      const run = gsap.timeline({ repeat: -1, repeatDelay: 0.7 });
+      const span = () => route.clientWidth - hop.offsetWidth;
+      run.set(hop, { x: 0, opacity: 1 });
+      for (let k = 1; k <= 3; k++) run.to(hop, { x: () => (span() * k) / 3, duration: 0.45, ease: "power2.inOut" }, ">0.15");
+      run.to(hop, { opacity: 0, duration: 0.3 }, ">0.2");
+      tl.add(run, 0.6);
     } else if (key === "get-2") {
       const memo = one("[data-decrypt]");
-      tl.from(one(".notif"), { opacity: 0, y: -22, scale: 0.97, duration: 0.8, ease: "expo.out" }, 0)
-        .from(one(".memo"), { opacity: 0, y: 12, duration: 0.7, ease: "expo.out" }, 0.45)
-        .fromTo(memo, { scrambleText: { text: "█".repeat(26), chars: "█▓▒░" } },
-          { duration: 1.6, scrambleText: { text: memo.dataset.decrypt, chars: "█▓▒░", revealDelay: 0.35, speed: 0.5 } }, 0.7)
-        .from(q(".tiles div"), { opacity: 0, y: 12, stagger: 0.1, duration: 0.6, ease: "expo.out" }, 1.2)
-        .from(one(".foot"), { opacity: 0, duration: 0.6 }, 1.6);
-      count(tl, one(".notif .amt"), 24321, 8, 0.15);
+      count(tl, one(".s-total b"), 0, 1.1);
+      tl.from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.09, duration: 0.45 }, 0.3)
+        .fromTo(memo, { scrambleText: { text: "█".repeat(24), chars: "█▓▒░" } },
+          { duration: 1.5, scrambleText: { text: memo.dataset.decrypt, chars: "█▓▒░", revealDelay: 0.3, speed: 0.5 } }, 0.6)
+        .from(one(".s-note"), { opacity: 0, duration: 0.6 }, 1.4);
     }
     return tl;
   }
 
-  function finalState(v) {
+  // End state without animation (reduced motion, no GSAP).
+  function settle(v) {
     if (!v) return;
     v.querySelectorAll("[data-redact]").forEach((el) => { el.textContent = "█".repeat(Math.min(16, el.dataset.redact.length)); el.classList.add("redacted"); });
+    v.querySelectorAll(".h-a, .h-b").forEach((el) => chars(el).forEach((c) => c.classList.add("ok")));
   }
 
   function setDir(d) {
@@ -174,61 +154,60 @@
     stage.dataset.dir = d;
     toggle.dataset.active = d;
     toggle.querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.dir === d)));
-    stage.querySelectorAll(".vis.on").forEach((v) => { v.classList.remove("on"); if (hasGsap) gsap.set(v, { clearProps: "all" }); });
+    stage.querySelectorAll(".vis.on, .vis.cur").forEach((v) => { v.classList.remove("on", "cur"); if (hasGsap) gsap.set(v, { clearProps: "all" }); });
     const cur = Math.max(step, 0);
     step = -1;
     show(cur, true);
   }
   toggle.addEventListener("click", (e) => { const b = e.target.closest("button[data-dir]"); if (b) setDir(b.dataset.dir); });
 
-  // Dots jump to a step within the pinned scroll range.
-  dots.forEach((d, k) => d.addEventListener("click", () => {
-    if (!pinST) return show(k);
-    const y = pinST.start + ((k + 0.15) / 3) * (pinST.end - pinST.start);
-    window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
-  }));
-
-  if (!hasGsap) { show(0, true); return; }
+  if (!hasGsap) { arrived = true; show(0, true); return; }
 
   gsap.from(".hiw .sec-head > *", { opacity: 0, y: 24, filter: "blur(8px)", stagger: 0.12, duration: 1.1, ease: "expo.out", clearProps: "filter",
     scrollTrigger: { trigger: ".hiw .sec-head", start: "top 85%" } });
 
-  const mm = gsap.matchMedia();
-  mm.add("(min-width: 901px)", () => {
-    wide = true;
-    step = -1;
-    steps.forEach((s) => s.classList.remove("on"));
-    show(0, true);
-    pinST = ScrollTrigger.create({
-      trigger: pinEl, start: "top top", end: () => "+=" + Math.round(innerHeight * 2.4), pin: true, anticipatePin: 1,
-      onEnter: () => { if (step === 0 && !reduce) show(0, true); }, // replay 01 when the section arrives
-      onUpdate: (self) => {
-        const p = self.progress * 3;
-        show(Math.min(2, Math.floor(p * 0.9999)));
-        dots.forEach((d, k) => d.querySelector("i").style.setProperty("--p", Math.max(0, Math.min(1, p - k)).toFixed(3)));
-      },
-    });
-    const onResize = () => { if (step >= 0) gsap.set(visual, { x: screenX(step) }); };
-    addEventListener("resize", onResize);
-    return () => {
-      removeEventListener("resize", onResize);
-      wide = false;
-      pinST = null;
-      gsap.set([visual, ...steps], { clearProps: "all" });
-      step = -1;
-    };
+  // The screen stays empty and hidden until the section arrives; then it rises in and
+  // step 01 plays. (Fixes seeing the finished scene before reaching the section.)
+  gsap.set(visual, { autoAlpha: 0, y: 40 });
+  ScrollTrigger.create({
+    trigger: stage, start: "top 62%", once: true,
+    onEnter: () => {
+      arrived = true;
+      gsap.to(visual, { autoAlpha: 1, y: 0, duration: reduce ? 0 : 1, ease: "expo.out" });
+      show(0, true);
+    },
   });
+
+  // Steps become active as they cross the reading line.
+  const mm = gsap.matchMedia();
+  const stepTriggers = (line) => steps.map((s, i) => ScrollTrigger.create({
+    trigger: s, start: `top ${line}`, end: `bottom ${line}`,
+    onToggle: (self) => { if (self.isActive) show(i); },
+  }));
+
+  mm.add("(min-width: 901px)", () => {
+    const triggers = stepTriggers("55%");
+    const rightX = () => stage.clientWidth - visual.offsetWidth;
+    // The path: hold left through 01, glide right into 02, glide back left into 03.
+    // A slight arc, tilt and depth while it travels; scrubbed to the scroll with a little lag.
+    const path = gsap.timeline({
+      defaults: { ease: "power2.inOut" },
+      scrollTrigger: { trigger: list, start: "top 55%", end: "bottom 55%", scrub: reduce ? true : 1.2, invalidateOnRefresh: true,
+        onUpdate: (self) => list.style.setProperty("--fill", self.progress.toFixed(4)) },
+    });
+    path.set(visual, { x: 0 }, 0)
+      .to(visual, { x: rightX, duration: 1 }, 0.5)
+      .to(visual, { keyframes: { y: [0, -26, 0], rotation: [0, -1.2, 0], scale: [1, 0.965, 1] }, duration: 1, ease: "none" }, 0.5)
+      .to(visual, { x: 0, duration: 1 }, 1.5)
+      .to(visual, { keyframes: { y: [0, -26, 0], rotation: [0, 1.2, 0], scale: [1, 0.965, 1] }, duration: 1, ease: "none" }, 1.5)
+      .to({}, { duration: 0.5 }, 2.5);
+    return () => { triggers.forEach((t) => t.kill()); gsap.set(visual, { x: 0, rotation: 0, scale: 1 }); };
+  });
+
   mm.add("(max-width: 900px)", () => {
-    wide = false;
-    const triggers = steps.map((s, i) => ScrollTrigger.create({
-      trigger: s, start: "top 78%", end: "bottom 78%",
-      onToggle: (self) => { if (self.isActive) show(i); },
-    }));
-    // Visible from the start in its finished state; the scene plays when step 01 scrolls into view.
-    const v0 = visFor(dir, 0);
-    v0.classList.add("on");
-    finalState(v0);
-    steps[0].classList.add("on");
-    return () => triggers.forEach((t) => t.kill());
+    const triggers = stepTriggers("78%");
+    const fill = ScrollTrigger.create({ trigger: list, start: "top 78%", end: "bottom 78%", scrub: true,
+      onUpdate: (self) => list.style.setProperty("--fill", self.progress.toFixed(4)) });
+    return () => { triggers.forEach((t) => t.kill()); fill.kill(); };
   });
 })();
