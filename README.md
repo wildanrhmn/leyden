@@ -1,150 +1,272 @@
-# Leyden
+<p align="center">
+  <a href="https://leydenpay.xyz">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.png">
+      <img src="docs/assets/logo-light.png" alt="Leyden" height="88">
+    </picture>
+  </a>
+</p>
 
-**Pay any Lightning invoice from shielded ZEC. Receive Lightning payments as shielded ZEC.**
+<p align="center">
+  <b>Shielded ZEC, at Lightning speed.</b><br>
+  Pay any Lightning invoice from shielded Zcash, or get paid over Lightning straight into the shielded pool.
+</p>
 
-Named after the Leyden jar, the first device to hold lightning: a charge kept sealed in
-glass and foil.
+<p align="center">
+  <a href="https://leydenpay.xyz"><img alt="Live on mainnet" src="https://img.shields.io/badge/live-leydenpay.xyz-FFC21A?style=flat-square&labelColor=05060A"></a>
+  <img alt="Zcash mainnet" src="https://img.shields.io/badge/Zcash-mainnet%20%C2%B7%20shielded%20only-3B45D9?style=flat-square&labelColor=05060A">
+  <img alt="Lightning mainnet" src="https://img.shields.io/badge/Lightning-mainnet-FFC21A?style=flat-square&labelColor=05060A">
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-F4F5F7?style=flat-square&labelColor=05060A"></a>
+</p>
 
-Live: **https://leydenpay.xyz** (Zcash mainnet, Bitcoin Lightning mainnet, small limits)
+<p align="center">
+  <a href="https://leydenpay.xyz/app/">Launch the app</a> ·
+  <a href="https://leydenpay.xyz/#proof">Check the receipts</a> ·
+  <a href="docs/mainnet-runs.md">Mainnet run log</a>
+</p>
 
-Leyden is a swap gateway between the Zcash shielded pool and the Bitcoin Lightning
-Network. Neither leg touches a transparent address or a public Bitcoin transaction:
+---
 
-- **ZEC → Lightning.** Paste a Lightning invoice. Pay the quoted amount from any shielded
-  wallet (Zodl, Zkool, zcash-devtool…) to a one-time shielded address. The gateway pays the
-  invoice and shows you the Lightning preimage, which is cryptographic proof of payment.
-- **Lightning → ZEC.** Enter your shielded address and an amount. Pay the Lightning invoice
-  from any Lightning wallet; shielded ZEC arrives with an encrypted memo.
-- **Lightning addresses.** Claim `you@<gateway>`. Anyone with a Lightning wallet can pay it,
-  and the money lands in your shielded address. The payer's comment arrives as an encrypted memo.
+Leyden is a swap gateway between the **Zcash shielded pool** and the **Bitcoin Lightning Network**. Neither leg touches a transparent address or a public Bitcoin transaction. There is no account, nothing to connect, nothing to sign: you use the wallets you already have.
 
-Why this matters: Lightning is accepted by far more merchants and wallets than shielded ZEC,
-and existing ZEC↔BTC routes (exchanges, NEAR Intents, instant-swap services) take ZEC
-deposits on transparent addresses or settle BTC on-chain, which publishes the amount and
-links the two sides. Here, a chain observer sees one shielded Zcash transaction and nothing
-at all on Bitcoin.
+| | What you do | What happens |
+|---|---|---|
+| **Pay** · ZEC → Lightning | Paste a Lightning invoice, send the quoted ZEC from any shielded wallet | Leyden pays the invoice and hands you the preimage, the payee's proof of payment |
+| **Get paid** · Lightning → ZEC | Enter an amount and your shielded address, share the invoice | The payer's sats are held until your shielded ZEC is sent, with an encrypted memo |
+| **Lightning address** | Claim `you@leydenpay.xyz` | Anyone can pay it from any Lightning wallet; it lands as shielded ZEC, and their comment arrives as an encrypted memo |
 
-## It runs on mainnet
+The name comes from the **Leyden jar**, the first device that could hold electricity: lightning, kept sealed.
 
-Every flow has been exercised on mainnet with real money. Transaction IDs, preimages and
-hashes are in [docs/mainnet-runs.md](docs/mainnet-runs.md):
+## Why
 
-1. ZEC → Lightning: a 1,000-sat invoice paid from shielded ZEC; `sha256(preimage)` matches the invoice's payment hash.
-2. Lightning → ZEC: 500 sats in, 0.00017883 ZEC out to an Ironwood note, with its memo.
-3. Production deployment: ZEC → Lightning in ~40 s, and a Lightning-address payment whose comment arrived as an encrypted memo.
+Lightning is where Bitcoin is actually spent: far more merchants and wallets take it than take shielded ZEC. But the usual ZEC ⇄ BTC routes (exchanges, NEAR Intents, instant-swap services) take ZEC deposits on **transparent** addresses or settle BTC **on-chain**, which publishes amounts and links both sides. The site's [Privacy section](https://leydenpay.xyz/#privacy) shows exactly that, with real transactions.
 
-## Why it does not leak
+With Leyden, a Zcash observer sees one shielded transaction (0 inputs, 0 outputs, 0 value on the explorer) and a Bitcoin observer sees nothing at all.
+
+## How it works
+
+### Pay a Lightning invoice with shielded ZEC
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as You · shielded wallet
+    participant L as Leyden
+    participant Z as Zcash shielded pool
+    participant N as Lightning network
+    actor P as Payee
+    U->>L: Lightning invoice + your shielded refund address
+    L-->>U: Quote: exact ZEC, a fresh Orchard-only address, valid 20 min
+    U->>Z: Send the ZEC (shielded)
+    L->>Z: Sync compact blocks, trial-decrypt, match the note by diversifier
+    Note over L: 1 confirmation, about a minute
+    L->>N: Pay the invoice
+    N->>P: Onion-routed payment
+    P-->>L: Preimage
+    L-->>U: Preimage: proof the invoice was paid
+    Note over U,L: Lightning payment failed, or you sent the wrong amount?<br/>The ZEC is refunded automatically to your shielded address.
+```
+
+### Get paid over Lightning, as shielded ZEC
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor R as You · shielded address
+    participant L as Leyden
+    actor S as Payer · any Lightning wallet
+    participant Z as Zcash shielded pool
+    R->>L: Amount + your shielded address (+ memo)
+    L-->>R: Hold invoice, locked to a secret only Leyden knows
+    S->>L: Pays the invoice
+    Note over L: The payment is held, not taken
+    L->>Z: Send your shielded ZEC, with the memo encrypted
+    L->>S: Reveal the secret and take the held payment
+    Note over S,L: If the ZEC can't be sent, Leyden never settles:<br/>the payment times out and the payer gets the sats back.
+```
+
+A Lightning address does the same thing over [LNURL-pay](https://github.com/lnurl/luds): the payer's wallet asks for an invoice, and their comment becomes the encrypted memo.
+
+## Privacy
 
 | Party | Learns | Never learns |
 |---|---|---|
 | Zcash chain observers | That a shielded transaction happened | Sender, recipient, amount, memo, that Lightning was involved |
 | Bitcoin chain observers | Nothing: Lightning payments are off-chain | Everything about the payment |
 | Lightning routing nodes | The amount passing through them | Who paid and who was paid (onion routing) |
-| The payee | That the gateway's node paid their invoice | The payer's Zcash address, wallet or balance |
-| The lightwalletd server | That the gateway downloads every block | Which outputs are the gateway's |
-| **The gateway** | The invoice it pays or issues, the ZEC amount, the refund or payout address, the visitor's IP (use Tor to hide it) | The user's other transactions or balance |
+| The payee | That their invoice was paid | Your Zcash address, wallet or balance |
+| The light-wallet server | That the gateway downloads every block | Which transactions are the gateway's |
+| **Leyden itself** | The invoice, the amounts and your shielded address while a swap runs; your IP unless you use Tor | Your other transactions or balance. The link between both sides is erased 24 h after the swap |
 
-Design decisions behind that table:
+How that holds:
 
-- **One fresh shielded address per quote.** Each ZEC → Lightning quote gets its own
-  Orchard-only diversified address (`zcash_keys` diversifier index 2³² + n). Payments are
-  matched to quotes by diversifier, so the gateway needs no memo and no account. Two
-  payments cannot be linked by address, even by someone who saw both quotes.
-- **No transaction lookups.** The gateway syncs from compact blocks and trial-decrypts
-  locally (`zcash_client_backend::sync`). It never calls `GetTransaction(txid)`, the request
-  that tells a lightwalletd operator which transactions a wallet cares about.
-- **Shielded only, enforced.** Refund and payout addresses must carry an Orchard or Sapling
-  receiver; transparent and TEX addresses are refused. The gateway never pays in the clear.
-- **Records are erased.** 24 hours after a swap finishes, every field that links the two
-  legs is wiped: invoice, addresses, txids, preimage. What stays is amount, direction, state and time.
-- **No logs, no third parties.** Caddy logs are discarded entirely (error logs included, since
-  they contain IPs). The web app loads nothing from other origins: fonts and the QR library
-  are self-hosted, and a strict Content-Security-Policy enforces it.
-- **No transparent hop to fund it.** The operator funds and rebalances inventory outside the
-  user flow, so user payments are never batched or forwarded through transparent addresses.
+- **A fresh address for every quote.** Each ZEC → Lightning quote gets its own Orchard-only diversified address (diversifier index 2³² + n). Payments are matched by diversifier, so there's no memo, no account, and no two payments share an address.
+- **No transaction lookups.** The gateway syncs compact blocks and trial-decrypts locally (`zcash_client_backend`). It never calls `GetTransaction`, the request that would tell the light-wallet server which transactions it cares about.
+- **Shielded only, enforced.** Refund and payout addresses need an Orchard or Sapling receiver; transparent and TEX addresses are refused.
+- **Linking data is erased.** 24 hours after a swap finishes, the invoice, addresses, txids and preimage are wiped. Amount, direction, state and time remain.
+- **No logs, no third parties.** Caddy discards every log, error logs included, since they carry IPs. The web app loads nothing from other origins (fonts, QR code and animation libraries are self-hosted) under a strict Content-Security-Policy.
 
-### Trust model and limits
+## Trust model
 
-**Lightning → ZEC uses hold invoices, so the payer's sats are never at risk.** The gateway
-creates each invoice from a payment hash whose preimage only it knows. A payment to it is held,
-not taken; the gateway sends the shielded ZEC first and only then reveals the preimage to take
-the held payment. If the payout fails (no liquidity, a crash, a bug), the gateway never settles,
-the payment times out and the sats go back to the payer automatically. The payer ends up with
-the preimage as proof of payment. (It protects against the gateway failing, not against a
-gateway that settles without paying out.)
+- **Getting paid uses hold invoices.** The payer's sats are held, not taken, until the shielded ZEC has been sent. If the payout fails (no liquidity, a crash, a bug), Leyden never settles and the sats return to the payer automatically. This protects against the gateway *failing*; it can't stop a gateway that settles without paying out.
+- **Paying with ZEC is custodial for about a minute,** like any instant-swap service: Leyden holds your ZEC between "confirmed" and "invoice paid". Failed payments and wrong amounts are refunded automatically, minus the Zcash network fee.
+- **Exposure is capped:** 100–5,000 sats per swap on the live demo, and state is persisted before any payment is sent, so a crash can never pay twice.
+- **Why not fully trustless?** A shielded Zcash note can't be locked to a SHA-256 preimage, and point-locked (PTLC) payments aren't deployed on Lightning, so an atomic swap against standard invoices isn't possible today. The mitigation is that anyone can run their own gateway.
+- **Lightning runs through a [Spark](https://spark.money) wallet** (no channels, no liquidity purchase), so Spark's operators see the gateway's Lightning payments, never the Zcash side. The sidecar is small and replaceable with phoenixd or LND.
+- **Limits follow liquidity.** Each swap is paid from the gateway's own balance on the other side, so the maximum size moves with what it holds; the app shows the live limit.
 
-**ZEC → Lightning is custodial for about a minute,** the same trust you give any instant-swap
-service: the gateway holds your ZEC between "payment confirmed" and "invoice paid". If the
-Lightning payment fails, or you pay the wrong amount, the ZEC is refunded automatically to your
-shielded address, minus the network fee. To keep the exposure small:
+## Proof on mainnet
 
-- Amounts are capped (100–5,000 sats on the demo).
-- Quotes are priced from the public NEAR Intents price feed, with a 1% fee.
-- State is persisted before any payment is sent, so a crash can never pay twice.
-  An unclear Lightning result is held for manual review, never auto-refunded.
+Every flow has run on Zcash and Lightning mainnet with real money. Details, preimages and hashes: [docs/mainnet-runs.md](docs/mainnet-runs.md). Each Zcash transaction below shows 0 inputs, 0 outputs, 0 value on the explorer.
 
-Lightning cannot make this trustless today. A shielded Zcash note cannot be locked to a SHA-256
-preimage, and point-time-locked contracts are not deployed on Lightning, so an atomic swap over
-standard invoices isn't possible. The mitigation available today is that anyone can run their
-own gateway: it is a single Rust binary and a small Node process.
+| # | Flow | Amount | Zcash transaction |
+|---|---|---|---|
+| 1 | ZEC → Lightning, preimage matches the invoice | 1,000 sats for 0.00067778 ZEC | [`0c54e2b8…a004`](https://blockchair.com/zcash/transaction/0c54e2b885e9faa475d89030a7f5e28f22ab7f534d2e57e629e82cf98249a004) |
+| 2 | Lightning → ZEC, with a memo | 500 sats → 0.00017883 ZEC | [`91601ee8…2c8f`](https://blockchair.com/zcash/transaction/91601ee802b41b36046aabc4d3814b00eb386931c6830aef07a22d2cbadc2c8f) |
+| 3 | ZEC → Lightning, production | 1,500 sats for 0.00101257 ZEC | [`d23d08c0…62e4`](https://blockchair.com/zcash/transaction/d23d08c04902193c0d34640296d58e4954923d51df71e555a52fc89de10c62e4) |
+| 4 | Lightning address, comment as memo | 600 sats → 0.00024321 ZEC | [`f2686336…b465`](https://blockchair.com/zcash/transaction/f2686336e1035405c777722f308cd573fa576a952517f9a66b740bbb6158b465) |
+| 5 | Underpaid swap, refunded automatically | 0.0003 ZEC in, 0.00015 back | [`d0ee5ca3…f9ed`](https://blockchair.com/zcash/transaction/d0ee5ca35bbda1e0f14493c98b238b26c69e378d0377d8fb38d4cba511dcf9ed) |
+| 6 | Lightning → ZEC with a hold invoice | 500 sats → 0.00016837 ZEC | [`bae01061…3a55`](https://blockchair.com/zcash/transaction/bae01061fac67226cb2196d9170a944b1d147f864f6de724d6239bd135b93a55) |
 
-The Lightning backend in the demo is a self-custodial [Spark](https://spark.money) wallet
-(no channels, no liquidity purchase), which adds Spark's operator trust assumptions. The
-gateway talks to it through a small sidecar, so phoenixd or LND can be swapped in.
-
-Other honest limits: incoming ZEC is acted on after 1 confirmation (75 s blocks today, 25 s
-after NU7); invoices without an amount are not supported; the gateway sees the visitor's IP
-unless they use Tor.
-
-## What is real and what is a mock
-
-Everything in the demo is real: mainnet Zcash, mainnet Lightning, real funds. Nothing is
-mocked. The only test-only code is `lightning/customer-invoice.mjs`, a second independent
-Lightning wallet used to play "some Lightning user" in the recorded runs.
+The landing page's [Proof section](https://leydenpay.xyz/#proof) lets you check the Lightning preimages yourself: your browser reads the payment hash out of the invoice and hashes the preimage, nothing sent anywhere.
 
 ## Architecture
 
-```
-   any shielded wallet                                       any Lightning wallet
-          │  shielded tx (Ironwood)                                  ▲  │  Lightning
-          ▼                                                          │  ▼
- ┌────────────────────────────────── leyden (Rust) ─────────────────────────────────┐
- │ wallet.rs   compact-block sync + trial decryption, per-quote Orchard addresses,  │
- │             shielded sends (zcash_client_backend / zcash_client_sqlite)           │
- │ engine.rs   quotes, pricing, state machine, refunds, 24 h erasure                 │
- │ api.rs      JSON API, LNURL-pay (Lightning addresses), static web app             │
- └───────────────┬───────────────────────────────────────────────┬──────────────────┘
-                 │ gRPC (compact blocks, send)                    │ localhost HTTP
-                 ▼                                                ▼
-          lightwalletd (zec.rocks)                     lightning/server.mjs (Spark wallet)
+```mermaid
+flowchart LR
+    BR["Browser<br/>leydenpay.xyz"]
+    ZW["Any shielded<br/>Zcash wallet"]
+    LW["Any Lightning<br/>wallet"]
+
+    subgraph GW["leyden · Rust"]
+        API["api.rs<br/>JSON API · LNURL-pay · web app"]
+        ENG["engine.rs<br/>quotes · state machine<br/>refunds · 24 h erasure"]
+        WAL["wallet.rs<br/>compact-block sync<br/>trial decryption · shielded sends"]
+        DB[("store.rs<br/>SQLite")]
+    end
+
+    SC["lightning/server.mjs<br/>Spark wallet sidecar"]
+    LWD["lightwalletd<br/>zec.rocks"]
+    PX["NEAR Intents<br/>price feed"]
+    ZC(("Zcash<br/>shielded pool"))
+    LN(("Lightning<br/>network"))
+
+    BR -- HTTPS --> API
+    API --> ENG
+    ENG --> WAL
+    ENG --> DB
+    ENG -- prices --> PX
+    ENG -- localhost HTTP --> SC
+    WAL -- "gRPC: blocks, send" --> LWD
+    LWD --- ZC
+    SC --- LN
+    ZW -. shielded tx .-> ZC
+    LW -. payment .-> LN
 ```
 
-Swap states: `awaiting_zec → paying_ln → complete` (or `refunding → refunded`) and
-`awaiting_ln → paying_zec → complete`; quotes that are never paid end `expired`.
+### Swap lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> awaiting_zec: Pay quote
+    awaiting_zec --> paying_ln: ZEC confirmed
+    paying_ln --> complete: invoice paid
+    awaiting_zec --> refunding: underpaid
+    paying_ln --> refunding: payment failed
+    refunding --> refunded
+    paying_ln --> failed: unclear result, held for review
+
+    [*] --> awaiting_ln: Get-paid quote
+    awaiting_ln --> paying_zec: payment held
+    paying_zec --> settling_ln: ZEC sent
+    settling_ln --> complete: held payment taken
+    paying_zec --> failed: payment timed out first
+
+    awaiting_zec --> expired: nothing paid in time
+    awaiting_ln --> expired: nothing paid in time
+    expired --> refunding: ZEC arrived late
+```
+
+### API
+
+| Method | Path | Does |
+|---|---|---|
+| `GET` | `/api/info` | Rate, fee, limits, live liquidity, Lightning-address domain |
+| `POST` | `/api/swaps/pay` | `{invoice, refund_address}` → a ZEC → Lightning quote |
+| `POST` | `/api/swaps/receive` | `{payout_address, amount_sats, memo?}` → a Lightning → ZEC quote with a hold invoice |
+| `GET` | `/api/swaps/{id}` | A swap's state |
+| `POST` / `DELETE` | `/api/ln-address` | Claim `{name, payout_address}` (returns a manage key) / delete `{name, manage_key}` |
+| `GET` | `/.well-known/lnurlp/{name}` | LNURL-pay for a Lightning address (comments up to 200 chars) |
 
 ## Run your own
 
 Requirements: Rust 1.89+, Node 22+.
 
 ```sh
-# Lightning sidecar
+git clone https://github.com/wildanrhmn/leyden && cd leyden
+
+# 1. Lightning sidecar: a Spark wallet behind a localhost-only HTTP API
 cd lightning && npm ci
-node init-wallet.mjs ~/.leyden/spark.mnemonic     # prints a BTC deposit address to fund it
+node init-wallet.mjs ~/.leyden/spark.mnemonic        # prints a BTC deposit address to fund it
 LEYDEN_LN_TOKEN=$(openssl rand -hex 24) LEYDEN_LN_MNEMONIC=~/.leyden/spark.mnemonic node server.mjs
 
-# Gateway (creates its ZEC wallet on first run)
-cd gateway && cargo build --release
-./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic status        # shows the wallet
-./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic address       # where to send ZEC to top up liquidity
+# 2. Gateway: creates its shielded ZEC wallet on first run
+cd ../gateway && cargo build --release
+./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic address   # send ZEC here to add liquidity
+./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic status    # sync and show the wallet
 LEYDEN_LN_TOKEN=… ./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic serve --web ../web
 ```
 
-`deploy/` has the systemd units, the Caddyfile and an environment template used for the live instance.
+For a server, [`deploy/`](deploy) has the systemd units, the Caddyfile (HTTPS, no logs, CSP) and an environment template.
+
+<details>
+<summary><b>Configuration</b></summary>
+
+Every flag can also be set from the environment.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `LEYDEN_DATA` | `./data` | Wallet and swap database directory |
+| `LEYDEN_ZEC_MNEMONIC` | required | File holding the gateway's Zcash seed phrase |
+| `LEYDEN_LWD` | `https://zec.rocks:443` | lightwalletd server |
+| `LEYDEN_LISTEN` | `127.0.0.1:8080` | Gateway HTTP listener |
+| `LEYDEN_PUBLIC_URL` | `http://localhost:8080` | Public URL; its host is the Lightning-address domain |
+| `LEYDEN_WEB` | `./web` | Static web app directory |
+| `LEYDEN_LN_URL` / `LEYDEN_LN_TOKEN` | `http://127.0.0.1:9737` / required | Lightning sidecar and its bearer token |
+| `LEYDEN_FEE_BPS` | `100` | Swap fee, in basis points |
+| `LEYDEN_MIN_SATS` / `LEYDEN_MAX_SATS` | `100` / `20000` | Per-swap limits (the live demo uses 5,000) |
+| `LEYDEN_QUOTE_TTL` | `1200` | Quote lifetime, seconds |
+| `LEYDEN_ZEC_FEE_ZAT` | `15000` | Zcash network fee reserved per payout or refund |
+| `LEYDEN_MIN_CONF` | `1` | Confirmations before acting on a deposit |
+| `LEYDEN_RETAIN_SECS` | `86400` | How long linking data of finished swaps is kept |
+| `LEYDEN_LN_MNEMONIC` / `LEYDEN_LN_PORT` | required / `9737` | Sidecar: Spark seed file and port |
+
+</details>
+
+<details>
+<summary><b>Repository layout</b></summary>
+
+```
+gateway/          Rust gateway
+  src/main.rs       CLI: serve, status, address, send
+  src/wallet.rs     shielded wallet: sync, trial decryption, quote addresses, sends
+  src/engine.rs     quotes, pricing, swap state machine, refunds, erasure
+  src/store.rs      SQLite swap and Lightning-address store
+  src/api.rs        JSON API, LNURL-pay, static files
+  src/ln.rs         client for the Lightning sidecar
+  src/price.rs      ZEC/BTC rate from the NEAR Intents token list
+lightning/        Spark wallet sidecar (server.mjs) and setup and test helpers
+web/              landing page and app: vanilla HTML/CSS/JS, self-hosted fonts and libraries
+deploy/           systemd units, Caddyfile, environment template
+docs/             mainnet run log and README assets
+```
+
+</details>
 
 ## Built for ZECATHON
 
-All code was written during the build window (October 2026). It builds on
-`librustzcash` (`zcash_client_backend`, `zcash_client_sqlite`, `zcash_keys`), the Spark SDK,
-`light-bolt11-decoder` and `qrcode-generator`, and uses `zcash-devtool` as the shielded test wallet.
+Built for [ZECATHON](https://thezecathon.com) (Cross-Chain track), October 2026; all code was written during the build window. It stands on [`librustzcash`](https://github.com/zcash/librustzcash) (`zcash_client_backend`, `zcash_client_sqlite`, `zcash_keys`), the Spark SDK, `light-bolt11-decoder`, `qrcode-generator` and GSAP, and uses `zcash-devtool` as the shielded test wallet.
 
-License: MIT.
+Everything in the demo is real: mainnet Zcash, mainnet Lightning, real funds, no mocks. The only test-only code is `lightning/customer-invoice.mjs`, a second Lightning wallet that played "some Lightning user" in the recorded runs.
+
+[MIT License](LICENSE)
