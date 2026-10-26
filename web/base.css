@@ -3,23 +3,25 @@
 
 :root {
   /* Surfaces */
-  --bg: #FFFFFF;
-  --bg-subtle: #F7F7F8;
-  --line: #E7E7EA;
-  --line-strong: #D4D4D8;
+  --bg: #05060A;
+  --bg-subtle: #0C0E14;
+  --bg-raised: #11141C;
+  --line: rgb(255 255 255 / .08);
+  --line-strong: rgb(255 255 255 / .16);
   /* Ink */
-  --ink: #0A0A0B;
-  --ink-2: #55555E;   /* secondary text */
-  --ink-3: #8E8E98;   /* tertiary, the grey half of two-tone headlines */
-  /* One accent, for actions only */
-  --accent: #4338CA;
-  --accent-hover: #3730A3;
-  --accent-soft: #EEF0FD;
-  --on-accent: #FFFFFF;
-  /* The bolt, used only where Lightning is meant */
-  --bolt: #F2A900;
-  --ok: #15803D;
-  --bad: #C2410C;
+  --ink: #F4F5F7;
+  --ink-2: rgb(244 245 247 / .64);  /* secondary text */
+  --ink-3: rgb(244 245 247 / .40);  /* tertiary, the dim half of two-tone headlines */
+  /* Actions inside the app */
+  --accent: #8C92FF;
+  --accent-hover: #A3A8FF;
+  --accent-soft: rgb(140 146 255 / .14);
+  --on-accent: #05060A;
+  /* The bolt: the primary call to action, and anything Lightning */
+  --bolt: #FFC21A;
+  --bolt-hover: #FFD25A;
+  --ok: #4ADE80;
+  --bad: #FB923C;
 
   --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -32,7 +34,7 @@
   --on-cobalt: var(--on-accent); --amber: var(--bolt); --rust: var(--bad);
   --display: var(--sans); --body: var(--sans);
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -42,7 +44,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 v
 a { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 code, .mono { font-family: var(--mono); font-size: .9em; }
-::selection { background: var(--accent-soft); }
+::selection { background: rgb(255 194 26 / .3); }
 
 /* --- Navbar: logo, a floating capsule of links, one action ---------------------- */
 .nav { position: sticky; top: 0; z-index: 20; padding: 14px clamp(16px, 4vw, 32px); pointer-events: none; }
@@ -52,19 +54,19 @@ code, .mono { font-family: var(--mono); font-size: .9em; }
 .brand { justify-self: start; display: inline-flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; font-weight: 600; font-size: 17px; letter-spacing: -.025em; }
 .brand img { width: 26px; height: 26px; display: block; }
 
-.nav-links { display: flex; align-items: center; gap: 2px; padding: 4px; background: rgb(255 255 255 / .72); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 1px 2px rgb(10 10 11 / .04), 0 10px 30px -18px rgb(10 10 11 / .25); backdrop-filter: saturate(1.6) blur(16px); -webkit-backdrop-filter: saturate(1.6) blur(16px); }
+.nav-links { display: flex; align-items: center; gap: 2px; padding: 4px; background: rgb(255 255 255 / .04); border: 1px solid var(--line); border-radius: 999px; box-shadow: inset 0 1px 0 rgb(255 255 255 / .04); backdrop-filter: saturate(1.6) blur(16px); -webkit-backdrop-filter: saturate(1.6) blur(16px); }
 .nav-links a { color: var(--ink-2); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: -.01em; padding: 8px 16px; border-radius: 999px; transition: color .15s, background-color .15s; }
-.nav-links a:hover { color: var(--ink); background: var(--bg-subtle); }
+.nav-links a:hover { color: var(--ink); background: rgb(255 255 255 / .06); }
 .nav-links .nav-cta-menu { display: none; }
 
 .nav-end { justify-self: end; display: flex; align-items: center; gap: 10px; }
-.nav-cta { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 18px; border-radius: 999px; background: var(--ink); color: #fff; text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: -.01em; white-space: nowrap; transition: background-color .15s, transform .15s; }
-.nav-cta:hover { background: #26262B; }
+.nav-cta { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 18px; border-radius: 999px; background: var(--bolt); color: #0A0A0B; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; transition: background-color .15s, transform .15s; }
+.nav-cta:hover { background: var(--bolt-hover); }
 .nav-cta .arrow { transition: transform .15s; }
 .nav-cta:hover .arrow { transform: translateX(2px); }
-.nav-cta[aria-current="page"] { background: var(--bg); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.nav-cta[aria-current="page"] { background: rgb(255 255 255 / .06); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
 
-.burger { display: none; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 999px; background: rgb(255 255 255 / .8); backdrop-filter: blur(12px); cursor: pointer; padding: 0; position: relative; }
+.burger { display: none; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 999px; background: rgb(255 255 255 / .04); backdrop-filter: blur(12px); cursor: pointer; padding: 0; position: relative; }
 .burger span { position: absolute; left: 13px; right: 13px; height: 1.5px; background: var(--ink); border-radius: 2px; transition: transform .2s, top .2s; }
 .burger span:first-child { top: 16px; }
 .burger span:last-child { top: 22px; }
@@ -75,11 +77,11 @@ code, .mono { font-family: var(--mono); font-size: .9em; }
   .nav-in { grid-template-columns: 1fr auto; }
   .burger { display: block; }
   .nav-end > .nav-cta { display: none; }
-  .nav-links { display: none; position: absolute; top: 64px; left: clamp(16px, 4vw, 32px); right: clamp(16px, 4vw, 32px); flex-direction: column; align-items: stretch; gap: 2px; padding: 8px; border-radius: 20px; background: var(--bg); }
+  .nav-links { display: none; position: absolute; top: 64px; left: clamp(16px, 4vw, 32px); right: clamp(16px, 4vw, 32px); flex-direction: column; align-items: stretch; gap: 2px; padding: 8px; border-radius: 20px; background: var(--bg-raised); box-shadow: 0 24px 48px -16px rgb(0 0 0 / .6); }
   .nav.open .nav-links { display: flex; }
   .nav-links a { font-size: 16px; padding: 13px 16px; border-radius: 12px; }
-  .nav-links a.nav-cta-menu { display: flex; justify-content: center; margin-top: 6px; height: 48px; padding: 0; align-items: center; color: #fff; background: var(--ink); border-radius: 999px; }
-  .nav-links a.nav-cta-menu:hover { background: #26262B; }
+  .nav-links a.nav-cta-menu { display: flex; justify-content: center; margin-top: 6px; height: 48px; padding: 0; align-items: center; color: #0A0A0B; font-weight: 600; background: var(--bolt); border-radius: 999px; }
+  .nav-links a.nav-cta-menu:hover { background: var(--bolt-hover); }
 }
 
 @media (prefers-reduced-motion: reduce) {
