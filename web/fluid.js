@@ -16,10 +16,10 @@
     dyeRes: 224,          // colour grid (short side)
     pressureIters: 22,
     velocityDissipation: 0.972,
-    dyeDissipation: 0.991,
+    dyeDissipation: 0.982,
     pressureDecay: 0.8,
     splatRadius: 0.024,   // gaussian width, in uv² units
-    force: 2600,
+    force: 1700,
     curlStrength: 0,      // left at 0: smooth, Katana-like smoke rather than swirly
     autoSpeed: 0.26,
     idleMs: 1600,
@@ -55,7 +55,7 @@ o=vec4(texture(uVelocity,vUv).xy-vec2(R-L,T-B),0.,1.); }`),
     scale: FS(`uniform sampler2D uTexture; uniform float value; void main(){ o=value*texture(uTexture,vUv); }`),
     display: FS(`uniform sampler2D uDye; uniform float time;
 float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
-void main(){ vec3 c=texture(uDye,vUv).rgb; c=1.-exp(-c*1.15);
+void main(){ vec3 c=texture(uDye,vUv).rgb; c=1.-exp(-c*0.9);
 vec3 col=vec3(.0196,.0235,.039)+c; col+=(h(gl_FragCoord.xy+fract(time))-.5)*(3./255.);
 o=vec4(col,1.); }`),
   };
@@ -249,7 +249,7 @@ o=vec4(col,1.); }`),
     const x = (c.left + c.width / 2 - r.left) / r.width, y = 1 - (c.top + c.height / 2 - r.top) / r.height;
     for (let i = 0; i < 6; i++) {
       const a = (i / 6) * Math.PI * 2;
-      splat(x, y, Math.cos(a) * 900, Math.sin(a) * 900, nextColor(0.09), 0.02);
+      splat(x, y, Math.cos(a) * 900, Math.sin(a) * 900, nextColor(0.04), 0.02);
     }
   });
 
@@ -263,10 +263,10 @@ o=vec4(col,1.); }`),
     const now = t - pointer.lastMove < CFG.idleMs ? "cursor" : "ghost";
     if (now === "cursor") {
       [x, y] = [pointer.x, pointer.y];
-      k = 0.05;
+      k = 0.018;
     } else {
       [x, y] = ghost(t, dt);
-      k = 0.027;
+      k = 0.009;
     }
     // Switching between the real and ghost cursor must not draw a streak between them.
     if (now !== mode) { mode = now; pointer.px = x; pointer.py = y; }
@@ -283,7 +283,7 @@ o=vec4(col,1.); }`),
 
   init();
   // Seed a few soft clouds so the first frame is not empty.
-  for (let i = 0; i < 5; i++) splat(0.3 + Math.random() * 0.4, 0.55 + Math.random() * 0.3, (Math.random() - 0.5) * 600, (Math.random() - 0.5) * 300, nextColor(0.08), 0.05);
+  for (let i = 0; i < 5; i++) splat(0.3 + Math.random() * 0.4, 0.55 + Math.random() * 0.3, (Math.random() - 0.5) * 600, (Math.random() - 0.5) * 300, nextColor(0.03), 0.05);
   pointer.px = pointer.x; pointer.py = pointer.y;
 
   let resizeTimer;

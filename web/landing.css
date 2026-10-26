@@ -15,7 +15,7 @@
 .fluid { position: absolute; z-index: -3; top: -92px; left: 50%; width: 100vw; height: calc(100% + 92px); transform: translateX(-50%); display: block; pointer-events: none; }
 /* A veil over the fluid: keeps the copy legible and melts the hero into the page below. */
 .veil { position: absolute; z-index: -2; top: -92px; left: 50%; width: 100vw; height: calc(100% + 92px); transform: translateX(-50%); pointer-events: none;
-  background: linear-gradient(to bottom, rgb(5 6 10 / .25) 0%, rgb(5 6 10 / .08) 30%, rgb(5 6 10 / .45) 70%, var(--bg) 100%); }
+  background: linear-gradient(to bottom, rgb(5 6 10 / .4) 0%, rgb(5 6 10 / .2) 30%, rgb(5 6 10 / .6) 70%, var(--bg) 100%); }
 /* Without WebGL2 (or with reduced motion), a still glow stands in for the fluid. */
 .hero:not(.has-fluid) .veil { background:
   radial-gradient(34% 40% at 50% 26%, rgb(76 86 255 / .26), transparent 70%),
