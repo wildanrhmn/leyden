@@ -55,10 +55,12 @@ output.leg-amount { color: var(--ink); }
 
 .token { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px 0 6px; border-radius: 999px; background: rgb(255 255 255 / .06); border: 1px solid var(--line); font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
 .token small { font-weight: 400; color: var(--ink-3); font-size: 12px; margin-left: 2px; }
-.token .ico { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
-.token .ico svg { width: 15px; height: 15px; }
-.ico-zec { background: #2B2F8F; color: #C9CCFF; }
-.ico-ln { background: rgb(255 194 26 / .16); color: var(--bolt); }
+.token .ico { position: relative; width: 26px; height: 26px; flex-shrink: 0; }
+.token .ico img { width: 26px; height: 26px; display: block; border-radius: 50%; }
+.token .badge { position: absolute; right: -4px; bottom: -3px; width: 14px; height: 14px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 0 0 2px #1A1C24; }
+.token .badge svg { width: 8px; height: 8px; }
+.badge-shield { background: #3B45D9; color: #fff; }
+.badge-bolt { background: #0A0A0B; color: var(--bolt); }
 
 /* The flip button sits on the seam between the two legs. */
 .flip { position: relative; z-index: 1; display: grid; place-items: center; margin: -14px auto; width: 40px; height: 40px; padding: 0; border-radius: 12px; border: 4px solid var(--bg); background: #1A1D26; color: var(--ink); cursor: pointer; }

@@ -11,8 +11,9 @@
 
   const SHIELD = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 2.5 3.8v3.7c0 3.2 2.3 5.9 5.5 7 3.2-1.1 5.5-3.8 5.5-7V3.8z" fill="currentColor"/></svg>';
   const BOLT = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.2 1 3.5 9.2h3.9L6.6 15l5.9-8.4H8.6z" fill="currentColor"/></svg>';
-  const ZEC = `<span class="ico ico-zec">${SHIELD}</span>ZEC<small>shielded</small>`;
-  const LN = `<span class="ico ico-ln">${BOLT}</span>BTC<small>Lightning</small>`;
+  // Real asset marks, each with a small badge for how it moves: shielded, or over Lightning.
+  const ZEC = `<span class="ico"><img src="/brand/tokens/zec.svg" alt="" width="26" height="26"><span class="badge badge-shield">${SHIELD}</span></span>ZEC<small>shielded</small>`;
+  const LN = `<span class="ico"><img src="/brand/tokens/btc.svg" alt="" width="26" height="26"><span class="badge badge-bolt">${BOLT}</span></span>BTC<small>Lightning</small>`;
 
   const fmtZec = (zat) => (zat / 1e8).toFixed(8).replace(/0+$/, "").replace(/\.$/, "");
   const fmtUsd = (usd) => `≈ $${usd < 1 ? usd.toFixed(2) : usd.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
