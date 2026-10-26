@@ -35,14 +35,14 @@
   <div class="app-glow" aria-hidden="true"></div>
 
   <section class="stage" aria-label="Swap">
-    <div class="card" id="card">
-      <div class="tabs" id="tabs" role="tablist" aria-label="What to do">
-        <span class="tabs-thumb" aria-hidden="true"></span>
-        <button type="button" role="tab" id="tab-pay" aria-selected="true" aria-controls="view-pay" data-mode="pay">Pay</button>
-        <button type="button" role="tab" id="tab-receive" aria-selected="false" aria-controls="view-receive" data-mode="receive">Get paid</button>
-        <button type="button" role="tab" id="tab-address" aria-selected="false" aria-controls="view-address" data-mode="address">Lightning address</button>
-      </div>
+    <div class="tabs" id="tabs" role="tablist" aria-label="What to do">
+      <span class="tabs-thumb" aria-hidden="true"></span>
+      <button type="button" role="tab" id="tab-pay" aria-selected="true" aria-controls="view-pay" data-mode="pay">Pay</button>
+      <button type="button" role="tab" id="tab-receive" aria-selected="false" aria-controls="view-receive" data-mode="receive">Get paid</button>
+      <button type="button" role="tab" id="tab-address" aria-selected="false" aria-controls="view-address" data-mode="address">Lightning address</button>
+    </div>
 
+    <div class="card" id="card">
       <!-- Pay a Lightning invoice with shielded ZEC -->
       <form class="view" id="view-pay" role="tabpanel" aria-labelledby="tab-pay" autocomplete="off" novalidate>
         <div class="leg">
@@ -53,25 +53,25 @@
           </div>
           <p class="leg-foot" id="pay-zec-usd">&nbsp;</p>
         </div>
-        <button class="flip" type="button" data-go="receive" aria-label="Switch to getting paid">
+        <div class="seam"><button class="flip" type="button" data-go="receive" aria-label="Switch to getting paid">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        </button></div>
         <div class="leg">
-          <span class="leg-label">The invoice receives</span>
+          <div class="leg-top"><span class="leg-label">Lightning invoice</span><button class="link" type="button" id="pay-paste">Paste</button></div>
           <div class="leg-row">
             <output class="leg-amount is-empty" id="pay-sats" aria-label="Invoice amount in sats">0</output>
             <span class="token" data-token="ln"></span>
           </div>
-          <div class="inv">
-            <input class="inv-input" id="pay-invoice" spellcheck="false" autocapitalize="off" placeholder="Paste a Lightning invoice" aria-label="Lightning invoice" aria-describedby="pay-inv-note">
-            <button class="mini" type="button" id="pay-paste">Paste</button>
-          </div>
-          <p class="leg-foot" id="pay-inv-note">&nbsp;</p>
+          <input class="inv-input" id="pay-invoice" spellcheck="false" autocapitalize="off" placeholder="Paste a Lightning invoice, lnbc…" aria-label="Lightning invoice" aria-describedby="pay-inv-note">
+          <p class="leg-foot" id="pay-inv-note"></p>
         </div>
-        <label class="field">
-          <span class="field-label">Refund to <small>only if the Lightning payment fails</small></span>
-          <input class="field-input" id="pay-refund" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…">
-        </label>
+        <div class="details">
+          <div class="drow" data-empty="Add address">
+            <span class="d-label">Refund to</span>
+            <button class="d-show" type="button" aria-label="Refund to: edit"></button>
+            <input class="d-input" id="pay-refund" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…" aria-label="Refund to">
+          </div>
+        </div>
         <button class="pill pill-bolt pill-block go" type="submit" id="pay-go" disabled>Paste an invoice</button>
         <p class="err" role="alert" hidden></p>
       </form>
@@ -86,9 +86,9 @@
           </div>
           <p class="leg-foot" id="rcv-sats-usd">&nbsp;</p>
         </div>
-        <button class="flip" type="button" data-go="pay" aria-label="Switch to paying an invoice">
+        <div class="seam"><button class="flip" type="button" data-go="pay" aria-label="Switch to paying an invoice">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        </button></div>
         <div class="leg">
           <span class="leg-label">You receive</span>
           <div class="leg-row">
@@ -97,14 +97,18 @@
           </div>
           <p class="leg-foot" id="rcv-zec-usd">&nbsp;</p>
         </div>
-        <label class="field">
-          <span class="field-label">Send it to</span>
-          <input class="field-input" id="rcv-address" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…">
-        </label>
-        <details class="memo">
-          <summary>Add a memo <small>arrives encrypted</small></summary>
-          <input class="field-input" id="rcv-memo" maxlength="400" placeholder="What it's for" aria-label="Memo">
-        </details>
+        <div class="details">
+          <div class="drow" data-empty="Add address">
+            <span class="d-label">Send to</span>
+            <button class="d-show" type="button" aria-label="Send to: edit"></button>
+            <input class="d-input" id="rcv-address" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…" aria-label="Send to">
+          </div>
+          <div class="drow" data-empty="Add" data-kind="memo">
+            <span class="d-label">Memo <small>encrypted</small></span>
+            <button class="d-show" type="button" aria-label="Memo: edit"></button>
+            <input class="d-input" id="rcv-memo" maxlength="400" placeholder="What it's for" aria-label="Memo">
+          </div>
+        </div>
         <button class="pill pill-bolt pill-block go" type="submit" id="rcv-go">Create Lightning invoice</button>
         <p class="err" role="alert" hidden></p>
       </form>
@@ -118,11 +122,14 @@
           </div>
           <p class="leg-foot" id="ln-preview">name@<span class="dom">…</span></p>
         </div>
-        <label class="field">
-          <span class="field-label">Pays out to</span>
-          <input class="field-input" id="ln-address" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…">
-        </label>
-        <p class="view-note">Anyone can pay this address from a Lightning wallet. It arrives as shielded ZEC, and their comment comes along as an encrypted memo.</p>
+        <div class="details">
+          <div class="drow" data-empty="Add address">
+            <span class="d-label">Pays out to</span>
+            <button class="d-show" type="button" aria-label="Pays out to: edit"></button>
+            <input class="d-input" id="ln-address" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…" aria-label="Pays out to">
+          </div>
+          <p class="d-note">Anyone can pay it from a Lightning wallet. It arrives as shielded ZEC, and their comment comes along as an encrypted memo.</p>
+        </div>
         <button class="pill pill-bolt pill-block go" type="submit" id="ln-go">Claim address</button>
         <p class="err" role="alert" hidden></p>
       </form>

@@ -94,7 +94,7 @@
     resize(() => {
       Object.entries(views).forEach(([k, v]) => { v.hidden = k !== name; });
       const working = name === "swap" || name === "claimed";
-      tabs.hidden = working;
+      tabs.classList.toggle("off", working);
       if (!working) {
         mode = name;
         tabs.querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.mode === name)));
@@ -120,7 +120,7 @@
     show(b.dataset.go);
     renderReceive();
   }));
-  addEventListener("resize", () => { if (!tabs.hidden) placeThumb(); });
+  addEventListener("resize", () => { if (!tabs.classList.contains("off")) placeThumb(); });
 
   // Forms: errors appear under the button; the button label always says what happens next.
   function wire(form, render, handler) {
@@ -145,12 +145,38 @@
     });
   }
   function fieldError(input, message) {
-    input.closest(".field").classList.toggle("bad", !!message);
-    if (message) throw new Error(message);
+    const row = input.closest(".drow");
+    row.classList.toggle("bad", !!message);
+    if (message) { row.classList.add("editing"); throw new Error(message); }
+  }
+
+  // Detail rows show their value until tapped; then they turn into an input. Addresses are
+  // checked when you leave the field, and an invalid one stays open, underlined in red.
+  function setupRow(row) {
+    const input = row.querySelector(".d-input");
+    const shown = row.querySelector(".d-show");
+    const memo = row.dataset.kind === "memo";
+    const paint = () => {
+      const v = input.value.trim();
+      if (!v) { shown.className = "d-show empty"; shown.textContent = row.dataset.empty; return; }
+      shown.className = "d-show";
+      shown.replaceChildren(el("span", null, memo ? v : short(v, 10, 8)), el("small", null, "Edit"));
+    };
+    shown.addEventListener("click", () => { row.classList.add("editing"); input.focus(); });
+    input.addEventListener("blur", () => {
+      const v = input.value.trim();
+      const bad = !memo && v && shieldedError(v);
+      row.classList.toggle("bad", !!bad);
+      if (!bad) { row.classList.remove("editing"); paint(); }
+    });
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); input.blur(); } });
+    row.paint = paint;
+    paint();
   }
 
   const saved = store.get("leyden.address");
   if (saved) ["pay-refund", "rcv-address", "ln-address"].forEach((id) => { $(id).value = saved; });
+  document.querySelectorAll(".drow").forEach(setupRow);
 
   // --- Pay a Lightning invoice ------------------------------------------------------------
 
@@ -197,7 +223,7 @@
       if (invoice.description) parts.push(Object.assign(document.createElement("q"), { textContent: invoice.description }), " · ");
       parts.push(expiresIn(invoice.expiresAt));
       note.replaceChildren(...parts);
-    } else note.textContent = " ";
+    } else note.textContent = "";
 
     let label = "Pay with shielded ZEC";
     if (!raw) label = "Paste an invoice";
@@ -205,12 +231,13 @@
     else if (info && (sats < info.min_sats || sats > info.max_sats)) label = `Leyden pays ${n(info.min_sats)}–${n(info.max_sats)} sats`;
     else if (info && sats > info.liquidity.lightning_sats) label = `Up to ${n(info.liquidity.lightning_sats)} sats right now`;
     else if (!payRefund.value.trim()) label = "Add a refund address";
+    else if (shieldedError(payRefund.value.trim())) label = "Use a shielded refund address";
     $("pay-go").textContent = label;
     go.disabled = label !== "Pay with shielded ZEC" || !info;
   }
 
   payInv.addEventListener("input", renderPay);
-  payRefund.addEventListener("input", () => { payRefund.closest(".field").classList.remove("bad"); renderPay(); });
+  payRefund.addEventListener("input", () => { payRefund.closest(".drow").classList.remove("bad"); renderPay(); });
   $("pay-paste").addEventListener("click", async () => {
     try {
       payInv.value = (await navigator.clipboard.readText()).trim();
@@ -248,12 +275,13 @@
     else if (zat <= 0) label = "Too small to cover the Zcash network fee";
     else if (zat > info.liquidity.zec_zat) label = "More than Leyden can pay out right now";
     else if (!rcvAddr.value.trim()) label = "Add your shielded address";
+    else if (shieldedError(rcvAddr.value.trim())) label = "Use a shielded address";
     go.textContent = label;
     go.disabled = label !== "Create Lightning invoice";
   }
 
   rcvSats.addEventListener("input", renderReceive);
-  rcvAddr.addEventListener("input", () => { rcvAddr.closest(".field").classList.remove("bad"); renderReceive(); });
+  rcvAddr.addEventListener("input", () => { rcvAddr.closest(".drow").classList.remove("bad"); renderReceive(); });
 
   wire(views.receive, renderReceive, async () => {
     const addr = rcvAddr.value.trim();
@@ -280,12 +308,13 @@
     if (!name) label = "Pick a name";
     else if (!NAME.test(name)) label = "Use 3–32 letters, digits, - or _";
     else if (!lnAddr.value.trim()) label = "Add your shielded address";
+    else if (shieldedError(lnAddr.value.trim())) label = "Use a shielded address";
     $("ln-go").textContent = label;
     $("ln-go").disabled = label !== "Claim address" || !info;
   }
 
   lnName.addEventListener("input", renderAddress);
-  lnAddr.addEventListener("input", () => { lnAddr.closest(".field").classList.remove("bad"); renderAddress(); });
+  lnAddr.addEventListener("input", () => { lnAddr.closest(".drow").classList.remove("bad"); renderAddress(); });
 
   wire(views.address, renderAddress, async () => {
     const addr = lnAddr.value.trim();
