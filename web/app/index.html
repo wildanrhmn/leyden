@@ -57,15 +57,19 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button></div>
         <div class="leg">
-          <div class="leg-top"><span class="leg-label">Lightning invoice</span><button class="link" type="button" id="pay-paste">Paste</button></div>
+          <span class="leg-label">They receive</span>
           <div class="leg-row">
             <output class="leg-amount is-empty" id="pay-sats" aria-label="Invoice amount in sats">0</output>
             <span class="token" data-token="ln"></span>
           </div>
-          <input class="inv-input" id="pay-invoice" spellcheck="false" autocapitalize="off" placeholder="Paste a Lightning invoice, lnbc…" aria-label="Lightning invoice" aria-describedby="pay-inv-note">
-          <p class="leg-foot" id="pay-inv-note"></p>
+          <p class="leg-foot" id="pay-inv-note">&nbsp;</p>
         </div>
         <div class="details">
+          <div class="drow" data-empty="Paste" data-kind="invoice">
+            <span class="d-label">Invoice</span>
+            <button class="d-show" type="button" aria-label="Lightning invoice: paste or edit"></button>
+            <input class="d-input" id="pay-invoice" spellcheck="false" autocapitalize="off" placeholder="lnbc…" aria-label="Lightning invoice" aria-describedby="pay-inv-note">
+          </div>
           <div class="drow" data-empty="Add address">
             <span class="d-label">Refund to</span>
             <button class="d-show" type="button" aria-label="Refund to: edit"></button>

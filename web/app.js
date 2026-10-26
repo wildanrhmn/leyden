@@ -155,17 +155,27 @@
   function setupRow(row) {
     const input = row.querySelector(".d-input");
     const shown = row.querySelector(".d-show");
-    const memo = row.dataset.kind === "memo";
+    const kind = row.dataset.kind ?? "address";
     const paint = () => {
       const v = input.value.trim();
       if (!v) { shown.className = "d-show empty"; shown.textContent = row.dataset.empty; return; }
       shown.className = "d-show";
-      shown.replaceChildren(el("span", null, memo ? v : short(v, 10, 8)), el("small", null, "Edit"));
+      shown.replaceChildren(el("span", null, kind === "memo" ? v : kind === "invoice" ? short(v, 12, 6) : short(v, 10, 8)), el("small", null, "Edit"));
     };
-    shown.addEventListener("click", () => { row.classList.add("editing"); input.focus(); });
+    const edit = () => { row.classList.add("editing"); input.focus(); };
+    shown.addEventListener("click", async () => {
+      // An empty invoice row pastes straight from the clipboard, if the browser allows it.
+      if (kind === "invoice" && !input.value.trim()) {
+        try {
+          const text = (await navigator.clipboard.readText()).trim();
+          if (text) { input.value = text; input.dispatchEvent(new Event("input")); paint(); return; }
+        } catch { /* fall back to typing */ }
+      }
+      edit();
+    });
     input.addEventListener("blur", () => {
       const v = input.value.trim();
-      const bad = !memo && v && shieldedError(v);
+      const bad = kind === "address" && v && shieldedError(v);
       row.classList.toggle("bad", !!bad);
       if (!bad) { row.classList.remove("editing"); paint(); }
     });
@@ -223,7 +233,7 @@
       if (invoice.description) parts.push(Object.assign(document.createElement("q"), { textContent: invoice.description }), " · ");
       parts.push(expiresIn(invoice.expiresAt));
       note.replaceChildren(...parts);
-    } else note.textContent = "";
+    } else note.textContent = "\u00a0";
 
     let label = "Pay with shielded ZEC";
     if (!raw) label = "Paste an invoice";
@@ -238,14 +248,6 @@
 
   payInv.addEventListener("input", renderPay);
   payRefund.addEventListener("input", () => { payRefund.closest(".drow").classList.remove("bad"); renderPay(); });
-  $("pay-paste").addEventListener("click", async () => {
-    try {
-      payInv.value = (await navigator.clipboard.readText()).trim();
-      renderPay();
-    } catch {
-      payInv.focus();
-    }
-  });
 
   wire(views.pay, renderPay, async () => {
     const refund = payRefund.value.trim();
