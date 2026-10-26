@@ -41,6 +41,12 @@ with no transparent address and no on-chain Bitcoin transaction at any point.
 | Lightning address `demo@43-134-116-188.sslip.io`, 600 sats with a comment | LNURL-pay invoice `description_hash` = `sha256(metadata)` = `00f801e8…9555ce`; payout Zcash tx `f2686336e1035405c777722f308cd573fa576a952517f9a66b740bbb6158b465`, mined at 3,531,010 |
 | Payer's comment, as received | Encrypted memo in the recipient's wallet: `zap from a Lightning wallet, landing shielded — via Shieldbolt ⚡` |
 
+## 4. Through the restyled app (2026-10-26)
+
+| Run | Evidence |
+|---|---|
+| Lightning → ZEC, 600 sats with a memo, created in the new `/app/` | Paid from a separate Spark wallet; payout Zcash tx `8cb94b4618c1159b1656b1cbe0d50b5b2f955e96c1a5d4fcf95a66256da13462` for 0.00023753 ZEC |
+
 ## Funding (for reference)
 
 The gateway and test wallets were funded from ~$12 of ETH on Base through NEAR Intents:

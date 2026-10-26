@@ -2,7 +2,7 @@
 
 // Proof: the first four mainnet swaps (docs/mainnet-runs.md), printed as receipts that feed
 // out of the slot once, on scroll. The two Lightning receipts can be checked on the page:
-// the payment hash is read out of the BOLT11 invoice and compared with SHA-256(preimage).
+// the payment hash is read out of the BOLT11 invoice (bolt11.js) and compared with SHA-256(preimage).
 (() => {
   const root = document.querySelector(".proof");
   if (!root) return;
@@ -10,45 +10,6 @@
   const animate = !!window.gsap && !reduce;
   if (animate) gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
-  // --- BOLT11: bech32 with a checksum; tagged field `p` (type 1, 52 words) is the payment hash.
-  const CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
-  function polymod(values) {
-    const G = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
-    let chk = 1;
-    for (const v of values) {
-      const top = chk >>> 25;
-      chk = ((chk & 0x1ffffff) << 5) ^ v;
-      for (let i = 0; i < 5; i++) if ((top >>> i) & 1) chk ^= G[i];
-    }
-    return chk;
-  }
-  function wordsToHex(words) {
-    let acc = 0, bits = 0, out = "";
-    for (const w of words) {
-      acc = (acc << 5) | w;
-      bits += 5;
-      while (bits >= 8) { bits -= 8; out += ((acc >> bits) & 255).toString(16).padStart(2, "0"); }
-      acc &= (1 << bits) - 1;
-    }
-    return out;
-  }
-  function paymentHash(invoice) {
-    const s = invoice.toLowerCase();
-    const sep = s.lastIndexOf("1");
-    const hrp = s.slice(0, sep);
-    const words = [...s.slice(sep + 1)].map((c) => CHARSET.indexOf(c));
-    if (sep < 1 || words.includes(-1)) throw new Error("not a bech32 invoice");
-    const codes = [...hrp].map((c) => c.charCodeAt(0));
-    if (polymod([...codes.map((c) => c >> 5), 0, ...codes.map((c) => c & 31), ...words]) !== 1) throw new Error("bad invoice checksum");
-    const data = words.slice(0, -6);
-    // 7 words of timestamp first, 104 words of signature last, tagged fields in between.
-    for (let i = 7; i + 3 <= data.length - 104; ) {
-      const type = data[i], len = data[i + 1] * 32 + data[i + 2];
-      if (type === 1 && len === 52) return wordsToHex(data.slice(i + 3, i + 3 + len));
-      i += 3 + len;
-    }
-    throw new Error("no payment hash in the invoice");
-  }
   async function sha256(hex) {
     const bytes = new Uint8Array(hex.match(/../g).map((h) => parseInt(h, 16)));
     const digest = await crypto.subtle.digest("SHA-256", bytes);
@@ -80,7 +41,7 @@
       started = true;
       let fromInvoice, computed;
       try {
-        fromInvoice = paymentHash(rcpt.dataset.bolt11);
+        fromInvoice = bolt11.decode(rcpt.dataset.bolt11).paymentHash;
         computed = await sha256(rcpt.dataset.preimage);
       } catch (e) {
         ok.textContent = `This browser couldn't run the check (${e.message}).`;

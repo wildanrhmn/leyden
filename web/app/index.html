@@ -31,102 +31,121 @@
   </div>
 </header>
 
+<main class="app">
+  <div class="app-glow" aria-hidden="true"></div>
 
-<main>
-  <section class="thesis">
-    <h1>Spend shielded ZEC anywhere Lightning works.<br><span>Get paid over Lightning, straight into the shielded pool.</span></h1>
-    <p class="lede">No transparent addresses on the way through. The Zcash side is a shielded transaction and the Bitcoin side never touches a blockchain, so there is nothing for a chain observer to link.</p>
-  </section>
+  <section class="stage" aria-label="Swap">
+    <div class="card" id="card">
+      <div class="tabs" id="tabs" role="tablist" aria-label="What to do">
+        <span class="tabs-thumb" aria-hidden="true"></span>
+        <button type="button" role="tab" id="tab-pay" aria-selected="true" aria-controls="view-pay" data-mode="pay">Pay</button>
+        <button type="button" role="tab" id="tab-receive" aria-selected="false" aria-controls="view-receive" data-mode="receive">Get paid</button>
+        <button type="button" role="tab" id="tab-address" aria-selected="false" aria-controls="view-address" data-mode="address">Lightning address</button>
+      </div>
 
-  <section class="panel" aria-label="Swap">
-    <div class="switch" role="tablist" aria-label="Direction">
-      <button role="tab" id="tab-pay" aria-selected="true" aria-controls="form-pay">ZEC <i aria-hidden="true">→</i> Lightning</button>
-      <button role="tab" id="tab-receive" aria-selected="false" aria-controls="form-receive">Lightning <i aria-hidden="true">→</i> ZEC</button>
-    </div>
-
-    <div class="work">
-      <form id="form-pay" class="form" role="tabpanel" aria-labelledby="tab-pay" autocomplete="off">
-        <label for="pay-invoice">Lightning invoice to pay</label>
-        <textarea id="pay-invoice" rows="4" spellcheck="false" placeholder="lnbc…" required></textarea>
-        <label for="pay-refund">Your shielded address, for refunds</label>
-        <input id="pay-refund" spellcheck="false" placeholder="u1…" required>
-        <p class="hint">Used only if the Lightning payment fails. Transparent addresses are refused.</p>
-        <button class="go" type="submit">Get a quote</button>
-        <p class="err" role="alert" hidden></p>
-      </form>
-
-      <form id="form-receive" class="form" role="tabpanel" aria-labelledby="tab-receive" autocomplete="off" hidden>
-        <label for="rcv-amount">Amount</label>
-        <div class="unit"><input id="rcv-amount" type="number" inputmode="numeric" min="1" step="1" required><span>sats</span></div>
-        <p class="hint" id="rcv-estimate">&nbsp;</p>
-        <label for="rcv-address">Your shielded address</label>
-        <input id="rcv-address" spellcheck="false" placeholder="u1…" required>
-        <label for="rcv-memo">Memo <small>optional, arrives encrypted</small></label>
-        <input id="rcv-memo" maxlength="400">
-        <button class="go" type="submit">Create Lightning invoice</button>
-        <p class="err" role="alert" hidden></p>
-      </form>
-
-      <article id="swap" class="swap" aria-live="polite">
-        <div class="swap-empty">
-          <p>Your swap will appear here, with every step it goes through.</p>
+      <!-- Pay a Lightning invoice with shielded ZEC -->
+      <form class="view" id="view-pay" role="tabpanel" aria-labelledby="tab-pay" autocomplete="off" novalidate>
+        <div class="leg">
+          <span class="leg-label">You pay</span>
+          <div class="leg-row">
+            <output class="leg-amount is-empty" id="pay-zec" aria-label="Estimated ZEC">0</output>
+            <span class="token" data-token="zec"></span>
+          </div>
+          <p class="leg-foot" id="pay-zec-usd">&nbsp;</p>
         </div>
-      </article>
-    </div>
-  </section>
+        <button class="flip" type="button" data-go="receive" aria-label="Switch to getting paid">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="leg">
+          <span class="leg-label">The invoice receives</span>
+          <div class="leg-row">
+            <output class="leg-amount is-empty" id="pay-sats" aria-label="Invoice amount in sats">0</output>
+            <span class="token" data-token="ln"></span>
+          </div>
+          <div class="inv">
+            <input class="inv-input" id="pay-invoice" spellcheck="false" autocapitalize="off" placeholder="Paste a Lightning invoice" aria-label="Lightning invoice" aria-describedby="pay-inv-note">
+            <button class="mini" type="button" id="pay-paste">Paste</button>
+          </div>
+          <p class="leg-foot" id="pay-inv-note">&nbsp;</p>
+        </div>
+        <label class="field">
+          <span class="field-label">Refund to <small>only if the Lightning payment fails</small></span>
+          <input class="field-input" id="pay-refund" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…">
+        </label>
+        <button class="pill pill-bolt pill-block go" type="submit" id="pay-go" disabled>Paste an invoice</button>
+        <p class="err" role="alert" hidden></p>
+      </form>
 
-  <section class="lnaddr" aria-labelledby="lnaddr-h">
-    <div>
-      <h2 id="lnaddr-h">A Lightning address that lands in the shielded pool</h2>
-      <p>Anyone with a Lightning wallet can pay <b>you@<span class="dom">this gateway</span></b>, and it arrives as shielded ZEC. Payer comments ride along as encrypted memos.</p>
-    </div>
-    <form id="form-ln" class="form inline" autocomplete="off">
-      <label for="ln-name">Name</label>
-      <div class="unit"><input id="ln-name" pattern="[a-z0-9_\-]{3,32}" placeholder="satoshi" required><span>@<span class="dom">…</span></span></div>
-      <label for="ln-address">Shielded address it pays to</label>
-      <input id="ln-address" spellcheck="false" placeholder="u1…" required>
-      <button class="go" type="submit">Claim address</button>
-      <p class="err" role="alert" hidden></p>
-      <div class="claimed" hidden></div>
-    </form>
-  </section>
+      <!-- Receive a Lightning payment as shielded ZEC -->
+      <form class="view" id="view-receive" role="tabpanel" aria-labelledby="tab-receive" autocomplete="off" novalidate hidden>
+        <div class="leg">
+          <span class="leg-label">They pay</span>
+          <div class="leg-row">
+            <input class="leg-amount leg-input" id="rcv-sats" type="number" inputmode="numeric" min="1" step="1" value="1000" aria-label="Amount in sats">
+            <span class="token" data-token="ln"></span>
+          </div>
+          <p class="leg-foot" id="rcv-sats-usd">&nbsp;</p>
+        </div>
+        <button class="flip" type="button" data-go="pay" aria-label="Switch to paying an invoice">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="leg">
+          <span class="leg-label">You receive</span>
+          <div class="leg-row">
+            <output class="leg-amount" id="rcv-zec" aria-label="Estimated ZEC">0</output>
+            <span class="token" data-token="zec"></span>
+          </div>
+          <p class="leg-foot" id="rcv-zec-usd">&nbsp;</p>
+        </div>
+        <label class="field">
+          <span class="field-label">Send it to</span>
+          <input class="field-input" id="rcv-address" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…">
+        </label>
+        <details class="memo">
+          <summary>Add a memo <small>arrives encrypted</small></summary>
+          <input class="field-input" id="rcv-memo" maxlength="400" placeholder="What it's for" aria-label="Memo">
+        </details>
+        <button class="pill pill-bolt pill-block go" type="submit" id="rcv-go">Create Lightning invoice</button>
+        <p class="err" role="alert" hidden></p>
+      </form>
 
-  <section class="ledger" aria-labelledby="ledger-h">
-    <h2 id="ledger-h">Who sees what</h2>
-    <p class="lede">Privacy claims should be checkable. This is the full list.</p>
-    <div class="table-wrap">
-    <table>
-      <thead><tr><th scope="col">Party</th><th scope="col">Learns</th><th scope="col">Never learns</th></tr></thead>
-      <tbody>
-        <tr><th scope="row">Zcash chain observers</th><td>That a shielded transaction happened</td><td>Sender, recipient, amount, memo, that Lightning was involved</td></tr>
-        <tr><th scope="row">Bitcoin chain observers</th><td>Nothing. Lightning payments are off-chain</td><td>Everything about the payment</td></tr>
-        <tr><th scope="row">Lightning routing nodes</th><td>The amount passing through them</td><td>Who paid, and who was paid (onion routing)</td></tr>
-        <tr><th scope="row">The payee</th><td>That Leyden's node paid their invoice</td><td>Your Zcash address, your wallet, your balance</td></tr>
-        <tr><th scope="row">The lightwalletd server</th><td>That the gateway downloads every block</td><td>Which outputs are the gateway's. It never asks for a transaction by ID</td></tr>
-        <tr class="us"><th scope="row">This gateway</th><td>The invoice it pays or issues, the ZEC amount, your refund or payout address, your IP unless you use Tor</td><td>Your other transactions or balance. Linking data is erased <span id="retain">24 hours</span> after a swap finishes</td></tr>
-      </tbody>
-    </table>
+      <!-- Claim a Lightning address that pays out as shielded ZEC -->
+      <form class="view" id="view-address" role="tabpanel" aria-labelledby="tab-address" autocomplete="off" novalidate hidden>
+        <div class="leg">
+          <span class="leg-label">Pick a name</span>
+          <div class="leg-row">
+            <input class="leg-amount leg-input handle" id="ln-name" maxlength="32" spellcheck="false" autocapitalize="off" placeholder="satoshi" aria-label="Name" aria-describedby="ln-preview">
+          </div>
+          <p class="leg-foot" id="ln-preview">name@<span class="dom">…</span></p>
+        </div>
+        <label class="field">
+          <span class="field-label">Pays out to</span>
+          <input class="field-input" id="ln-address" spellcheck="false" autocapitalize="off" placeholder="Your shielded address, u1…">
+        </label>
+        <p class="view-note">Anyone can pay this address from a Lightning wallet. It arrives as shielded ZEC, and their comment comes along as an encrypted memo.</p>
+        <button class="pill pill-bolt pill-block go" type="submit" id="ln-go">Claim address</button>
+        <p class="err" role="alert" hidden></p>
+      </form>
+
+      <!-- A swap in progress, or a claimed address -->
+      <section class="view" id="view-swap" aria-live="polite" hidden></section>
+      <section class="view" id="view-claimed" aria-live="polite" hidden></section>
     </div>
-    <p class="fine">The gateway holds funds for the seconds between the two legs, like any swap service. Amounts are capped to keep that exposure small. Run your own: the code is open source.</p>
+
+    <p class="terms" id="terms">&nbsp;</p>
+    <p class="app-note">No wallet to connect, nothing to sign. Pay from any shielded Zcash wallet or any Lightning wallet.</p>
   </section>
 </main>
 
-<footer class="foot">
-  <span>Leyden: shielded Zcash ⇄ Bitcoin Lightning.</span>
-  <a href="https://github.com/wildanrhmn/leyden" rel="noopener">Source</a>
+<footer class="app-foot">
+  <span>Leyden · shielded Zcash ⇄ Bitcoin Lightning</span>
+  <nav aria-label="Footer"><a href="/#privacy">Who sees what</a><a href="/#proof">Proof</a><a href="https://github.com/wildanrhmn/leyden" rel="noopener">Source</a></nav>
 </footer>
 
-<template id="tpl-swap">
-  <header class="swap-head">
-    <p class="swap-kind"></p>
-    <p class="swap-clock"></p>
-  </header>
-  <ol class="wire" aria-label="Swap progress"></ol>
-  <div class="swap-body"></div>
-</template>
-
-<script src="/vendor/qrcode.js"></script>
 <script src="/nav.js"></script>
+<script src="/vendor/gsap/gsap.min.js"></script>
+<script src="/vendor/qrcode.js"></script>
+<script src="/bolt11.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>
