@@ -5,13 +5,33 @@
 	}
 }
 
-# Replace the host with your own domain. sslip.io resolves 43-134-116-188.sslip.io to that IP.
-43-134-116-188.sslip.io {
+(headers) {
 	encode zstd gzip
 	header {
 		Referrer-Policy no-referrer
 		X-Content-Type-Options nosniff
 		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'"
 	}
+}
+
+leydenpay.xyz {
+	import headers
 	reverse_proxy 127.0.0.1:8080
+}
+
+www.leydenpay.xyz {
+	redir https://leydenpay.xyz{uri} permanent
+}
+
+# The address the demo first ran on. Lightning-address lookups keep working, so anything
+# already shared (demo@43-134-116-188.sslip.io) still pays; people are sent to the new domain.
+43-134-116-188.sslip.io {
+	import headers
+	@ln path /.well-known/lnurlp/* /lnurlp/*
+	handle @ln {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle {
+		redir https://leydenpay.xyz{uri} permanent
+	}
 }

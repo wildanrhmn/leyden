@@ -5,7 +5,7 @@
 Named after the Leyden jar, the first device to hold lightning: a charge kept sealed in
 glass and foil.
 
-Live: **https://43-134-116-188.sslip.io** (Zcash mainnet, Bitcoin Lightning mainnet, small limits)
+Live: **https://leydenpay.xyz** (Zcash mainnet, Bitcoin Lightning mainnet, small limits)
 
 Leyden is a swap gateway between the Zcash shielded pool and the Bitcoin Lightning
 Network. Neither leg touches a transparent address or a public Bitcoin transaction:
