@@ -11,8 +11,16 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .hero > :not(.beam):not(.fluid):not(.veil):not(.grain) { position: relative; z-index: 1; }
 
-/* The ambient fluid (fluid.js), extended up under the floating navbar. */
-.fluid { position: absolute; z-index: -3; top: -92px; left: 50%; width: 100vw; height: calc(100% + 92px); transform: translateX(-50%); display: block; pointer-events: none; }
+/* The ambient fluid (fluid.js): a fixed layer behind the whole page, so the smoke follows the
+   cursor wherever you are. lvh keeps its size steady while mobile browser bars show and hide. */
+.fluid { position: fixed; z-index: -4; top: 0; left: 0; width: 100vw; height: 100vh; height: 100lvh; display: block; pointer-events: none; }
+/* A page-wide veil over the fluid: lightest behind the hero, a little darker once you scroll
+   into the content (hero.js tweens --dim), so text always reads cleanly. */
+.page-veil { position: fixed; z-index: -3; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom, rgb(5 6 10 / .4) 0%, rgb(5 6 10 / .2) 30%, rgb(5 6 10 / .45) 100%); }
+.page-veil::after { content: ""; position: absolute; inset: 0; background: var(--bg); opacity: var(--dim, 0); }
+html:not(.has-fluid) .page-veil { display: none; }
+.hero.has-fluid .veil { display: none; }
 /* A veil over the fluid: keeps the copy legible and melts the hero into the page below. */
 .veil { position: absolute; z-index: -2; top: -92px; left: 50%; width: 100vw; height: calc(100% + 92px); transform: translateX(-50%); pointer-events: none;
   background: linear-gradient(to bottom, rgb(5 6 10 / .4) 0%, rgb(5 6 10 / .2) 30%, rgb(5 6 10 / .6) 70%, var(--bg) 100%); }
@@ -57,7 +65,7 @@
 
 /* Before the intro runs, the revealed pieces are hidden. If scripts fail, they appear anyway after 2.5 s. */
 html.motion .hero [data-reveal] { opacity: 0; animation: reveal-fallback .6s 2.5s forwards; }
-html.motion .hero .beam, html.motion .hero .fluid { opacity: 0; }
+html.motion .hero .beam, html.motion .fluid { opacity: 0; }
 @keyframes reveal-fallback { to { opacity: 1; } }
 html.motion.intro-ready .hero [data-reveal] { animation: none; }
 

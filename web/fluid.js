@@ -1,8 +1,9 @@
 "use strict";
 
-// Ambient fluid behind the hero: a small GPU stable-fluids solver (advect, add forces,
-// project) in WebGL2. The cursor stirs indigo "smoke"; when the cursor rests, a ghost
-// cursor keeps it drifting. Falls back to a static CSS glow without WebGL2.
+// Ambient fluid behind the whole landing page: a small GPU stable-fluids solver (advect,
+// add forces, project) in WebGL2 on a fixed, full-screen canvas. The cursor stirs indigo
+// "smoke" wherever you are on the page; when it rests, a ghost cursor keeps it drifting.
+// Falls back to a static CSS glow in the hero without WebGL2.
 (() => {
   const canvas = document.getElementById("fluid");
   const hero = document.querySelector(".hero");
@@ -238,7 +239,7 @@ o=vec4(col,1.); }`),
   let ghostT = Math.random() * 100;
   function ghost(t, dt) {
     ghostT += dt * CFG.autoSpeed;
-    // Long, wandering sweeps across the whole hero; the inner sine keeps the path from repeating.
+    // Long, wandering sweeps across the whole screen; the inner sine keeps the path from repeating.
     const x = 0.5 + 0.44 * Math.sin(ghostT * 0.9 + Math.sin(ghostT * 0.31) * 1.3);
     const y = 0.58 + 0.24 * Math.sin(ghostT * 1.27 + 0.7 + Math.cos(ghostT * 0.23));
     return [x, y];
@@ -292,7 +293,8 @@ o=vec4(col,1.); }`),
 
   let resizeTimer;
   new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(init, 150); }).observe(canvas);
-  new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop())).observe(hero);
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+  start();
   hero.classList.add("has-fluid");
+  document.documentElement.classList.add("has-fluid");
 })();

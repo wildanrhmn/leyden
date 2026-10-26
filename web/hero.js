@@ -198,6 +198,7 @@
     // As the hero scrolls away: the copy drifts up and the light dims.
     gsap.timeline({ scrollTrigger: { trigger: hero, start: "top top", end: "bottom 30%", scrub: 0.6 } })
       .to(".hero-copy", { y: -90, opacity: 0.2, ease: "none" }, 0)
-      .to(state, { intensity: 0.35, ease: "none" }, 0);
+      .to(state, { intensity: 0.35, ease: "none" }, 0)
+      .to(".page-veil", { "--dim": 0.35, ease: "none" }, 0);
   });
 })();
