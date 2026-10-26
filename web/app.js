@@ -24,14 +24,11 @@ async function api(path, body, method) {
 const fmtSats = (n) => `${Number(n).toLocaleString("en-US")} sats`;
 const zatToZec = (z) => (Number(z) / 1e8).toFixed(8).replace(/0+$/, "").replace(/\.$/, "");
 
-// --- Header meter -------------------------------------------------------------
+// --- Gateway info -------------------------------------------------------------
 
 async function loadInfo() {
   try {
     info = await api("/api/info");
-    $("#m-rate").textContent = `${info.rate.zat_per_sat.toFixed(1)} zat`;
-    $("#m-ln").textContent = fmtSats(info.liquidity.lightning_sats);
-    $("#m-zec").textContent = `${zatToZec(info.liquidity.zec_zat)} ZEC`;
     document.querySelectorAll(".dom").forEach((el) => { el.textContent = info.lightning_address_domain; });
     const h = Math.round(info.retain_secs / 3600);
     $("#retain").textContent = h === 1 ? "1 hour" : `${h} hours`;
@@ -39,8 +36,8 @@ async function loadInfo() {
     $("#rcv-amount").max = info.max_sats;
     $("#rcv-amount").placeholder = `${info.min_sats}–${info.max_sats}`;
     estimateReceive();
-  } catch (e) {
-    $("#m-rate").textContent = "offline";
+  } catch {
+    // The navbar readout shows the gateway as offline.
   }
 }
 

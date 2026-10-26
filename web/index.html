@@ -4,118 +4,39 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shieldbolt</title>
-<meta name="description" content="Pay Lightning invoices from shielded ZEC, and receive Lightning payments as shielded ZEC.">
+<meta name="description" content="Pay any Lightning invoice from shielded ZEC, and receive Lightning payments as shielded ZEC. No transparent addresses, nothing on the Bitcoin chain.">
 <meta name="referrer" content="no-referrer">
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 2 4 7v8c0 7 5 13 12 15 7-2 12-8 12-15V7z' fill='%233B4CCA'/><path d='M18 7l-7 11h5l-2 7 7-11h-5z' fill='%23F2A900'/></svg>">
+<link rel="stylesheet" href="/base.css">
+<link rel="stylesheet" href="/landing.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
-<header class="bar">
-  <a class="mark" href="./" aria-label="Shieldbolt home">
-    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7 5 13 12 15 7-2 12-8 12-15V7z" class="mark-shield"/><path d="M18 7l-7 11h5l-2 7 7-11h-5z" class="mark-bolt"/></svg>
-    <span>Shieldbolt</span>
-  </a>
-  <dl class="meter" id="meter" aria-live="polite">
-    <div><dt>1 sat</dt><dd id="m-rate">…</dd></div>
-    <div><dt>Lightning ready</dt><dd id="m-ln">…</dd></div>
-    <div><dt>ZEC ready</dt><dd id="m-zec">…</dd></div>
-  </dl>
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Shieldbolt home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path class="b-shield" d="M16 2 4 7v8c0 7 5 13 12 15 7-2 12-8 12-15V7z"/><path class="b-bolt" d="M18 7l-7 11h5l-2 7 7-11h-5z"/></svg>
+      <span>Shieldbolt</span>
+    </a>
+    <nav class="nav-links" id="nav-menu" aria-label="Primary">
+      <a href="/#how">How it works</a>
+      <a href="/#privacy">Privacy</a>
+      <a href="/#proof">Proof</a>
+      <a href="/#ln-address">Lightning address</a>
+      <a href="https://github.com/wildanrhmn/shieldbolt" rel="noopener">Source</a>
+      <a class="nav-cta nav-cta-menu" href="/app/">Open app <span class="arrow" aria-hidden="true">→</span></a>
+    </nav>
+    <div class="nav-end">
+      <p class="status" data-status data-state="pending"><span class="led" aria-hidden="true"></span><span class="net">Mainnet</span><span class="rate">…</span></p>
+      <a class="nav-cta" href="/app/">Open app <span class="arrow" aria-hidden="true">→</span></a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu"><span></span><span></span></button>
+    </div>
+  </div>
 </header>
 
-<main>
-  <section class="thesis">
-    <h1>Spend shielded ZEC anywhere Lightning works.<br><span>Get paid over Lightning, straight into the shielded pool.</span></h1>
-    <p class="lede">No transparent addresses on the way through. The Zcash side is a shielded transaction and the Bitcoin side never touches a blockchain, so there is nothing for a chain observer to link.</p>
-  </section>
-
-  <section class="panel" aria-label="Swap">
-    <div class="switch" role="tablist" aria-label="Direction">
-      <button role="tab" id="tab-pay" aria-selected="true" aria-controls="form-pay">ZEC <i aria-hidden="true">→</i> Lightning</button>
-      <button role="tab" id="tab-receive" aria-selected="false" aria-controls="form-receive">Lightning <i aria-hidden="true">→</i> ZEC</button>
-    </div>
-
-    <div class="work">
-      <form id="form-pay" class="form" role="tabpanel" aria-labelledby="tab-pay" autocomplete="off">
-        <label for="pay-invoice">Lightning invoice to pay</label>
-        <textarea id="pay-invoice" rows="4" spellcheck="false" placeholder="lnbc…" required></textarea>
-        <label for="pay-refund">Your shielded address, for refunds</label>
-        <input id="pay-refund" spellcheck="false" placeholder="u1…" required>
-        <p class="hint">Used only if the Lightning payment fails. Transparent addresses are refused.</p>
-        <button class="go" type="submit">Get a quote</button>
-        <p class="err" role="alert" hidden></p>
-      </form>
-
-      <form id="form-receive" class="form" role="tabpanel" aria-labelledby="tab-receive" autocomplete="off" hidden>
-        <label for="rcv-amount">Amount</label>
-        <div class="unit"><input id="rcv-amount" type="number" inputmode="numeric" min="1" step="1" required><span>sats</span></div>
-        <p class="hint" id="rcv-estimate">&nbsp;</p>
-        <label for="rcv-address">Your shielded address</label>
-        <input id="rcv-address" spellcheck="false" placeholder="u1…" required>
-        <label for="rcv-memo">Memo <small>optional, arrives encrypted</small></label>
-        <input id="rcv-memo" maxlength="400">
-        <button class="go" type="submit">Create Lightning invoice</button>
-        <p class="err" role="alert" hidden></p>
-      </form>
-
-      <article id="swap" class="swap" aria-live="polite">
-        <div class="swap-empty">
-          <p>Your swap will appear here, with every step it goes through.</p>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="lnaddr" aria-labelledby="lnaddr-h">
-    <div>
-      <h2 id="lnaddr-h">A Lightning address that lands in the shielded pool</h2>
-      <p>Anyone with a Lightning wallet can pay <b>you@<span class="dom">this gateway</span></b>, and it arrives as shielded ZEC. Payer comments ride along as encrypted memos.</p>
-    </div>
-    <form id="form-ln" class="form inline" autocomplete="off">
-      <label for="ln-name">Name</label>
-      <div class="unit"><input id="ln-name" pattern="[a-z0-9_\-]{3,32}" placeholder="satoshi" required><span>@<span class="dom">…</span></span></div>
-      <label for="ln-address">Shielded address it pays to</label>
-      <input id="ln-address" spellcheck="false" placeholder="u1…" required>
-      <button class="go" type="submit">Claim address</button>
-      <p class="err" role="alert" hidden></p>
-      <div class="claimed" hidden></div>
-    </form>
-  </section>
-
-  <section class="ledger" aria-labelledby="ledger-h">
-    <h2 id="ledger-h">Who sees what</h2>
-    <p class="lede">Privacy claims should be checkable. This is the full list.</p>
-    <div class="table-wrap">
-    <table>
-      <thead><tr><th scope="col">Party</th><th scope="col">Learns</th><th scope="col">Never learns</th></tr></thead>
-      <tbody>
-        <tr><th scope="row">Zcash chain observers</th><td>That a shielded transaction happened</td><td>Sender, recipient, amount, memo, that Lightning was involved</td></tr>
-        <tr><th scope="row">Bitcoin chain observers</th><td>Nothing. Lightning payments are off-chain</td><td>Everything about the payment</td></tr>
-        <tr><th scope="row">Lightning routing nodes</th><td>The amount passing through them</td><td>Who paid, and who was paid (onion routing)</td></tr>
-        <tr><th scope="row">The payee</th><td>That Shieldbolt's node paid their invoice</td><td>Your Zcash address, your wallet, your balance</td></tr>
-        <tr><th scope="row">The lightwalletd server</th><td>That the gateway downloads every block</td><td>Which outputs are the gateway's. It never asks for a transaction by ID</td></tr>
-        <tr class="us"><th scope="row">This gateway</th><td>The invoice it pays or issues, the ZEC amount, your refund or payout address, your IP unless you use Tor</td><td>Your other transactions or balance. Linking data is erased <span id="retain">24 hours</span> after a swap finishes</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <p class="fine">The gateway holds funds for the seconds between the two legs, like any swap service. Amounts are capped to keep that exposure small. Run your own: the code is open source.</p>
-  </section>
+<main class="landing">
+  <!-- Sections are added one at a time. -->
+  <section class="placeholder"></section>
 </main>
-
-<footer class="foot">
-  <span>Shieldbolt: shielded Zcash ⇄ Bitcoin Lightning.</span>
-  <a href="https://github.com/wildanrhmn/shieldbolt" rel="noopener">Source</a>
-</footer>
-
-<template id="tpl-swap">
-  <header class="swap-head">
-    <p class="swap-kind"></p>
-    <p class="swap-clock"></p>
-  </header>
-  <ol class="wire" aria-label="Swap progress"></ol>
-  <div class="swap-body"></div>
-</template>
-
-<script src="vendor/qrcode.js"></script>
-<script src="app.js"></script>
+<script src="/nav.js"></script>
 </body>
 </html>

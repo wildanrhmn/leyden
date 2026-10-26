@@ -1,64 +1,3 @@
-@font-face { font-family: "Chakra Petch"; font-weight: 600; font-display: swap; src: url(vendor/fonts/chakra-petch-latin-600-normal.woff2) format("woff2"); }
-@font-face { font-family: "Public Sans"; font-weight: 400; font-display: swap; src: url(vendor/fonts/public-sans-latin-400-normal.woff2) format("woff2"); }
-@font-face { font-family: "Public Sans"; font-weight: 600; font-display: swap; src: url(vendor/fonts/public-sans-latin-600-normal.woff2) format("woff2"); }
-@font-face { font-family: "JetBrains Mono"; font-weight: 400; font-display: swap; src: url(vendor/fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2"); }
-
-:root {
-  --film: #EEF0EA;      /* drafting film */
-  --sheet: #F8F9F5;     /* raised surfaces */
-  --graphite: #1B2027;  /* ink */
-  --lead: #5E6670;      /* secondary ink */
-  --rule: #C9CDC4;      /* hairlines */
-  --cobalt: #3B4CCA;    /* shielded */
-  --cobalt-soft: #E3E6F8;
-  --amber: #F2A900;     /* the bolt: Lightning only */
-  --rust: #B4400E;      /* errors */
-  --ok: #2E7D4F;
-  --display: "Chakra Petch", "Arial Narrow", sans-serif;
-  --body: "Public Sans", system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --film: #14171C; --sheet: #1C2027; --graphite: #E6E8E3; --lead: #9AA2AB; --rule: #2F353D;
-    --cobalt: #8C98F2; --cobalt-soft: #232846; --amber: #F2B92A; --rust: #F08A5D; --ok: #6CC793;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --film: #14171C; --sheet: #1C2027; --graphite: #E6E8E3; --lead: #9AA2AB; --rule: #2F353D;
-  --cobalt: #8C98F2; --cobalt-soft: #232846; --amber: #F2B92A; --rust: #F08A5D; --ok: #6CC793;
-  color-scheme: dark;
-}
-
-* { box-sizing: border-box; }
-[hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0; background: var(--film); color: var(--graphite);
-  font: 400 16px/1.55 var(--body);
-  /* a faint drafting grid */
-  background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
-  background-size: 48px 48px; background-position: -1px -1px;
-  background-attachment: fixed;
-}
-body::before { content: ""; position: fixed; inset: 0; background: var(--film); opacity: .82; pointer-events: none; z-index: -1; }
-a { color: var(--cobalt); }
-:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 2px; }
-code, .mono { font-family: var(--mono); font-size: .86em; }
-
-.bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--rule); background: color-mix(in srgb, var(--sheet) 80%, transparent); backdrop-filter: blur(6px); position: sticky; top: 0; z-index: 5; }
-.mark { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--graphite); font: 600 20px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
-.mark svg { width: 28px; height: 28px; }
-.mark-shield { fill: var(--cobalt); }
-.mark-bolt { fill: var(--amber); }
-.meter { display: flex; gap: 22px; margin: 0; flex-wrap: wrap; }
-.meter div { display: flex; flex-direction: column; }
-.meter dt { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--lead); }
-.meter dd { margin: 0; font: 400 14px/1.3 var(--mono); }
-
 main { max-width: 1120px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
 
 .thesis { padding: clamp(40px, 8vw, 88px) 0 28px; }
@@ -90,7 +29,7 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
 .unit input { border-radius: 8px 0 0 8px; }
 .unit > span { display: flex; align-items: center; padding: 0 12px; border: 1px solid var(--rule); border-left: 0; border-radius: 0 8px 8px 0; font: 400 14px var(--mono); color: var(--lead); background: var(--sheet); white-space: nowrap; }
 .hint { margin: 2px 0 0; font-size: 13px; color: var(--lead); }
-.go { margin-top: 18px; align-self: flex-start; font: 600 15px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; color: #fff; background: var(--cobalt); border: 0; border-radius: 8px; padding: 14px 20px; cursor: pointer; }
+.go { margin-top: 18px; align-self: flex-start; font: 600 15px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--on-cobalt); background: var(--cobalt); border: 0; border-radius: 8px; padding: 14px 20px; cursor: pointer; }
 .go:hover { filter: brightness(1.08); }
 .go:disabled { opacity: .55; cursor: progress; }
 .err { color: var(--rust); font-size: 14px; margin: 10px 0 0; }
