@@ -479,6 +479,18 @@
     return root;
   }
 
+  // A refund sends back what arrived, minus the network fee of the refund transaction itself.
+  const networkFee = () => (info ? info.zec_network_fee_zat : 15000);
+  const refundZec = (s) => fmtZec(Math.max(0, Math.round(Number(s.received_zec ?? s.zec) * 1e8) - networkFee()));
+  function refundReason(s) {
+    const e = s.error ?? "";
+    if (e.startsWith("underpaid")) return `You sent ${s.received_zec} ZEC, but the quote was ${s.zec} ZEC, so it was sent back.`;
+    if (e.startsWith("payment arrived after")) return "Your payment arrived after the quote expired, so it was sent back.";
+    if (e.includes("invoice expired")) return "The Lightning invoice expired before your payment confirmed, so it was sent back.";
+    if (e.startsWith("lightning payment failed")) return "The Lightning payment didn't go through, so your ZEC was sent back.";
+    return e ? sentence(e) : "The Lightning payment didn't go through, so your ZEC was sent back.";
+  }
+
   function buildPay(s, root) {
     const sats = n(s.amount_sats);
     switch (s.state) {
@@ -514,13 +526,13 @@
         break;
       }
       case "refunding":
-        root.append(amount("Refunding", s.received_zec ?? s.zec, "ZEC"), el("p", "sv-note bad", s.error ? sentence(s.error) : "The Lightning payment failed."));
+        root.append(amount("Sending it back", refundZec(s), "ZEC"), el("p", "sv-note", refundReason(s)));
         break;
       case "refunded":
         root.append(
-          amount("Refunded to your shielded address", s.received_zec ?? s.zec, "ZEC"),
+          amount("Refunded to your shielded address", refundZec(s), "ZEC"),
           rows(s.refund_txid ? [["Refund tx", `${short(s.refund_txid, 8, 4)} ↗`, { href: explorer(s.refund_txid) }]] : []),
-          el("p", "sv-note bad", s.error ? sentence(s.error) : "The Lightning payment failed."),
+          el("p", "sv-note", `${refundReason(s)} That's what arrived, minus the ${fmtZec(networkFee())} ZEC network fee for sending it back.`),
         );
         break;
       case "expired":

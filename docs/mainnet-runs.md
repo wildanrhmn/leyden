@@ -47,6 +47,17 @@ with no transparent address and no on-chain Bitcoin transaction at any point.
 |---|---|
 | Lightning → ZEC, 600 sats with a memo, created in the new `/app/` | Paid from a separate Spark wallet; payout Zcash tx `8cb94b4618c1159b1656b1cbe0d50b5b2f955e96c1a5d4fcf95a66256da13462` for 0.00023753 ZEC |
 
+## 5. Refund: an underpaid swap (2026-10-26, https://leydenpay.xyz)
+
+A ZEC → Lightning quote for a 1,000-sat invoice, deliberately paid short.
+
+| Step | Evidence |
+|---|---|
+| Quote, created in the live app | 1,000 sats for 0.00065599 ZEC, swap `9cf3d93e…` |
+| Customer sends only 0.0003 ZEC | Zcash tx `07c245e0fbd48380e88a08d1462c17cb2f6a46095972f216b6edb4327b2a57d1` |
+| Gateway detects the shortfall, does not pay the invoice | state `refunding`: "underpaid: received 30000 zat, quote was 65599 zat" |
+| Refund, 24 s later | Zcash tx `d0ee5ca35bbda1e0f14493c98b238b26c69e378d0377d8fb38d4cba511dcf9ed`, mined at 3,531,392: 0.00015 ZEC (what arrived, minus the 0.00015 ZEC network fee), memo `Leyden refund, swap 9cf3d93e` |
+
 ## Funding (for reference)
 
 The gateway and test wallets were funded from ~$12 of ETH on Base through NEAR Intents:
