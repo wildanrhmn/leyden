@@ -293,3 +293,54 @@ html.motion.intro-ready .hero [data-reveal] { animation: none; }
 @media (max-width: 600px) {
   .sees-row { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* --- Proof: the first four swaps, printed as receipts ------------------------------------ */
+.proof { max-width: 1200px; margin: 0 auto; padding: 120px clamp(16px, 4vw, 32px) 120px; }
+.rail { margin-top: 64px; }
+.slot { position: relative; z-index: 2; height: 10px; border-radius: 999px; background: #0E1118; border: 1px solid var(--line); box-shadow: inset 0 2px 4px rgb(0 0 0 / .6); }
+.slot::after { content: ""; position: absolute; left: 10%; right: 10%; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, rgb(255 194 26 / .28), transparent); transform: scaleX(var(--lit, 1)); }
+.receipts { list-style: none; margin: -5px 0 0; padding: 0 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: start; }
+/* Each receipt hangs from the slot; only the top edge is clipped, so it can feed out from behind it. */
+.r-hang { clip-path: inset(0 -24px -48px -24px); }
+.rcpt { --edge: 8px; padding: 28px 20px calc(26px + var(--edge)); background: linear-gradient(to bottom, rgb(0 0 0 / .5), transparent 32px), #0B0D12; border: 1px solid rgb(255 255 255 / .07); border-top: 0;
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - var(--edge)) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px var(--edge) repeat-x;
+          mask: linear-gradient(#000 0 0) top / 100% calc(100% - var(--edge)) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px var(--edge) repeat-x; }
+:where(.rcpt) p { margin: 0; }
+.r-top { display: flex; justify-content: space-between; gap: 8px; font: 400 11.5px var(--mono); letter-spacing: .02em; color: var(--ink-3); }
+.r-dir { margin-top: 26px; font-size: 13px; color: var(--ink-2); }
+.r-dir i { font-style: normal; color: var(--ink-3); }
+.r-big { margin-top: 4px; font-weight: 300; font-size: 44px; line-height: 1.1; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+.r-big small { font-size: 16px; letter-spacing: -.01em; color: var(--ink-3); }
+.r-sub { margin-top: 2px; font: 400 12.5px var(--mono); color: var(--ink-2); }
+.r-rows, .r-proof, .r-memo { margin: 22px 0 0; padding-top: 14px; border-top: 1px dashed rgb(255 255 255 / .13); }
+.r-rows div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 5px 0; }
+.r-rows dt { font-size: 12.5px; color: var(--ink-3); white-space: nowrap; }
+.r-rows dd { margin: 0; font: 400 12.5px var(--mono); color: var(--ink); white-space: nowrap; }
+.r-rows a { color: inherit; text-decoration: none; transition: color .2s; }
+.r-rows a:hover { color: var(--bolt); }
+.r-check { margin-top: 20px; width: 100%; height: 40px; border-radius: 999px; border: 1px solid var(--line-strong); background: transparent; color: var(--ink); font: 500 13.5px var(--sans); letter-spacing: -.01em; cursor: pointer; transition: background-color .2s, border-color .2s; }
+.r-check:hover { background: rgb(255 255 255 / .05); border-color: rgb(255 255 255 / .24); }
+.r-check:focus-visible, .r-copy button:focus-visible { outline: 2px solid var(--bolt); outline-offset: 2px; }
+.r-proof { overflow: hidden; }
+.r-lbl { margin: 0 0 6px; font-size: 11.5px; color: var(--ink-3); }
+.r-hash { display: block; margin-bottom: 14px; font: 400 11px/1.55 var(--mono); letter-spacing: 0; color: var(--ink-3); word-break: break-all; min-height: 34px; }
+.r-hash b { font-weight: 400; transition: color .25s; }
+.r-hash b.m { color: var(--bolt); }
+.r-ok { font-size: 13px; line-height: 1.45; color: var(--ink); }
+.r-ok strong { font-weight: 500; color: var(--bolt); }
+.r-copy { margin-top: 12px; display: flex; gap: 16px; }
+.r-copy button { padding: 0; border: 0; background: none; font: 400 12px var(--sans); color: var(--ink-3); cursor: pointer; transition: color .2s; }
+.r-copy button:hover { color: var(--ink); }
+.r-memo-text { font-size: 13.5px; line-height: 1.45; color: var(--ink); }
+.proof-note { margin: 40px auto 0; max-width: 640px; text-align: center; font-size: 13.5px; line-height: 1.6; color: var(--ink-3); }
+.proof-note a { color: var(--ink-2); text-decoration: none; white-space: nowrap; }
+.proof-note a:hover { color: var(--ink); }
+
+/* Narrower screens: the receipts scroll sideways under one slot. */
+@media (max-width: 1000px) {
+  .receipts { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: min(78vw, 290px); gap: 14px; padding: 0 16px 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .receipts::-webkit-scrollbar { display: none; }
+  .r-hang { scroll-snap-align: center; }
+  .proof { padding-top: 96px; }
+  .rail { margin-top: 44px; }
+}
