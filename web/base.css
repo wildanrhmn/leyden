@@ -85,6 +85,16 @@ code, .mono { font-family: var(--mono); font-size: .9em; }
   .nav-links a.nav-cta-menu:hover { background: var(--bolt-hover); }
 }
 
+/* The ambient fluid (fluid.js), shared by the landing page and the app: a fixed layer behind the whole page, so the smoke follows the
+   cursor wherever you are. lvh keeps its size steady while mobile browser bars show and hide. */
+.fluid { position: fixed; z-index: -4; top: 0; left: 0; width: 100vw; height: 100vh; height: 100lvh; display: block; pointer-events: none; }
+/* A page-wide veil over the fluid: lightest behind the hero, a little darker once you scroll
+   into the content (hero.js tweens --dim), so text always reads cleanly. */
+.page-veil { position: fixed; z-index: -3; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom, rgb(5 6 10 / .4) 0%, rgb(5 6 10 / .2) 30%, rgb(5 6 10 / .45) 100%); }
+.page-veil::after { content: ""; position: absolute; inset: 0; background: var(--bg); opacity: var(--dim, 0); }
+html:not(.has-fluid) .page-veil { display: none; }
+
 /* --- Shared components: pills, swap legs, token chips, the flip button -------------- */
 .pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border-radius: 999px; font: 600 15px/1 var(--sans); letter-spacing: -.01em; text-decoration: none; cursor: pointer; border: 0; transition: background-color .15s, border-color .15s, color .15s; }
 .pill-bolt { background: var(--bolt); color: #0A0A0B; }

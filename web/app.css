@@ -4,8 +4,11 @@
 :root { --err: #FF7A6E; --surface: #0B0D13; }
 
 .app { position: relative; display: flex; flex-direction: column; align-items: center; min-height: calc(100svh - 140px); padding: clamp(40px, 8vh, 88px) 16px 72px; overflow: hidden; }
-.app-glow { position: absolute; left: 0; right: 0; top: -260px; height: 760px; pointer-events: none;
-  background: radial-gradient(ellipse 42% 46% at 50% 42%, rgb(84 96 255 / .11), transparent 70%); }
+/* The shared smoke (fluid.js) sits behind the whole app too, a little dimmer than on the
+   landing page so the card stays the focus. It fades in rather than popping on. */
+.page-veil { --dim: .3; }
+.fluid { animation: fluid-in 1.6s ease-out both; }
+@keyframes fluid-in { from { opacity: 0; } }
 .stage { position: relative; width: 100%; max-width: 460px; }
 
 /* Tabs sit above the card as plain text; a soft thumb slides to the selected one. */

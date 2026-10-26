@@ -11,6 +11,8 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
+<canvas class="fluid" id="fluid" aria-hidden="true"></canvas>
+<div class="page-veil" aria-hidden="true"></div>
 <header class="nav" data-nav>
   <div class="nav-in">
     <a class="brand" href="/" aria-label="Leyden home">
@@ -32,7 +34,6 @@
 </header>
 
 <main class="app">
-  <div class="app-glow" aria-hidden="true"></div>
 
   <section class="stage" aria-label="Swap">
     <div class="tabs" id="tabs" role="tablist" aria-label="What to do">
@@ -155,6 +156,7 @@
 
 <script src="/nav.js"></script>
 <script src="/vendor/gsap/gsap.min.js"></script>
+<script src="/fluid.js"></script>
 <script src="/vendor/qrcode.js"></script>
 <script src="/bolt11.js"></script>
 <script src="/app.js"></script>

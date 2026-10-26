@@ -1,16 +1,16 @@
 "use strict";
 
-// Ambient fluid behind the whole landing page: a small GPU stable-fluids solver (advect,
-// add forces, project) in WebGL2 on a fixed, full-screen canvas. The cursor stirs indigo
+// Ambient fluid behind the landing page and the app: a small GPU stable-fluids solver
+// (advect, add forces, project) in WebGL2 on a fixed, full-screen canvas. The cursor stirs indigo
 // "smoke" wherever you are on the page; when it rests, a ghost cursor keeps it drifting.
 // Falls back to a static CSS glow in the hero without WebGL2.
 (() => {
   const canvas = document.getElementById("fluid");
-  const hero = document.querySelector(".hero");
-  if (!canvas || !hero) return;
+  const hero = document.querySelector(".hero"); // landing page only
+  if (!canvas) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const gl = !reduce && canvas.getContext("webgl2", { alpha: false, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false });
-  if (!gl || !gl.getExtension("EXT_color_buffer_float")) { hero.classList.add("no-fluid"); return; }
+  if (!gl || !gl.getExtension("EXT_color_buffer_float")) { hero?.classList.add("no-fluid"); return; }
 
   const CFG = {
     simRes: 96,          // velocity / pressure grid (short side)
@@ -245,9 +245,9 @@ o=vec4(col,1.); }`),
     return [x, y];
   }
 
-  // A burst from the swap card when the direction flips.
+  // A burst from the swap card when the direction flips (the hero card, or the app's card).
   addEventListener("leyden:flip", () => {
-    const card = document.getElementById("swapcard");
+    const card = document.getElementById("swapcard") || document.getElementById("card");
     if (!card) return;
     const r = canvas.getBoundingClientRect(), c = card.getBoundingClientRect();
     const x = (c.left + c.width / 2 - r.left) / r.width, y = 1 - (c.top + c.height / 2 - r.top) / r.height;
@@ -295,6 +295,6 @@ o=vec4(col,1.); }`),
   new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(init, 150); }).observe(canvas);
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
   start();
-  hero.classList.add("has-fluid");
+  hero?.classList.add("has-fluid");
   document.documentElement.classList.add("has-fluid");
 })();

@@ -115,6 +115,7 @@
     next.focus();
   });
   document.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => {
+    dispatchEvent(new Event("leyden:flip"));
     // Flipping from a pasted invoice carries its amount over.
     if (b.dataset.go === "receive" && invoice) $("rcv-sats").value = Math.ceil(invoice.sats);
     show(b.dataset.go);
