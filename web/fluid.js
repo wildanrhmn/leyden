@@ -245,7 +245,7 @@ o=vec4(col,1.); }`),
   }
 
   // A burst from the swap card when the direction flips.
-  addEventListener("shieldbolt:flip", () => {
+  addEventListener("leyden:flip", () => {
     const card = document.getElementById("swapcard");
     if (!card) return;
     const r = canvas.getBoundingClientRect(), c = card.getBoundingClientRect();

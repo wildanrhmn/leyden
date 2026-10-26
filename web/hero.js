@@ -164,8 +164,8 @@
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
 
   // The quote card nudges the beam when you interact with it.
-  addEventListener("shieldbolt:pulse", () => { if (!reduce) nextPulse = 0; });
-  addEventListener("shieldbolt:flip", () => {
+  addEventListener("leyden:pulse", () => { if (!reduce) nextPulse = 0; });
+  addEventListener("leyden:flip", () => {
     if (reduce || !window.gsap) return;
     gsap.fromTo(state, { flash: 1 }, { flash: 0, duration: 0.9, ease: "power2.out" });
     nextPulse = 0;

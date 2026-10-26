@@ -1,0 +1,16 @@
+[Unit]
+Description=Leyden gateway
+After=network-online.target leyden-ln.service
+Wants=network-online.target
+Requires=leyden-ln.service
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/leyden
+EnvironmentFile=/home/ubuntu/.leyden/env
+ExecStart=/home/ubuntu/leyden/gateway/target/release/leyden serve
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

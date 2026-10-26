@@ -1,10 +1,13 @@
-# Shieldbolt
+# Leyden
 
 **Pay any Lightning invoice from shielded ZEC. Receive Lightning payments as shielded ZEC.**
 
+Named after the Leyden jar, the first device to hold lightning: a charge kept sealed in
+glass and foil.
+
 Live: **https://43-134-116-188.sslip.io** (Zcash mainnet, Bitcoin Lightning mainnet, small limits)
 
-Shieldbolt is a swap gateway between the Zcash shielded pool and the Bitcoin Lightning
+Leyden is a swap gateway between the Zcash shielded pool and the Bitcoin Lightning
 Network. Neither leg touches a transparent address or a public Bitcoin transaction:
 
 - **ZEC → Lightning.** Paste a Lightning invoice. Pay the quoted amount from any shielded
@@ -96,7 +99,7 @@ Lightning wallet used to play "some Lightning user" in the recorded runs.
    any shielded wallet                                       any Lightning wallet
           │  shielded tx (Ironwood)                                  ▲  │  Lightning
           ▼                                                          │  ▼
- ┌──────────────────────────────── shieldbolt (Rust) ───────────────────────────────┐
+ ┌────────────────────────────────── leyden (Rust) ─────────────────────────────────┐
  │ wallet.rs   compact-block sync + trial decryption, per-quote Orchard addresses,  │
  │             shielded sends (zcash_client_backend / zcash_client_sqlite)           │
  │ engine.rs   quotes, pricing, state machine, refunds, 24 h erasure                 │
@@ -117,13 +120,13 @@ Requirements: Rust 1.89+, Node 22+.
 ```sh
 # Lightning sidecar
 cd lightning && npm ci
-node init-wallet.mjs ~/.shieldbolt/spark.mnemonic     # prints a BTC deposit address to fund it
-SHIELDBOLT_LN_TOKEN=$(openssl rand -hex 24) SHIELDBOLT_LN_MNEMONIC=~/.shieldbolt/spark.mnemonic node server.mjs
+node init-wallet.mjs ~/.leyden/spark.mnemonic     # prints a BTC deposit address to fund it
+LEYDEN_LN_TOKEN=$(openssl rand -hex 24) LEYDEN_LN_MNEMONIC=~/.leyden/spark.mnemonic node server.mjs
 
 # Gateway (creates its ZEC wallet on first run)
 cd gateway && cargo build --release
-./target/release/shieldbolt --zec-mnemonic ~/.shieldbolt/zec.mnemonic status        # shows the wallet
-SHIELDBOLT_LN_TOKEN=… ./target/release/shieldbolt --zec-mnemonic ~/.shieldbolt/zec.mnemonic serve --web ../web
+./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic status        # shows the wallet
+LEYDEN_LN_TOKEN=… ./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic serve --web ../web
 ```
 
 `deploy/` has the systemd units, the Caddyfile and an environment template used for the live instance.

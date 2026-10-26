@@ -340,7 +340,7 @@ pub fn parse_shielded_recipient(addr: &str, params: &Network) -> Result<ZcashAdd
     let ok = parsed.can_receive_as(zcash_protocol::PoolType::Shielded(ShieldedPool::Orchard))
         || parsed.can_receive_as(zcash_protocol::PoolType::Shielded(ShieldedPool::Sapling));
     if !ok {
-        bail!("address has no shielded receiver; Shieldbolt only pays shielded addresses");
+        bail!("address has no shielded receiver; Leyden only pays shielded addresses");
     }
     // Re-encode through the network check: errors if the address is for another network.
     parsed

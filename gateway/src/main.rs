@@ -11,16 +11,16 @@ use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "shieldbolt", about = "Shielded ZEC <-> Lightning gateway")]
+#[command(name = "leyden", about = "Shielded ZEC <-> Lightning gateway")]
 struct Cli {
     /// Directory holding the gateway's databases.
-    #[arg(long, env = "SHIELDBOLT_DATA", default_value = "./data")]
+    #[arg(long, env = "LEYDEN_DATA", default_value = "./data")]
     data: PathBuf,
     /// File holding the gateway wallet's 24-word mnemonic (created if missing).
-    #[arg(long, env = "SHIELDBOLT_ZEC_MNEMONIC")]
+    #[arg(long, env = "LEYDEN_ZEC_MNEMONIC")]
     zec_mnemonic: PathBuf,
     /// lightwalletd endpoint.
-    #[arg(long, env = "SHIELDBOLT_LWD", default_value = "https://zec.rocks:443")]
+    #[arg(long, env = "LEYDEN_LWD", default_value = "https://zec.rocks:443")]
     lwd: String,
     #[command(subcommand)]
     cmd: Cmd,
@@ -43,31 +43,31 @@ enum Cmd {
 
 #[derive(Args)]
 struct ServeArgs {
-    #[arg(long, env = "SHIELDBOLT_LISTEN", default_value = "127.0.0.1:8080")]
+    #[arg(long, env = "LEYDEN_LISTEN", default_value = "127.0.0.1:8080")]
     listen: String,
     /// Public base URL, used for Lightning addresses (name@host).
-    #[arg(long, env = "SHIELDBOLT_PUBLIC_URL", default_value = "http://localhost:8080")]
+    #[arg(long, env = "LEYDEN_PUBLIC_URL", default_value = "http://localhost:8080")]
     public_url: String,
-    #[arg(long, env = "SHIELDBOLT_WEB", default_value = "./web")]
+    #[arg(long, env = "LEYDEN_WEB", default_value = "./web")]
     web: String,
-    #[arg(long, env = "SHIELDBOLT_LN_URL", default_value = "http://127.0.0.1:9737")]
+    #[arg(long, env = "LEYDEN_LN_URL", default_value = "http://127.0.0.1:9737")]
     ln_url: String,
-    #[arg(long, env = "SHIELDBOLT_LN_TOKEN")]
+    #[arg(long, env = "LEYDEN_LN_TOKEN")]
     ln_token: String,
-    #[arg(long, env = "SHIELDBOLT_FEE_BPS", default_value_t = 100)]
+    #[arg(long, env = "LEYDEN_FEE_BPS", default_value_t = 100)]
     fee_bps: u64,
-    #[arg(long, env = "SHIELDBOLT_MIN_SATS", default_value_t = 100)]
+    #[arg(long, env = "LEYDEN_MIN_SATS", default_value_t = 100)]
     min_sats: u64,
-    #[arg(long, env = "SHIELDBOLT_MAX_SATS", default_value_t = 20_000)]
+    #[arg(long, env = "LEYDEN_MAX_SATS", default_value_t = 20_000)]
     max_sats: u64,
-    #[arg(long, env = "SHIELDBOLT_QUOTE_TTL", default_value_t = 20 * 60)]
+    #[arg(long, env = "LEYDEN_QUOTE_TTL", default_value_t = 20 * 60)]
     quote_ttl_secs: i64,
-    #[arg(long, env = "SHIELDBOLT_ZEC_FEE_ZAT", default_value_t = 15_000)]
+    #[arg(long, env = "LEYDEN_ZEC_FEE_ZAT", default_value_t = 15_000)]
     zec_network_fee_zat: u64,
-    #[arg(long, env = "SHIELDBOLT_MIN_CONF", default_value_t = 1)]
+    #[arg(long, env = "LEYDEN_MIN_CONF", default_value_t = 1)]
     min_conf: u32,
     /// Seconds to keep linking data of finished swaps (default 24 h).
-    #[arg(long, env = "SHIELDBOLT_RETAIN_SECS", default_value_t = 24 * 3600)]
+    #[arg(long, env = "LEYDEN_RETAIN_SECS", default_value_t = 24 * 3600)]
     retain_secs: i64,
 }
 

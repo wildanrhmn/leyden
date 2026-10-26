@@ -1580,6 +1580,43 @@ dependencies = [
 ]
 
 [[package]]
+name = "leyden"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "axum",
+ "bip0039",
+ "clap",
+ "hex",
+ "orchard",
+ "rand 0.10.3",
+ "reqwest",
+ "rusqlite",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "time",
+ "tokio",
+ "tonic",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+ "zcash_address",
+ "zcash_client_backend",
+ "zcash_client_sqlite",
+ "zcash_keys",
+ "zcash_primitives",
+ "zcash_proofs",
+ "zcash_protocol",
+ "zeroize",
+ "zip32",
+ "zip321",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.190"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2788,43 +2825,6 @@ dependencies = [
  "either",
  "incrementalmerkletree",
  "tracing",
-]
-
-[[package]]
-name = "shieldbolt"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "axum",
- "bip0039",
- "clap",
- "hex",
- "orchard",
- "rand 0.10.3",
- "reqwest",
- "rusqlite",
- "secrecy",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "time",
- "tokio",
- "tonic",
- "tower-http",
- "tracing",
- "tracing-subscriber",
- "uuid",
- "zcash_address",
- "zcash_client_backend",
- "zcash_client_sqlite",
- "zcash_keys",
- "zcash_primitives",
- "zcash_proofs",
- "zcash_protocol",
- "zeroize",
- "zip32",
- "zip321",
 ]
 
 [[package]]

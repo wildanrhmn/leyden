@@ -133,7 +133,7 @@ impl App {
         let now = now();
         let invoice = self
             .ln
-            .create_invoice(amount_sats, Some("Shieldbolt: Lightning to shielded ZEC"), description_hash, self.cfg.quote_ttl_secs as u64)
+            .create_invoice(amount_sats, Some("Leyden: Lightning to shielded ZEC"), description_hash, self.cfg.quote_ttl_secs as u64)
             .await?;
         let swap = Swap {
             id: uuid::Uuid::new_v4().simple().to_string(),
@@ -274,7 +274,7 @@ impl App {
                     return Ok(());
                 }
                 let to = s.refund_address.clone().ok_or_else(|| anyhow!("no refund address"))?;
-                let memo = format!("Shieldbolt refund, swap {}", &s.id[..8]);
+                let memo = format!("Leyden refund, swap {}", &s.id[..8]);
                 let txid = self.wallet.send(&to, amount as u64, Some(&memo)).await?;
                 s.refund_txid = Some(txid);
                 s.state = state::REFUNDED.into();
@@ -299,8 +299,8 @@ impl App {
     async fn pay_out(&self, s: &mut Swap) -> Result<()> {
         let to = s.payout_address.clone().ok_or_else(|| anyhow!("no payout address"))?;
         let memo = match &s.payout_memo {
-            Some(m) if !m.is_empty() => format!("{m}\n— via Shieldbolt ⚡"),
-            _ => "Received over Lightning via Shieldbolt ⚡".to_string(),
+            Some(m) if !m.is_empty() => format!("{m}\n— via Leyden ⚡"),
+            _ => "Received over Lightning via Leyden ⚡".to_string(),
         };
         let txid = self.wallet.send(&to, s.zec_zat as u64, Some(&memo)).await?;
         s.payout_txid = Some(txid);

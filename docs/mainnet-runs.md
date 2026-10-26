@@ -1,7 +1,8 @@
 # Mainnet runs
 
 Every swap below ran on Zcash mainnet and Bitcoin Lightning mainnet, through the
-gateway in this repository. Amounts are deliberately small.
+gateway in this repository. Amounts are deliberately small. The project was called
+Shieldbolt when these ran, which is why that name appears in the memos below.
 
 ## 1. ZEC → Lightning (2026-10-26)
 

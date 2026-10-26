@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shieldbolt app</title>
+<title>Leyden app</title>
 <meta name="description" content="Pay Lightning invoices from shielded ZEC, and receive Lightning payments as shielded ZEC.">
 <meta name="referrer" content="no-referrer">
 <link rel="stylesheet" href="/base.css">
@@ -13,15 +13,15 @@
 <body>
 <header class="nav" data-nav>
   <div class="nav-in">
-    <a class="brand" href="/" aria-label="Shieldbolt home">
+    <a class="brand" href="/" aria-label="Leyden home">
       <img src="/brand/logo.svg" alt="" width="26" height="26">
-      <span>Shieldbolt</span>
+      <span>Leyden</span>
     </a>
     <nav class="nav-links" id="nav-menu" aria-label="Primary">
       <a href="/#how">How it works</a>
       <a href="/#privacy">Privacy</a>
       <a href="/#proof">Proof</a>
-      <a href="https://github.com/wildanrhmn/shieldbolt" rel="noopener">Docs</a>
+      <a href="https://github.com/wildanrhmn/leyden" rel="noopener">Docs</a>
       <a class="nav-cta-menu" href="/app/">Launch app</a>
     </nav>
     <div class="nav-end">
@@ -101,7 +101,7 @@
         <tr><th scope="row">Zcash chain observers</th><td>That a shielded transaction happened</td><td>Sender, recipient, amount, memo, that Lightning was involved</td></tr>
         <tr><th scope="row">Bitcoin chain observers</th><td>Nothing. Lightning payments are off-chain</td><td>Everything about the payment</td></tr>
         <tr><th scope="row">Lightning routing nodes</th><td>The amount passing through them</td><td>Who paid, and who was paid (onion routing)</td></tr>
-        <tr><th scope="row">The payee</th><td>That Shieldbolt's node paid their invoice</td><td>Your Zcash address, your wallet, your balance</td></tr>
+        <tr><th scope="row">The payee</th><td>That Leyden's node paid their invoice</td><td>Your Zcash address, your wallet, your balance</td></tr>
         <tr><th scope="row">The lightwalletd server</th><td>That the gateway downloads every block</td><td>Which outputs are the gateway's. It never asks for a transaction by ID</td></tr>
         <tr class="us"><th scope="row">This gateway</th><td>The invoice it pays or issues, the ZEC amount, your refund or payout address, your IP unless you use Tor</td><td>Your other transactions or balance. Linking data is erased <span id="retain">24 hours</span> after a swap finishes</td></tr>
       </tbody>
@@ -112,8 +112,8 @@
 </main>
 
 <footer class="foot">
-  <span>Shieldbolt: shielded Zcash ⇄ Bitcoin Lightning.</span>
-  <a href="https://github.com/wildanrhmn/shieldbolt" rel="noopener">Source</a>
+  <span>Leyden: shielded Zcash ⇄ Bitcoin Lightning.</span>
+  <a href="https://github.com/wildanrhmn/leyden" rel="noopener">Source</a>
 </footer>
 
 <template id="tpl-swap">

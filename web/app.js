@@ -83,7 +83,7 @@ function wireForm(form, handler) {
   });
 }
 
-const savedAddress = store.get("shieldbolt.address");
+const savedAddress = store.get("leyden.address");
 if (savedAddress) {
   ["#pay-refund", "#rcv-address", "#ln-address"].forEach((s) => { $(s).value = savedAddress; });
 }
@@ -91,7 +91,7 @@ if (savedAddress) {
 wireForm($("#form-pay"), async () => {
   const refund = $("#pay-refund").value.trim();
   const swap = await api("/api/swaps/pay", { invoice: $("#pay-invoice").value.trim(), refund_address: refund });
-  store.set("shieldbolt.address", refund);
+  store.set("leyden.address", refund);
   showSwap(swap);
 });
 
@@ -102,7 +102,7 @@ wireForm($("#form-receive"), async () => {
     amount_sats: Number($("#rcv-amount").value),
     memo: $("#rcv-memo").value.trim() || null,
   });
-  store.set("shieldbolt.address", addr);
+  store.set("leyden.address", addr);
   showSwap(swap);
 });
 $("#rcv-amount").addEventListener("input", estimateReceive);

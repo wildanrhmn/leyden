@@ -1,4 +1,4 @@
-// Shieldbolt Lightning sidecar.
+// Leyden Lightning sidecar.
 //
 // A small localhost-only HTTP service that gives the Rust gateway a backend-neutral
 // Lightning interface. This implementation uses a self-custodial Spark wallet
@@ -14,18 +14,18 @@
 //   GET  /balance                                                   -> {sats}
 //   POST /claim-deposits                                            -> {claimed: [...]}
 //
-// Every request must carry `Authorization: Bearer $SHIELDBOLT_LN_TOKEN`.
+// Every request must carry `Authorization: Bearer $LEYDEN_LN_TOKEN`.
 
 import http from "node:http";
 import fs from "node:fs";
 import { SparkWallet } from "@buildonspark/spark-sdk";
 import { decode as decodeBolt11 } from "light-bolt11-decoder";
 
-const PORT = Number(process.env.SHIELDBOLT_LN_PORT ?? 9737);
-const TOKEN = process.env.SHIELDBOLT_LN_TOKEN;
-const MNEMONIC_FILE = process.env.SHIELDBOLT_LN_MNEMONIC;
+const PORT = Number(process.env.LEYDEN_LN_PORT ?? 9737);
+const TOKEN = process.env.LEYDEN_LN_TOKEN;
+const MNEMONIC_FILE = process.env.LEYDEN_LN_MNEMONIC;
 if (!TOKEN || !MNEMONIC_FILE) {
-  console.error("SHIELDBOLT_LN_TOKEN and SHIELDBOLT_LN_MNEMONIC are required");
+  console.error("LEYDEN_LN_TOKEN and LEYDEN_LN_MNEMONIC are required");
   process.exit(1);
 }
 

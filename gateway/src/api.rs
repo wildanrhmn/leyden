@@ -21,7 +21,7 @@ use crate::{
 
 pub struct Web {
     pub app: Arc<App>,
-    /// e.g. "https://shieldbolt.example"
+    /// e.g. "https://leyden.example"
     pub public_url: String,
 }
 
