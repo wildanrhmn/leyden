@@ -362,12 +362,12 @@ html.motion.intro-ready .hero [data-reveal] { animation: none; }
 #foot-terms { font-family: var(--mono); font-size: 12.5px; }
 
 /* The wordmark sits nearly invisible; a charge of amber light passes over it once, then follows the cursor. */
-.foot-mark { position: relative; height: clamp(64px, 17vw, 250px); margin-top: 8px; user-select: none; pointer-events: none; }
-.foot-mark span { position: absolute; left: 50%; top: 0; transform: translateX(-50%); font-weight: 500; font-size: clamp(90px, 25vw, 360px); line-height: .9; letter-spacing: -.065em; white-space: nowrap; color: #0D1017;
-  -webkit-mask: linear-gradient(to bottom, #000 35%, transparent 95%); mask: linear-gradient(to bottom, #000 35%, transparent 95%); }
-.foot-mark .lit { color: rgb(255 194 26 / .5); opacity: var(--glow, 0);
-  -webkit-mask-image: radial-gradient(circle var(--r, 220px) at var(--x, -30%) var(--y, 40%), #000, transparent 70%), linear-gradient(to bottom, #000 35%, transparent 95%);
-          mask-image: radial-gradient(circle var(--r, 220px) at var(--x, -30%) var(--y, 40%), #000, transparent 70%), linear-gradient(to bottom, #000 35%, transparent 95%);
+.foot-mark { position: relative; margin-top: 16px; padding-bottom: clamp(20px, 3vw, 44px); user-select: none; pointer-events: none; }
+.foot-mark span { display: block; text-align: center; font-weight: 500; font-size: clamp(90px, 25vw, 360px); line-height: 1; letter-spacing: -.065em; white-space: nowrap; color: #0D1017;
+  -webkit-mask: linear-gradient(to bottom, #000 55%, rgb(0 0 0 / .35) 100%); mask: linear-gradient(to bottom, #000 55%, rgb(0 0 0 / .35) 100%); }
+.foot-mark .lit { position: absolute; inset: 0 0 auto; color: rgb(255 194 26 / .5); opacity: var(--glow, 0);
+  -webkit-mask-image: radial-gradient(circle var(--r, 220px) at var(--x, -30%) var(--y, 40%), #000, transparent 70%), linear-gradient(to bottom, #000 55%, rgb(0 0 0 / .35) 100%);
+          mask-image: radial-gradient(circle var(--r, 220px) at var(--x, -30%) var(--y, 40%), #000, transparent 70%), linear-gradient(to bottom, #000 55%, rgb(0 0 0 / .35) 100%);
   -webkit-mask-composite: source-in;
           mask-composite: intersect; }
 
