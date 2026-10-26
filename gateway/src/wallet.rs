@@ -189,6 +189,17 @@ impl ZecWallet {
         Ok((ua.encode(&self.params), d))
     }
 
+    /// The operator's own funding address: Orchard-only, at diversifier index 0. Quote
+    /// addresses start at 2^32, so ZEC sent here only adds liquidity and is never
+    /// mistaken for a swap deposit.
+    pub fn funding_address(&self) -> Result<String> {
+        let ua = self
+            .ufvk
+            .address(DiversifierIndex::from(0u64), UnifiedAddressRequest::ORCHARD)
+            .map_err(|e| anyhow!("address generation failed: {e:?}"))?;
+        Ok(ua.encode(&self.params))
+    }
+
     /// The last height the wallet has scanned up to (the chain tip as of last sync).
     pub fn chain_height(&self) -> Result<Option<u32>> {
         Ok(self.db()?.chain_height()?.map(u32::from))

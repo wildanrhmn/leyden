@@ -126,6 +126,7 @@ LEYDEN_LN_TOKEN=$(openssl rand -hex 24) LEYDEN_LN_MNEMONIC=~/.leyden/spark.mnemo
 # Gateway (creates its ZEC wallet on first run)
 cd gateway && cargo build --release
 ./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic status        # shows the wallet
+./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic address       # where to send ZEC to top up liquidity
 LEYDEN_LN_TOKEN=… ./target/release/leyden --zec-mnemonic ~/.leyden/zec.mnemonic serve --web ../web
 ```
 

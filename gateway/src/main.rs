@@ -32,6 +32,8 @@ enum Cmd {
     Serve(ServeArgs),
     /// Sync the wallet and print its state.
     Status,
+    /// Print the gateway's funding address, for topping up its ZEC (never used for quotes).
+    Address,
     /// Send shielded ZEC from the gateway wallet (operator use).
     Send {
         to: String,
@@ -120,6 +122,7 @@ async fn main() -> Result<()> {
                 );
             }
         }
+        Cmd::Address => println!("{}", wallet.funding_address()?),
         Cmd::Send { to, zat, memo } => {
             wallet.sync().await?;
             println!("{}", wallet.send(&to, zat, memo.as_deref()).await?);
