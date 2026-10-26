@@ -76,13 +76,112 @@
       <div><dt>Live rate</dt><dd id="stat-rate">…</dd></div>
     </dl>
   </section>
+
+  <section class="hiw" id="how" aria-labelledby="hiw-title">
+    <header class="sec-head">
+      <h2 id="hiw-title">Three steps. <span>Nothing left to trace.</span></h2>
+      <div class="dir-toggle" role="tablist" aria-label="Direction">
+        <span class="dir-thumb" aria-hidden="true"></span>
+        <button type="button" role="tab" aria-selected="true" data-dir="pay">Pay with ZEC</button>
+        <button type="button" role="tab" aria-selected="false" data-dir="get">Get paid in ZEC</button>
+      </div>
+    </header>
+
+    <div class="hiw-stage" data-dir="pay">
+      <div class="hiw-visual" aria-live="polite">
+        <div class="screen">
+          <!-- Pay with ZEC -->
+          <div class="vis" data-dir="pay" data-step="0">
+            <p class="vis-label">Lightning invoice</p>
+            <p class="field mono" data-type="lnbc10u1p4daa67pp5eju43ez3ea5w8dhdjpg4frkkuqpgpdw4mkf2weeagsf29fmzyk4s"></p>
+            <div class="quote">
+              <div class="row"><span>You pay</span><b class="mono">0.00067778 ZEC</b></div>
+              <div class="row"><span>To</span><b class="mono">u13sms2z4v…cut9f2e</b></div>
+              <p class="tag"><i class="dot-indigo"></i>One-time shielded address, never reused</p>
+            </div>
+          </div>
+          <div class="vis" data-dir="pay" data-step="1">
+            <p class="vis-label">What the Zcash chain shows</p>
+            <p class="txid mono">tx 0c54e2b8…8249a004 <span class="chip">Shielded · Ironwood</span></p>
+            <dl class="ledger">
+              <div><dt>From</dt><dd class="mono" data-redact="u1chuw3zehsktxjuwysq">u1chuw3zehsktxjuwysq</dd></div>
+              <div><dt>To</dt><dd class="mono" data-redact="u13sms2z4vt2u8hfkrva">u13sms2z4vt2u8hfkrva</dd></div>
+              <div><dt>Amount</dt><dd class="mono" data-redact="0.00067778 ZEC">0.00067778 ZEC</dd></div>
+              <div><dt>Memo</dt><dd class="mono" data-redact="512-byte encrypted field">512-byte encrypted field</dd></div>
+            </dl>
+            <p class="foot">No transparent input or output. Nothing links it to Lightning.</p>
+          </div>
+          <div class="vis" data-dir="pay" data-step="2">
+            <div class="paid">
+              <svg class="check" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M14 24.5l7 7 13-14"/></svg>
+              <div><p class="vis-label">Invoice paid over Lightning</p><p class="big-amt">1,000 <small>sats</small></p></div>
+            </div>
+            <div class="row col"><span>Preimage</span><b class="mono" data-scramble="2f507d7a6f6a4e8a…3e8a7c06">2f507d7a6f6a4e8a…3e8a7c06</b></div>
+            <p class="tag ok"><i class="dot-ok"></i>sha256(preimage) matches the payment hash</p>
+            <p class="foot">Bitcoin chain: no transaction.</p>
+          </div>
+
+          <!-- Get paid in ZEC -->
+          <div class="vis" data-dir="get" data-step="0">
+            <p class="vis-label">Your shielded address</p>
+            <p class="field mono" data-type="u1chuw3zehsktxjuwysqtstsylw6ensyxmf7unzs9a20eaa9"></p>
+            <div class="invoice-row">
+              <div class="qr-mini" data-qr="LIGHTNING:LNBC6U1P4DA7URPP5W49EHDTWQSM50D048T7DTMXU85JW3C54XATQ9Q4X0H8"></div>
+              <div>
+                <p class="vis-label">Or share your Lightning address</p>
+                <p class="mono addr">demo@43-134-116-188.sslip.io</p>
+              </div>
+            </div>
+          </div>
+          <div class="vis" data-dir="get" data-step="1">
+            <p class="vis-label">Pay from any Lightning wallet</p>
+            <ul class="wallets">
+              <li>Phoenix</li><li>Wallet of Satoshi</li><li>Strike</li><li>Cash App</li><li>Breez</li><li>Alby</li><li>Zeus</li><li>Blink</li>
+            </ul>
+            <div class="bolt-line" aria-hidden="true"><i></i></div>
+            <p class="foot">Lightning payments are off-chain. Routing nodes see an amount, not the endpoints.</p>
+          </div>
+          <div class="vis" data-dir="get" data-step="2">
+            <p class="vis-label">Arrived, shielded</p>
+            <p class="big-amt">0.00024321 <small>ZEC</small></p>
+            <div class="memo">
+              <p class="vis-label">Encrypted memo</p>
+              <p class="mono" data-decrypt="zap from a Lightning wallet, landing shielded">zap from a Lightning wallet, landing shielded</p>
+            </div>
+            <p class="foot">Only the recipient's viewing key can read it.</p>
+          </div>
+        </div>
+      </div>
+
+      <ol class="hiw-steps">
+        <li class="step" data-step="0">
+          <span class="step-n">01</span>
+          <h3><span data-dir="pay">Paste a Lightning invoice</span><span data-dir="get">Enter your shielded address</span></h3>
+          <p><span data-dir="pay">Get a live quote and a fresh shielded address made for this one payment. No account, no wallet to connect.</span><span data-dir="get">Pick an amount and get a Lightning invoice, or claim a Lightning address that always lands in your shielded wallet.</span></p>
+        </li>
+        <li class="step" data-step="1">
+          <span class="step-n">02</span>
+          <h3><span data-dir="pay">Pay from any shielded wallet</span><span data-dir="get">They pay from any Lightning wallet</span></h3>
+          <p><span data-dir="pay">Scan the QR with Zodl, Zkool or any Zcash wallet. On chain it is one shielded transaction: no sender, no recipient, no amount.</span><span data-dir="get">Phoenix, Strike, Cash App, anything that speaks Lightning. Nothing about the payment is written to the Bitcoin chain.</span></p>
+        </li>
+        <li class="step" data-step="2">
+          <span class="step-n">03</span>
+          <h3><span data-dir="pay">The invoice is paid</span><span data-dir="get">Shielded ZEC arrives</span></h3>
+          <p><span data-dir="pay">The gateway pays over Lightning about a minute later and hands you the preimage, the payee's cryptographic receipt.</span><span data-dir="get">Seconds after the invoice is paid, ZEC lands in your shielded address, with the payer's note as an encrypted memo.</span></p>
+        </li>
+      </ol>
+    </div>
+  </section>
 </main>
 <script src="/nav.js"></script>
 <script src="/vendor/gsap/gsap.min.js"></script>
 <script src="/vendor/gsap/SplitText.min.js"></script>
 <script src="/vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="/vendor/gsap/ScrambleTextPlugin.min.js"></script>
 <script src="/landing.js"></script>
 <script src="/hero.js"></script>
 <script src="/fluid.js"></script>
+<script src="/vendor/qrcode.js"></script>
+<script src="/hiw.js"></script>
 </body>
 </html>

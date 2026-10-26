@@ -98,3 +98,109 @@ html.motion .hero [data-reveal] { opacity: 0; animation: reveal-fallback .6s 2.5
 html.motion .hero .beam, html.motion .hero .fluid { opacity: 0; }
 @keyframes reveal-fallback { to { opacity: 1; } }
 html.motion.intro-ready .hero [data-reveal] { animation: none; }
+
+/* --- How it works ---------------------------------------------------------------- */
+.hiw { max-width: 1200px; margin: 0 auto; padding: 120px clamp(16px, 4vw, 32px) 80px; }
+.sec-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px; }
+.sec-head h2 { margin: 0; font-weight: 300; font-size: clamp(32px, 4.6vw, 56px); line-height: 1.05; letter-spacing: -.04em; }
+.sec-head h2 span { color: var(--ink-3); }
+
+.dir-toggle { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: rgb(255 255 255 / .04); border: 1px solid var(--line); }
+.dir-toggle button { position: relative; z-index: 1; border: 0; background: none; color: var(--ink-2); font: 500 14px var(--sans); letter-spacing: -.01em; padding: 10px 20px; border-radius: 999px; cursor: pointer; transition: color .25s; white-space: nowrap; }
+.dir-toggle button[aria-selected="true"] { color: #0A0A0B; }
+.dir-thumb { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: var(--bolt); transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+.dir-toggle[data-active="get"] .dir-thumb { transform: translateX(100%); }
+
+.hiw-stage { position: relative; margin-top: 72px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); }
+
+/* The screen stays in view while the steps scroll past. */
+.hiw-visual { position: sticky; top: max(96px, calc(50vh - 190px)); align-self: start; }
+.screen { position: relative; height: 380px; border-radius: 28px; background: rgb(255 255 255 / .025); border: 1px solid var(--line); box-shadow: 0 40px 80px -48px rgb(0 0 0 / .9), inset 0 1px 0 rgb(255 255 255 / .04); overflow: hidden; }
+.screen::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 20% 0%, rgb(76 86 255 / .10), transparent 70%); pointer-events: none; }
+.hiw-stage[data-dir="get"] .screen::before { background: radial-gradient(60% 50% at 80% 0%, rgb(255 194 26 / .06), transparent 70%); }
+
+.vis { position: absolute; inset: 0; padding: 32px; display: flex; flex-direction: column; gap: 16px; opacity: 0; visibility: hidden; }
+.vis.on { opacity: 1; visibility: visible; }
+.vis-label { margin: 0; font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.vis .mono { font-family: var(--mono); font-size: 13.5px; letter-spacing: -.01em; }
+.field { margin: 0; min-height: 50px; padding: 15px 16px; border-radius: 14px; background: rgb(255 255 255 / .04); border: 1px solid var(--line); color: var(--ink); overflow: hidden; white-space: nowrap; text-overflow: clip; }
+.field::after { content: ""; display: inline-block; width: 1px; height: 16px; margin-left: 2px; vertical-align: -3px; background: var(--bolt); animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.quote { display: grid; gap: 10px; padding: 18px; border-radius: 16px; background: rgb(255 255 255 / .03); border: 1px solid rgb(255 255 255 / .05); }
+.row { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--ink-2); }
+.row b { color: var(--ink); font-weight: 400; }
+.row.col { flex-direction: column; gap: 6px; }
+.tag { margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+.tag i { width: 6px; height: 6px; border-radius: 50%; }
+.dot-indigo { background: #7C84FF; }
+.dot-ok { background: var(--ok); }
+.tag.ok { color: var(--ok); }
+.foot { margin: auto 0 0; font-size: 13px; color: var(--ink-3); }
+
+.txid { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--ink-2); }
+.chip { font: 500 11px var(--sans); letter-spacing: .02em; padding: 4px 9px; border-radius: 999px; background: rgb(124 132 255 / .14); color: #AEB4FF; }
+.ledger { margin: 0; display: grid; gap: 2px; border-radius: 16px; overflow: hidden; border: 1px solid rgb(255 255 255 / .05); }
+.ledger div { display: grid; grid-template-columns: 90px 1fr; align-items: center; padding: 12px 16px; background: rgb(255 255 255 / .025); }
+.ledger dt { font-size: 13px; color: var(--ink-3); }
+.ledger dd { margin: 0; color: var(--ink); white-space: nowrap; overflow: hidden; }
+.ledger dd.redacted { color: #3A3F55; letter-spacing: 0; }
+
+.paid { display: flex; align-items: center; gap: 18px; }
+.check { width: 52px; height: 52px; flex-shrink: 0; }
+.check circle { fill: rgb(255 194 26 / .1); stroke: var(--bolt); stroke-width: 1.5; }
+.check path { fill: none; stroke: var(--bolt); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 32; stroke-dashoffset: 0; }
+.big-amt { margin: 4px 0 0; font-weight: 300; font-size: 40px; line-height: 1; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.big-amt small { font-size: 16px; color: var(--ink-3); letter-spacing: 0; }
+
+.invoice-row { display: flex; align-items: center; gap: 20px; padding: 16px; border-radius: 16px; background: rgb(255 255 255 / .03); border: 1px solid rgb(255 255 255 / .05); }
+.qr-mini { width: 112px; height: 112px; padding: 8px; border-radius: 12px; background: #fff; flex-shrink: 0; }
+.qr-mini svg { width: 100%; height: 100%; display: block; }
+.addr { margin: 8px 0 0; color: var(--bolt); word-break: break-all; }
+
+.wallets { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.wallets li { padding: 9px 14px; border-radius: 999px; background: rgb(255 255 255 / .05); border: 1px solid var(--line); font-size: 14px; color: var(--ink); }
+.bolt-line { position: relative; height: 2px; margin: 8px 0; background: linear-gradient(90deg, transparent, rgb(255 194 26 / .25), transparent); }
+.bolt-line i { position: absolute; top: -1px; left: 0; width: 120px; height: 4px; border-radius: 4px; background: linear-gradient(90deg, transparent, #FFF3C4); filter: drop-shadow(0 0 6px rgb(255 194 26 / .8)); }
+.memo { padding: 16px; border-radius: 16px; background: rgb(255 255 255 / .03); border: 1px solid rgb(255 255 255 / .05); display: grid; gap: 8px; }
+.memo .mono { margin: 0; color: var(--ink); }
+
+/* Steps: generous spacing so each one gets its own moment while the screen is sticky. */
+.hiw-steps { list-style: none; margin: 0; padding: 0 0 0 36px; }
+.step { min-height: 62vh; padding: 64px 0; opacity: .32; transition: opacity .5s; }
+.step:first-child { padding-top: 40px; }
+.step:last-child { min-height: 46vh; }
+.step.on { opacity: 1; }
+.step-n { font: 500 13px var(--mono); color: var(--bolt); }
+.step h3 { margin: 14px 0 12px; font-weight: 400; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.15; letter-spacing: -.03em; }
+.step p { margin: 0; max-width: 440px; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+
+/* Text that differs by direction. */
+.hiw-stage [data-dir] { display: none; }
+.hiw-stage[data-dir="pay"] [data-dir="pay"], .hiw-stage[data-dir="get"] [data-dir="get"] { display: revert; }
+.hiw-stage .vis[data-dir] { display: flex; }
+.hiw-stage[data-dir="pay"] .vis[data-dir="get"], .hiw-stage[data-dir="get"] .vis[data-dir="pay"] { display: none; }
+
+/* A thin rail beside the steps that fills with light as you read down (--fill set by hiw.js). */
+.hiw-steps { position: relative; }
+.hiw-steps::before, .hiw-steps::after { content: ""; position: absolute; top: 40px; bottom: 0; left: 0; width: 1px; background: var(--line); }
+.hiw-steps::after { left: -1px; width: 3px; border-radius: 3px; transform-origin: top; transform: scaleY(var(--fill, 0)); background: linear-gradient(to bottom, #7C84FF, var(--bolt)); box-shadow: 0 0 12px rgb(255 194 26 / .35); }
+
+@media (max-width: 900px) {
+  .hiw { padding-top: 88px; }
+  .hiw-stage { grid-template-columns: 1fr; gap: 0; margin-top: 48px; }
+  .hiw-visual { top: 72px; z-index: 2; }
+  /* On phones the steps scroll under the screen: give it a solid backdrop that fades them out. */
+  .hiw-visual::before { content: ""; position: absolute; z-index: -1; left: -24px; right: -24px; top: -96px; bottom: -56px; background: linear-gradient(to bottom, var(--bg) 78%, rgb(5 6 10 / 0)); }
+  .screen { height: 350px; background: #0B0D13; }
+  .ledger div { padding: 9px 14px; grid-template-columns: 76px 1fr; }
+  .vis { gap: 12px; }
+  .hiw-steps { padding-top: 24px; }
+  .vis { padding: 22px; }
+  .hiw-steps { padding-left: 24px; }
+  .step { min-height: 52vh; padding: 48px 0; }
+  .big-amt { font-size: 32px; }
+  .qr-mini { width: 92px; height: 92px; }
+}
+@media (max-width: 420px) {
+  .dir-toggle button { padding: 10px 14px; font-size: 13px; }
+}
