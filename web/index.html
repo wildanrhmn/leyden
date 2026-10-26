@@ -78,6 +78,7 @@
   </section>
 
   <section class="hiw" id="how" aria-labelledby="hiw-title">
+    <div class="hiw-pin">
     <header class="sec-head">
       <h2 id="hiw-title">Three steps. <span>Nothing left to trace.</span></h2>
       <div class="dir-toggle" role="tablist" aria-label="Direction">
@@ -90,65 +91,134 @@
     <div class="hiw-stage" data-dir="pay">
       <div class="hiw-visual" aria-live="polite">
         <div class="screen">
-          <!-- Pay with ZEC -->
+
+          <!-- Pay with ZEC · 01: an invoice goes in, a quote comes out -->
           <div class="vis" data-dir="pay" data-step="0">
-            <p class="vis-label">Lightning invoice</p>
-            <p class="field mono" data-type="lnbc10u1p4daa67pp5eju43ez3ea5w8dhdjpg4frkkuqpgpdw4mkf2weeagsf29fmzyk4s"></p>
-            <div class="quote">
-              <div class="row"><span>You pay</span><b class="mono">0.00067778 ZEC</b></div>
-              <div class="row"><span>To</span><b class="mono">u13sms2z4v…cut9f2e</b></div>
-              <p class="tag"><i class="dot-indigo"></i>One-time shielded address, never reused</p>
+            <div class="panel">
+              <div class="inv-head">
+                <span class="ln-ico"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.2 1 3.5 9.2h3.9L6.6 15l5.9-8.4H8.6z" fill="currentColor"/></svg></span>
+                <span class="mono inv-str">lnbc10u1p4daa67pp5eju…cwcu</span>
+                <span class="pill-tag">Pasted</span>
+              </div>
+              <dl class="kv">
+                <div><dt>Amount</dt><dd>1,000 sats</dd></div>
+                <div><dt>Description</dt><dd>coffee</dd></div>
+                <div><dt>Expires</dt><dd>in 60 min</dd></div>
+              </dl>
             </div>
-          </div>
-          <div class="vis" data-dir="pay" data-step="1">
-            <p class="vis-label">What the Zcash chain shows</p>
-            <p class="txid mono">tx 0c54e2b8…8249a004 <span class="chip">Shielded · Ironwood</span></p>
-            <dl class="ledger">
-              <div><dt>From</dt><dd class="mono" data-redact="u1chuw3zehsktxjuwysq">u1chuw3zehsktxjuwysq</dd></div>
-              <div><dt>To</dt><dd class="mono" data-redact="u13sms2z4vt2u8hfkrva">u13sms2z4vt2u8hfkrva</dd></div>
-              <div><dt>Amount</dt><dd class="mono" data-redact="0.00067778 ZEC">0.00067778 ZEC</dd></div>
-              <div><dt>Memo</dt><dd class="mono" data-redact="512-byte encrypted field">512-byte encrypted field</dd></div>
-            </dl>
-            <p class="foot">No transparent input or output. Nothing links it to Lightning.</p>
-          </div>
-          <div class="vis" data-dir="pay" data-step="2">
-            <div class="paid">
-              <svg class="check" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M14 24.5l7 7 13-14"/></svg>
-              <div><p class="vis-label">Invoice paid over Lightning</p><p class="big-amt">1,000 <small>sats</small></p></div>
+            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
+            <div class="panel quote-panel">
+              <img class="tok" src="/brand/tokens/zec.svg" alt="" width="40" height="40">
+              <div class="q-main">
+                <p class="lbl">You pay</p>
+                <p class="amt">0.00067778 <small>ZEC</small></p>
+              </div>
+              <p class="usd">≈ $0.82</p>
+              <p class="to">to <span class="mono">u13sms2z…cut9f2e</span><span class="badge-once">One-time address</span></p>
             </div>
-            <div class="row col"><span>Preimage</span><b class="mono" data-scramble="2f507d7a6f6a4e8a…3e8a7c06">2f507d7a6f6a4e8a…3e8a7c06</b></div>
-            <p class="tag ok"><i class="dot-ok"></i>sha256(preimage) matches the payment hash</p>
-            <p class="foot">Bitcoin chain: no transaction.</p>
           </div>
 
-          <!-- Get paid in ZEC -->
+          <!-- Pay with ZEC · 02: what the chain sees -->
+          <div class="vis" data-dir="pay" data-step="1">
+            <div class="tx-head">
+              <div><p class="lbl">Zcash transaction</p><p class="mono tx-id">0c54e2b8…8249a004</p></div>
+              <span class="chip">Shielded · Ironwood</span>
+            </div>
+            <dl class="ledger">
+              <div><dt>From</dt><dd class="mono" data-redact="u1chuw3zehsktxjuwy">u1chuw3zehsktxjuwy</dd></div>
+              <div><dt>To</dt><dd class="mono" data-redact="u13sms2z4vt2u8hfkr">u13sms2z4vt2u8hfkr</dd></div>
+              <div><dt>Amount</dt><dd class="mono" data-redact="0.00067778 ZEC">0.00067778 ZEC</dd></div>
+              <div><dt>Memo</dt><dd class="mono" data-redact="512-byte encrypted">512-byte encrypted</dd></div>
+            </dl>
+            <div class="tiles">
+              <div><b>0</b><span>transparent inputs</span></div>
+              <div><b>0</b><span>transparent outputs</span></div>
+              <div><b>0.0001</b><span>ZEC network fee</span></div>
+            </div>
+          </div>
+
+          <!-- Pay with ZEC · 03: paid, with proof -->
+          <div class="vis" data-dir="pay" data-step="2">
+            <div class="paid-hero">
+              <svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle class="ring-bg" cx="32" cy="32" r="29"/><circle class="ring-fg" cx="32" cy="32" r="29"/><path class="ring-check" d="M21 33l7.5 7.5L44 25"/></svg>
+              <div><p class="lbl">Invoice paid over Lightning</p><p class="amt">1,000 <small>sats</small></p></div>
+            </div>
+            <div class="panel proof">
+              <div class="kvrow"><span>Preimage</span><b class="mono" data-scramble="2f507d7a6f6a…e8a7c06">2f507d7a6f6a…e8a7c06</b></div>
+              <div class="kvrow"><span>sha256 of it</span><b class="mono">ccb958e451cf…76225ab</b></div>
+              <p class="verified"><span class="v-dot"></span>Equals the invoice's payment hash</p>
+            </div>
+            <div class="tiles two">
+              <div><b>0</b><span>Bitcoin transactions</span></div>
+              <div><b>~1 min</b><span>broadcast to paid</span></div>
+            </div>
+          </div>
+
+          <!-- Get paid in ZEC · 01: an invoice that pays out shielded -->
           <div class="vis" data-dir="get" data-step="0">
-            <p class="vis-label">Your shielded address</p>
-            <p class="field mono" data-type="u1chuw3zehsktxjuwysqtstsylw6ensyxmf7unzs9a20eaa9"></p>
-            <div class="invoice-row">
+            <div class="panel addr-row">
+              <img class="tok" src="/brand/tokens/zec.svg" alt="" width="36" height="36">
+              <div><p class="lbl">Pay out to</p><p class="mono">u1chuw3zehs…shsvydgnvap</p></div>
+              <span class="badge-once">Shielded</span>
+            </div>
+            <div class="panel inv-card">
               <div class="qr-mini" data-qr="LIGHTNING:LNBC6U1P4DA7URPP5W49EHDTWQSM50D048T7DTMXU85JW3C54XATQ9Q4X0H8"></div>
-              <div>
-                <p class="vis-label">Or share your Lightning address</p>
-                <p class="mono addr">demo@43-134-116-188.sslip.io</p>
+              <div class="inv-meta">
+                <p class="lbl">Lightning invoice</p>
+                <p class="amt">600 <small>sats</small></p>
+                <p class="mono dim">lnbc6u1p4da7ur…5vn2cm</p>
+                <p class="lbl or">or pay the address</p>
+                <p class="addr">demo@43-134-116-188.sslip.io</p>
               </div>
             </div>
           </div>
+
+          <!-- Get paid in ZEC · 02: any Lightning wallet, one gateway -->
           <div class="vis" data-dir="get" data-step="1">
-            <p class="vis-label">Pay from any Lightning wallet</p>
-            <ul class="wallets">
-              <li>Phoenix</li><li>Wallet of Satoshi</li><li>Strike</li><li>Cash App</li><li>Breez</li><li>Alby</li><li>Zeus</li><li>Blink</li>
-            </ul>
-            <div class="bolt-line" aria-hidden="true"><i></i></div>
-            <p class="foot">Lightning payments are off-chain. Routing nodes see an amount, not the endpoints.</p>
+            <p class="lbl center">Paid from any Lightning wallet</p>
+            <svg class="fan" viewBox="0 0 460 250" aria-hidden="true">
+              <g class="fan-lines">
+                <path d="M128 30 C 240 30, 240 125, 330 125"/>
+                <path d="M128 92 C 240 92, 240 125, 330 125"/>
+                <path d="M128 158 C 240 158, 240 125, 330 125"/>
+                <path d="M128 220 C 240 220, 240 125, 330 125"/>
+              </g>
+              <g class="fan-pulses">
+                <path d="M128 30 C 240 30, 240 125, 330 125"/>
+                <path d="M128 92 C 240 92, 240 125, 330 125"/>
+                <path d="M128 158 C 240 158, 240 125, 330 125"/>
+                <path d="M128 220 C 240 220, 240 125, 330 125"/>
+              </g>
+              <g class="fan-wallets">
+                <rect x="6" y="12" width="122" height="36" rx="18"/><text x="67" y="35">Phoenix</text>
+                <rect x="6" y="74" width="122" height="36" rx="18"/><text x="67" y="97">Strike</text>
+                <rect x="6" y="140" width="122" height="36" rx="18"/><text x="67" y="163">Cash App</text>
+                <rect x="6" y="202" width="122" height="36" rx="18"/><text x="67" y="225">Wallet of Satoshi</text>
+              </g>
+              <g class="fan-node">
+                <circle cx="372" cy="125" r="42"/>
+                <path transform="translate(356 107) scale(2)" d="M9.2 1 3.5 9.2h3.9L6.6 15l5.9-8.4H8.6z"/>
+              </g>
+            </svg>
+            <p class="foot center">Off-chain: nothing is written to the Bitcoin chain.</p>
           </div>
+
+          <!-- Get paid in ZEC · 03: it lands, memo and all -->
           <div class="vis" data-dir="get" data-step="2">
-            <p class="vis-label">Arrived, shielded</p>
-            <p class="big-amt">0.00024321 <small>ZEC</small></p>
-            <div class="memo">
-              <p class="vis-label">Encrypted memo</p>
-              <p class="mono" data-decrypt="zap from a Lightning wallet, landing shielded">zap from a Lightning wallet, landing shielded</p>
+            <div class="panel notif">
+              <img class="tok" src="/brand/tokens/zec.svg" alt="" width="40" height="40">
+              <div><p class="lbl">Received · shielded</p><p class="amt">+0.00024321 <small>ZEC</small></p></div>
+              <span class="when">now</span>
             </div>
-            <p class="foot">Only the recipient's viewing key can read it.</p>
+            <div class="panel memo">
+              <p class="lbl">Memo · encrypted to you</p>
+              <p class="memo-text" data-decrypt="zap from a Lightning wallet, landing shielded">zap from a Lightning wallet, landing shielded</p>
+            </div>
+            <div class="tiles two">
+              <div><b>16 s</b><span>invoice paid to ZEC sent</span></div>
+              <div><b>Ironwood</b><span>shielded pool it landed in</span></div>
+            </div>
+            <p class="foot center">tx f2686336…6158b465. Only your viewing key can read the memo.</p>
           </div>
         </div>
       </div>
@@ -170,6 +240,13 @@
           <p><span data-dir="pay">The gateway pays over Lightning about a minute later and hands you the preimage, the payee's cryptographic receipt.</span><span data-dir="get">Seconds after the invoice is paid, ZEC lands in your shielded address, with the payer's note as an encrypted memo.</span></p>
         </li>
       </ol>
+
+      <nav class="hiw-dots" aria-label="Steps">
+        <button type="button" data-goto="0"><i></i><span>01</span></button>
+        <button type="button" data-goto="1"><i></i><span>02</span></button>
+        <button type="button" data-goto="2"><i></i><span>03</span></button>
+      </nav>
+    </div>
     </div>
   </section>
 </main>
