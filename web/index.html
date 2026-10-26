@@ -92,86 +92,66 @@
         <div class="hiw-visual">
           <div class="screen">
 
-            <!-- Pay with ZEC · 01 -->
+            <!-- Pay with ZEC · 01: an amount in sats becomes an amount in ZEC -->
             <div class="vis" data-dir="pay" data-step="0">
-              <p class="s-eyebrow">Lightning invoice</p>
-              <p class="s-code" data-scramble="lnbc10u1p4daa67pp5eju43ez3ea5w8dhd…cwcu">lnbc10u1p4daa67pp5eju43ez3ea5w8dhd…cwcu</p>
-              <dl class="s-rows">
-                <div><dt>Amount</dt><dd>1,000 sat</dd></div>
-                <div><dt>Description</dt><dd>coffee</dd></div>
-                <div><dt>Expires in</dt><dd>60 min</dd></div>
-              </dl>
-              <div class="s-total">
-                <span>You send</span>
-                <b data-count="67778" data-decimals="8">0.00067778</b><em>ZEC</em>
+              <div class="conv">
+                <img src="/brand/tokens/btc.svg" alt="" width="36" height="36">
+                <div><p class="big-num"><b data-count="1000" data-decimals="0">1,000</b> <em>sat</em></p><p class="cap">Lightning invoice</p></div>
               </div>
-              <p class="s-note">to <code>u13sms2z…cut9f2e</code>, a shielded address made for this payment only</p>
+              <div class="conv-link" aria-hidden="true"><i></i></div>
+              <div class="conv">
+                <img src="/brand/tokens/zec.svg" alt="" width="36" height="36">
+                <div><p class="big-num"><b data-count="67778" data-decimals="8">0.00067778</b> <em>ZEC</em></p><p class="cap">to a shielded address made for this payment</p></div>
+              </div>
             </div>
 
-            <!-- Pay with ZEC · 02 -->
+            <!-- Pay with ZEC · 02: what a chain observer gets -->
             <div class="vis" data-dir="pay" data-step="1">
-              <p class="s-eyebrow">Zcash block explorer</p>
-              <p class="s-code">0c54e2b885e9faa4…8249a004</p>
-              <dl class="s-rows redact">
-                <div><dt>Sender</dt><dd data-redact="u1chuw3zehsktxjuwysq">u1chuw3zehsktxjuwysq</dd></div>
-                <div><dt>Recipient</dt><dd data-redact="u13sms2z4vt2u8hfkrva">u13sms2z4vt2u8hfkrva</dd></div>
-                <div><dt>Amount</dt><dd data-redact="0.00067778 ZEC">0.00067778 ZEC</dd></div>
-                <div><dt>Memo</dt><dd data-redact="encrypted, 512 bytes">encrypted, 512 bytes</dd></div>
-              </dl>
-              <p class="s-line"><span>Transparent inputs <b>0</b></span><span>Transparent outputs <b>0</b></span><span>Fee <b>0.0001</b></span></p>
+              <div class="chainview">
+                <div class="cv-node"><span>Sender</span><b data-redact="u1chuw3z">u1chuw3z</b></div>
+                <i class="cv-wire" aria-hidden="true"></i>
+                <div class="cv-node"><span>Amount</span><b data-redact="0.00067778">0.00067778</b></div>
+                <i class="cv-wire" aria-hidden="true"></i>
+                <div class="cv-node"><span>Recipient</span><b data-redact="u13sms2z">u13sms2z</b></div>
+              </div>
+              <p class="cap center">All the Zcash chain records. tx <code>0c54e2b8…8249a004</code></p>
             </div>
 
-            <!-- Pay with ZEC · 03 -->
+            <!-- Pay with ZEC · 03: paid, and provably so -->
             <div class="vis" data-dir="pay" data-step="2">
-              <p class="s-eyebrow">Paid over Lightning</p>
-              <div class="s-total big">
-                <b data-count="1000" data-decimals="0">1,000</b><em>sat</em>
+              <p class="big-num"><b data-count="1000" data-decimals="0">1,000</b> <em>sat</em> <span class="paid-word">paid</span></p>
+              <div class="hashpair">
+                <p class="cap">sha256(preimage)</p>
+                <p class="hash h-a">ccb958e451cf68e3b6ed</p>
+                <p class="cap">payment hash</p>
+                <p class="hash h-b">ccb958e451cf68e3b6ed</p>
               </div>
-              <dl class="s-rows hashes">
-                <div><dt>Preimage</dt><dd class="mono">2f507d7a6f6a4e8a1b33…3e8a7c06</dd></div>
-                <div><dt>SHA-256</dt><dd class="mono h-a">ccb958e451cf68e3b6ed9051</dd></div>
-                <div><dt>Payment hash</dt><dd class="mono h-b">ccb958e451cf68e3b6ed9051</dd></div>
-              </dl>
-              <p class="s-verdict">The hashes match: this is the payee's proof of payment.</p>
-              <p class="s-line"><span>Bitcoin transactions <b>0</b></span><span>Broadcast to paid <b>~1 min</b></span></p>
             </div>
 
-            <!-- Get paid in ZEC · 01 -->
+            <!-- Get paid in ZEC · 01: an invoice to share -->
             <div class="vis" data-dir="get" data-step="0">
-              <p class="s-eyebrow">Receive to</p>
-              <p class="s-code">u1chuw3zehsktxjuwy…rmshsvydgnvap</p>
-              <div class="s-invoice">
-                <div class="qr-mini" data-qr="LIGHTNING:LNBC6U1P4DA7URPP5W49EHDTWQSM50D048T7DTMXU85JW3C54XATQ9Q4X0H8"></div>
-                <div>
-                  <p class="s-eyebrow">Lightning invoice</p>
-                  <div class="s-total"><b data-count="600" data-decimals="0">600</b><em>sat</em></div>
-                  <p class="s-note">or pay <code>demo@43-134-116-188.sslip.io</code></p>
-                </div>
-              </div>
+              <div class="qr-big" data-qr="LIGHTNING:LNBC6U1P4DA7URPP5W49EHDTWQSM50D048T7DTMXU85JW3C54XATQ9Q4X0H8"></div>
+              <p class="big-num center"><b data-count="600" data-decimals="0">600</b> <em>sat</em></p>
+              <p class="cap center">or <code>demo@43-134-116-188.sslip.io</code></p>
             </div>
 
-            <!-- Get paid in ZEC · 02 -->
+            <!-- Get paid in ZEC · 02: one route across Lightning -->
             <div class="vis" data-dir="get" data-step="1">
-              <p class="s-eyebrow">Lightning payment</p>
-              <dl class="s-rows">
-                <div><dt>From</dt><dd>Phoenix, Strike, Cash App, any wallet</dd></div>
-                <div><dt>Route</dt><dd class="route" aria-hidden="true"><i></i><i></i><i></i><i></i><b class="hop"></b></dd></div>
-                <div><dt>To</dt><dd>Shieldbolt gateway</dd></div>
-                <div><dt>Bitcoin chain</dt><dd>no transaction</dd></div>
-              </dl>
-              <p class="s-note">Routing nodes forward an amount. None of them sees both ends.</p>
+              <div class="route-wide" aria-hidden="true">
+                <span class="end">Any wallet</span>
+                <div class="hops"><i></i><i></i><i></i><i></i><b class="hop"></b></div>
+                <span class="end">Shieldbolt</span>
+              </div>
+              <p class="cap center">Off-chain. Nothing is written to the Bitcoin chain.</p>
             </div>
 
-            <!-- Get paid in ZEC · 03 -->
+            <!-- Get paid in ZEC · 03: it lands, with its note -->
             <div class="vis" data-dir="get" data-step="2">
-              <p class="s-eyebrow">Received, shielded</p>
-              <div class="s-total big"><b data-count="24321" data-decimals="8" data-sign="+">+0.00024321</b><em>ZEC</em></div>
-              <dl class="s-rows">
-                <div class="row-stack"><dt>Memo</dt><dd class="memo-text" data-decrypt="zap from a Lightning wallet, landing shielded">zap from a Lightning wallet, landing shielded</dd></div>
-                <div><dt>Pool</dt><dd>Ironwood</dd></div>
-                <div><dt>Sent after payment</dt><dd>16 s</dd></div>
-              </dl>
-              <p class="s-note">tx <code>f2686336…6158b465</code>. Only your viewing key can read the memo.</p>
+              <div class="conv">
+                <img src="/brand/tokens/zec.svg" alt="" width="36" height="36">
+                <div><p class="big-num"><b data-count="24321" data-decimals="8" data-sign="+">+0.00024321</b> <em>ZEC</em></p><p class="cap">shielded, 16 s after payment</p></div>
+              </div>
+              <blockquote class="memo-q" data-decrypt="zap from a Lightning wallet, landing shielded">zap from a Lightning wallet, landing shielded</blockquote>
             </div>
           </div>
         </div>

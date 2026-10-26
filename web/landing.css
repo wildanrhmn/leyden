@@ -136,54 +136,59 @@ html.motion.intro-ready .hero [data-reveal] { animation: none; }
 .hiw-stage .vis[data-dir] { display: flex; }
 .hiw-stage[data-dir="pay"] .vis[data-dir="get"], .hiw-stage[data-dir="get"] .vis[data-dir="pay"] { display: none; }
 
-/* --- The screen: a plain surface, type and hairlines only ------------------------- */
+/* --- The screen: a plain surface; one visual idea per scene ------------------------ */
 .screen { position: relative; border-radius: 22px; background: #0B0D12; border: 1px solid rgb(255 255 255 / .08); box-shadow: 0 40px 80px -40px rgb(0 0 0 / .9); overflow: hidden; }
-.vis { position: absolute; top: 0; left: 0; right: 0; padding: 30px 32px 32px; display: flex; flex-direction: column; opacity: 0; visibility: hidden; }
+.vis { position: absolute; top: 0; left: 0; right: 0; padding: 40px 36px; display: flex; flex-direction: column; justify-content: center; gap: 22px; min-height: 340px; box-sizing: border-box; opacity: 0; visibility: hidden; }
 /* The current scene sits in the flow, so the screen takes its height; the outgoing one overlays while it fades. */
 .vis.cur { position: relative; }
 .vis.on { opacity: 1; visibility: visible; }
 
-.s-eyebrow { margin: 0; font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
-.s-code { margin: 10px 0 0; font: 400 14px/1.4 var(--mono); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
-.s-rows { margin: 22px 0 0; border-top: 1px solid rgb(255 255 255 / .07); }
-.s-rows div { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 12px 0; border-bottom: 1px solid rgb(255 255 255 / .07); }
-.s-rows dt { font-size: 14px; color: var(--ink-3); white-space: nowrap; }
-.s-rows dd { margin: 0; font-size: 14px; color: var(--ink); text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.s-rows dd.mono, .redact dd { font-family: var(--mono); font-size: 13px; letter-spacing: -.01em; }
-.redact dd.redacted { color: #3A3F52; letter-spacing: -.04em; }
+.big-num { margin: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.big-num b { font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.big-num em { font-style: normal; font-size: 16px; color: var(--ink-3); }
+.big-num.center { justify-content: center; }
+.cap { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--ink-3); }
+.cap.center { text-align: center; }
+.cap code { font: 400 12.5px var(--mono); color: var(--ink-2); }
 
-.s-total { display: flex; align-items: baseline; gap: 8px; margin-top: 22px; }
-.s-total > span { margin-right: auto; font-size: 14px; color: var(--ink-3); }
-.s-total b { font-weight: 300; font-size: 34px; letter-spacing: -.035em; line-height: 1; font-variant-numeric: tabular-nums; }
-.s-total em { font-style: normal; font-size: 14px; color: var(--ink-3); }
-.s-total.big { margin-top: 14px; padding-top: 0; }
-.s-total.big b { font-size: 48px; }
-.s-note { margin: 14px 0 0; font-size: 13px; line-height: 1.5; color: var(--ink-3); }
-.s-note code, .s-note code { font: 400 12.5px var(--mono); color: var(--ink-2); }
-.s-line { margin: 22px 0 0; display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 13px; color: var(--ink-3); }
-.s-line b { font-weight: 400; color: var(--ink); margin-left: 6px; font-variant-numeric: tabular-nums; }
+/* Pay · 01: sats become ZEC. */
+.conv { display: flex; align-items: center; gap: 18px; }
+.conv img { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; }
+.conv .cap { margin-top: 8px; }
+.conv-link { position: relative; height: 44px; margin: -6px 0 -6px 17px; width: 2px; }
+.conv-link::before { content: ""; position: absolute; inset: 0; background: rgb(255 255 255 / .1); }
+.conv-link i { position: absolute; inset: 0; background: var(--bolt); transform-origin: top; transform: scaleY(1); }
 
-/* Pay · 03: the SHA-256 of the preimage, checked character by character against the payment hash. */
-.hashes dd { letter-spacing: .02em; }
-.hashes .ch { transition: color .2s; }
-.hashes .ch.ok { color: var(--ok); }
-.s-verdict { margin: 14px 0 0; font-size: 13px; color: var(--ok); }
+/* Pay · 02: three values, then nothing. */
+.chainview { display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr; align-items: center; }
+.cv-node { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.cv-node span { font-size: 12.5px; color: var(--ink-3); }
+.cv-node b { font: 400 14px var(--mono); color: var(--ink); white-space: nowrap; padding: 12px 10px; width: 100%; border-radius: 10px; background: rgb(255 255 255 / .04); border: 1px solid rgb(255 255 255 / .07); }
+.cv-node b.redacted { color: #3A3F52; letter-spacing: -.06em; }
+.cv-wire { height: 1px; margin-top: 26px; background: rgb(255 255 255 / .16); }
 
-/* Get paid · 01 */
-.s-invoice { margin-top: 22px; display: flex; align-items: center; gap: 22px; padding-top: 20px; border-top: 1px solid rgb(255 255 255 / .07); }
-.s-invoice .s-total { margin-top: 8px; padding-top: 0; }
-.qr-mini { width: 132px; height: 132px; flex-shrink: 0; padding: 8px; border-radius: 10px; background: #fff; }
-.qr-mini svg { width: 100%; height: 100%; display: block; }
+/* Pay · 03: the proof is two lines that match. */
+.paid-word { margin-left: 4px; font-size: 16px; color: var(--ok); }
+.hashpair { display: grid; gap: 6px; }
+.hashpair .cap:nth-of-type(3) { margin-top: 12px; }
+.hash { margin: 0; font: 400 21px var(--mono); letter-spacing: .04em; color: var(--ink-2); }
+.hash .ch { transition: color .25s; }
+.hash .ch.ok { color: var(--ok); }
 
-/* Get paid · 02: four quiet hops and one moving payment. */
-.route { position: relative; display: flex; justify-content: space-between; align-items: center; width: 168px; margin-left: auto; overflow: visible !important; }
-.route::before { content: ""; position: absolute; left: 3px; right: 3px; top: 50%; height: 1px; background: rgb(255 255 255 / .16); }
-.route i { position: relative; width: 7px; height: 7px; border-radius: 50%; background: #0B0D12; border: 1px solid rgb(255 255 255 / .4); }
-.route .hop { position: absolute; left: 0; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; background: var(--bolt); }
+/* Get · 01: the QR is the scene. */
+.qr-big { width: 176px; height: 176px; margin: 0 auto; padding: 10px; border-radius: 14px; background: #fff; }
+.qr-big svg { width: 100%; height: 100%; display: block; }
 
-.memo-text { font-family: var(--mono); font-size: 13.5px; line-height: 1.5; }
-.s-rows .row-stack { flex-direction: column; align-items: flex-start; gap: 6px; }
-.s-rows .row-stack dd { white-space: normal; text-align: left; overflow: visible; }
+/* Get · 02: a route, end to end. */
+.route-wide { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; }
+.route-wide .end { font-size: 14px; color: var(--ink); white-space: nowrap; }
+.hops { position: relative; display: flex; justify-content: space-between; align-items: center; height: 12px; }
+.hops::before { content: ""; position: absolute; left: 4px; right: 4px; top: 50%; height: 1px; background: rgb(255 255 255 / .18); }
+.hops i { position: relative; width: 9px; height: 9px; border-radius: 50%; background: #0B0D12; border: 1px solid rgb(255 255 255 / .45); }
+.hops .hop { position: absolute; left: 0; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: var(--bolt); }
+
+/* Get · 03: the memo, as a quote. */
+.memo-q { margin: 0; padding-left: 18px; border-left: 2px solid var(--bolt); font: 400 16px/1.5 var(--mono); color: var(--ink); min-height: 1.5em; }
 
 /* --- Phones: the screen sits at the top, the steps scroll beneath it. -------------- */
 @media (max-width: 900px) {
@@ -194,9 +199,10 @@ html.motion.intro-ready .hero [data-reveal] { animation: none; }
   .hiw-steps { padding-top: 470px; }
   .hiw-steps::before, .hiw-steps::after { left: 0; top: 470px; }
   .step, .step[data-side] { width: auto; min-height: 56vh; margin: 0; padding: 40px 0 40px 24px; justify-content: flex-start; }
-  .vis { padding: 22px; }
-  .s-total b { font-size: 28px; }
-  .s-total.big b { font-size: 38px; }
-  .qr-mini { width: 104px; height: 104px; }
-  .s-rows div { padding: 10px 0; }
+  .vis { min-height: 300px; padding: 28px 22px; }
+  .big-num b { font-size: 34px; }
+  .hash { font-size: 16px; }
+  .qr-big { width: 150px; height: 150px; }
+  .cv-node b { font-size: 12px; padding: 10px 6px; }
+  .chainview { grid-template-columns: 1fr 14px 1fr 14px 1fr; }
 }

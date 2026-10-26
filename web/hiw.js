@@ -20,6 +20,7 @@
   let step = -1;
   let scene = null;
   let arrived = false;
+  let current = null;
 
   steps.forEach((s, i) => { s.dataset.side = i % 2 === 0 ? "right" : "left"; });
 
@@ -39,10 +40,16 @@
     step = i;
     steps.forEach((s, k) => s.classList.toggle("on", k === i));
     const next = visFor(dir, i);
-    if (scene) { scene.kill(); scene = null; }
+    current = next;
+    // Revert (not just kill) an interrupted scene: from() tweens would otherwise leave
+    // its elements stuck at their invisible start state, and the next replay animates from 0 to 0.
+    if (scene) { scene.revert(); scene = null; }
 
     const screen = visual.querySelector(".screen");
+    // Measure where the height is right now (possibly mid-animation), then drop any
+    // running height tween and its inline leftover before laying out the next scene.
     const h0 = screen.offsetHeight;
+    if (hasGsap) { gsap.killTweensOf(screen); gsap.set(screen, { clearProps: "height" }); }
     stage.querySelectorAll(".vis.cur").forEach((v) => v.classList.remove("cur"));
     next.classList.add("cur");
 
@@ -51,17 +58,22 @@
       settle(next);
       return;
     }
+    // Cancel anything still fading this scene out (scrolling back quickly must not blank it).
+    gsap.killTweensOf(next);
+    next.classList.add("on");
     // The screen eases to the new scene's height instead of jumping.
-    next.classList.add("on");
     const h1 = screen.offsetHeight;
-    if (h0 && h0 !== h1) gsap.fromTo(screen, { height: h0 }, { height: h1, duration: 0.6, ease: "power3.inOut", clearProps: "height" });
-    if (prev && prev !== next) {
-      gsap.to(prev, { opacity: 0, y: -8, duration: 0.3, ease: "power2.in", onComplete: () => { prev.classList.remove("on"); gsap.set(prev, { clearProps: "all" }); } });
-    }
-    stage.querySelectorAll(".vis.on").forEach((v) => { if (v !== prev && v !== next) v.classList.remove("on"); });
-    next.classList.add("on");
-    gsap.fromTo(next, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, delay: prev ? 0.25 : 0, ease: "power3.out" });
-    scene = play(next, prev ? 0.35 : 0.1);
+    if (h0 > 40 && Math.abs(h0 - h1) > 1) gsap.fromTo(screen, { height: h0 }, { height: h1, duration: 0.6, ease: "power3.inOut", clearProps: "height" });
+    // Every other scene fades out; only a scene that is no longer current may hide itself.
+    stage.querySelectorAll(".vis.on").forEach((v) => {
+      if (v === next) return;
+      gsap.killTweensOf(v);
+      gsap.to(v, { opacity: 0, y: -8, duration: 0.3, ease: "power2.in", onComplete: () => {
+        if (v !== current) { v.classList.remove("on"); gsap.set(v, { clearProps: "opacity,transform" }); }
+      } });
+    });
+    gsap.fromTo(next, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, delay: prev && prev !== next ? 0.25 : 0, ease: "power3.out" });
+    scene = play(next, prev && prev !== next ? 0.35 : 0.1);
   }
 
   // Count a number up (tweened as an integer: GSAP rounds fractional tween values).
@@ -85,58 +97,56 @@
     const key = `${v.dataset.dir}-${v.dataset.step}`;
     const q = (sel) => [...v.querySelectorAll(sel)];
     const one = (sel) => v.querySelector(sel);
-    const HEX = "0123456789abcdef";
+    const nums = q("[data-count]");
 
     if (key === "pay-0") {
-      const code = one(".s-code");
-      tl.fromTo(code, { scrambleText: { text: code.dataset.scramble, chars: HEX + "lnpu", speed: 1 } },
-        { duration: 0.9, scrambleText: { text: code.dataset.scramble, chars: HEX + "lnpu", revealDelay: 0.2, speed: 0.8 } }, 0)
-        .from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.09, duration: 0.5, ease: "power2.out" }, 0.35)
-        .from(one(".s-total"), { opacity: 0, duration: 0.5 }, 0.8)
-        .from(one(".s-note"), { opacity: 0, duration: 0.6 }, 1.3);
-      count(tl, one(".s-total b"), 0.8, 1.2);
+      // 1,000 sat appears, a line draws down, and the ZEC amount counts up beneath it.
+      const [top, bottom] = q(".conv");
+      tl.from(top, { opacity: 0, y: 10, duration: 0.6, ease: "power3.out" }, 0)
+        .fromTo(one(".conv-link i"), { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "power2.inOut" }, 0.55)
+        .from(bottom, { opacity: 0, y: 10, duration: 0.6, ease: "power3.out" }, 1.0);
+      count(tl, nums[0], 0.05, 0.9);
+      count(tl, nums[1], 1.05, 1.2);
     } else if (key === "pay-1") {
-      q("[data-redact]").forEach((dd) => { dd.textContent = dd.dataset.redact; dd.classList.remove("redacted"); });
-      tl.from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.08, duration: 0.45, ease: "power2.out" }, 0);
-      q("[data-redact]").forEach((dd, k) => {
-        tl.to(dd, { duration: 0.7, ease: "none", onStart: () => dd.classList.add("redacted"),
-          scrambleText: { text: "█".repeat(Math.min(16, dd.dataset.redact.length)), chars: "█▓▒░", speed: 0.6 } }, 0.8 + k * 0.18);
+      // Readable values, then the chain's view of them: nothing.
+      q("[data-redact]").forEach((el) => { el.textContent = el.dataset.redact; el.classList.remove("redacted"); });
+      tl.from(q(".cv-node"), { opacity: 0, y: 10, stagger: 0.12, duration: 0.5, ease: "power3.out" }, 0)
+        .from(q(".cv-wire"), { scaleX: 0, transformOrigin: "left", stagger: 0.12, duration: 0.5 }, 0.2);
+      q("[data-redact]").forEach((el, k) => {
+        tl.to(el, { duration: 0.6, ease: "none", onStart: () => el.classList.add("redacted"),
+          scrambleText: { text: "█".repeat(el.dataset.redact.length), chars: "█▓▒░", speed: 0.6 } }, 1.0 + k * 0.22);
       });
-      tl.from(one(".s-line"), { opacity: 0, duration: 0.6 }, 1.6);
+      tl.from(one(".cap"), { opacity: 0, duration: 0.6 }, 1.7);
     } else if (key === "pay-2") {
-      count(tl, one(".s-total b"), 0, 1.1);
+      // Paid, then the proof: two hashes that match, character by character.
+      count(tl, nums[0], 0, 0.9);
+      tl.from(one(".paid-word"), { opacity: 0, x: -6, duration: 0.4 }, 0.6)
+        .from(q(".hashpair > *"), { opacity: 0, y: 6, stagger: 0.08, duration: 0.45 }, 0.4);
       const a = chars(one(".h-a")), b = chars(one(".h-b"));
-      tl.from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.09, duration: 0.45 }, 0.3);
-      // Compare the two hashes, character by character.
-      a.forEach((c, k) => {
-        tl.add(() => { c.classList.add("ok"); b[k].classList.add("ok"); }, 1.0 + k * 0.035);
-      });
-      tl.from(one(".s-verdict"), { opacity: 0, y: 4, duration: 0.5 }, 1.0 + a.length * 0.035)
-        .from(one(".s-line"), { opacity: 0, duration: 0.6 }, ">0.1");
+      a.forEach((c, k) => tl.add(() => { c.classList.add("ok"); b[k].classList.add("ok"); }, 1.0 + k * 0.05));
     } else if (key === "get-0") {
-      tl.from(one(".s-code"), { opacity: 0, duration: 0.5 }, 0)
-        .from(one(".s-invoice"), { opacity: 0, y: 10, duration: 0.6, ease: "power3.out" }, 0.3)
-        .from(one(".qr-mini"), { opacity: 0, scale: 0.94, duration: 0.6, ease: "power3.out" }, 0.4)
-        .from(one(".s-note"), { opacity: 0, duration: 0.6 }, 1.0);
-      count(tl, one(".s-total b"), 0.5, 1);
+      tl.from(one(".qr-big"), { opacity: 0, scale: 0.92, duration: 0.7, ease: "power3.out" }, 0)
+        .from(one(".big-num"), { opacity: 0, y: 8, duration: 0.5 }, 0.35)
+        .from(one(".cap"), { opacity: 0, duration: 0.6 }, 0.8);
+      count(tl, nums[0], 0.35, 0.9);
     } else if (key === "get-1") {
-      const hop = one(".hop"), route = one(".route");
-      tl.from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.09, duration: 0.45 }, 0)
-        .from(one(".s-note"), { opacity: 0, duration: 0.6 }, 0.7);
+      const hop = one(".hop"), hops = one(".hops");
+      tl.from(q(".route-wide > *"), { opacity: 0, y: 6, stagger: 0.12, duration: 0.5 }, 0)
+        .from(one(".cap"), { opacity: 0, duration: 0.6 }, 0.6);
       // The payment hops node to node, then starts over.
-      const run = gsap.timeline({ repeat: -1, repeatDelay: 0.7 });
-      const span = () => route.clientWidth - hop.offsetWidth;
+      const span = () => hops.clientWidth - hop.offsetWidth;
+      const run = gsap.timeline({ repeat: -1, repeatDelay: 0.6 });
       run.set(hop, { x: 0, opacity: 1 });
-      for (let k = 1; k <= 3; k++) run.to(hop, { x: () => (span() * k) / 3, duration: 0.45, ease: "power2.inOut" }, ">0.15");
-      run.to(hop, { opacity: 0, duration: 0.3 }, ">0.2");
-      tl.add(run, 0.6);
+      for (let k = 1; k <= 3; k++) run.to(hop, { x: () => (span() * k) / 3, duration: 0.5, ease: "power2.inOut" }, ">0.12");
+      run.to(hop, { opacity: 0, duration: 0.3 }, ">0.25");
+      tl.add(run, 0.5);
     } else if (key === "get-2") {
       const memo = one("[data-decrypt]");
-      count(tl, one(".s-total b"), 0, 1.1);
-      tl.from(q(".s-rows div"), { opacity: 0, y: 6, stagger: 0.09, duration: 0.45 }, 0.3)
-        .fromTo(memo, { scrambleText: { text: "█".repeat(24), chars: "█▓▒░" } },
-          { duration: 1.5, scrambleText: { text: memo.dataset.decrypt, chars: "█▓▒░", revealDelay: 0.3, speed: 0.5 } }, 0.6)
-        .from(one(".s-note"), { opacity: 0, duration: 0.6 }, 1.4);
+      tl.from(one(".conv"), { opacity: 0, y: 10, duration: 0.6, ease: "power3.out" }, 0)
+        .from(memo, { opacity: 0, duration: 0.4 }, 0.5)
+        .fromTo(memo, { scrambleText: { text: "█".repeat(memo.dataset.decrypt.length), chars: "█▓▒░" } },
+          { duration: 1.6, scrambleText: { text: memo.dataset.decrypt, chars: "█▓▒░", revealDelay: 0.3, speed: 0.5 } }, 0.5);
+      count(tl, nums[0], 0.05, 1.1);
     }
     return tl;
   }
@@ -144,7 +154,7 @@
   // End state without animation (reduced motion, no GSAP).
   function settle(v) {
     if (!v) return;
-    v.querySelectorAll("[data-redact]").forEach((el) => { el.textContent = "█".repeat(Math.min(16, el.dataset.redact.length)); el.classList.add("redacted"); });
+    v.querySelectorAll("[data-redact]").forEach((el) => { el.textContent = "█".repeat(el.dataset.redact.length); el.classList.add("redacted"); });
     v.querySelectorAll(".h-a, .h-b").forEach((el) => chars(el).forEach((c) => c.classList.add("ok")));
   }
 
