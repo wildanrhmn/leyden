@@ -9,13 +9,17 @@
 /* Film grain and a vignette, for depth. */
 .grain { position: absolute; z-index: 0; top: -64px; left: 50%; width: 100vw; height: calc(100% + 64px); transform: translateX(-50%); pointer-events: none; opacity: .07; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-.hero > :not(.beam):not(.glow):not(.grain) { position: relative; z-index: 1; }
+.hero > :not(.beam):not(.fluid):not(.veil):not(.grain) { position: relative; z-index: 1; }
 
-/* One soft light source behind the headline, in the shield's indigo. */
-.glow { position: absolute; z-index: -1; inset: -140px 0 auto; height: 760px; pointer-events: none;
-  background:
-    radial-gradient(34% 40% at 50% 26%, rgb(76 86 255 / .26), transparent 70%);
-  filter: blur(20px); }
+/* The ambient fluid (fluid.js), extended up under the floating navbar. */
+.fluid { position: absolute; z-index: -3; top: -92px; left: 50%; width: 100vw; height: calc(100% + 92px); transform: translateX(-50%); display: block; pointer-events: none; }
+/* A veil over the fluid: keeps the copy legible and melts the hero into the page below. */
+.veil { position: absolute; z-index: -2; top: -92px; left: 50%; width: 100vw; height: calc(100% + 92px); transform: translateX(-50%); pointer-events: none;
+  background: linear-gradient(to bottom, rgb(5 6 10 / .25) 0%, rgb(5 6 10 / .08) 30%, rgb(5 6 10 / .45) 70%, var(--bg) 100%); }
+/* Without WebGL2 (or with reduced motion), a still glow stands in for the fluid. */
+.hero:not(.has-fluid) .veil { background:
+  radial-gradient(34% 40% at 50% 26%, rgb(76 86 255 / .26), transparent 70%),
+  linear-gradient(to bottom, transparent 70%, var(--bg) 100%); }
 
 .hero h1 { margin: 12px 0 0; font-weight: 300; font-size: clamp(42px, 6.6vw, 84px); line-height: 1.02; letter-spacing: -.045em; }
 .hero h1 .h-line { display: block; }
@@ -89,6 +93,6 @@ output.leg-amount { color: var(--ink); }
 
 /* Before the intro runs, the revealed pieces are hidden. If scripts fail, they appear anyway after 2.5 s. */
 html.motion .hero [data-reveal] { opacity: 0; animation: reveal-fallback .6s 2.5s forwards; }
-html.motion .hero .beam { opacity: 0; }
+html.motion .hero .beam, html.motion .hero .fluid { opacity: 0; }
 @keyframes reveal-fallback { to { opacity: 1; } }
 html.motion.intro-ready .hero [data-reveal] { animation: none; }

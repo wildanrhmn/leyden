@@ -185,7 +185,8 @@
     gsap.set("[data-reveal]", { opacity: 1 });
 
     const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-    tl.to(canvas, { opacity: 1, duration: 1.4, ease: "power2.out" }, 0)
+    tl.to("#fluid", { opacity: 1, duration: 2.4, ease: "power2.inOut" }, 0)
+      .to(canvas, { opacity: 1, duration: 1.4, ease: "power2.out" }, 0)
       .to(state, { ignite: 1, duration: 2.4, ease: "expo.inOut" }, 0.15)
       .from(split.chars, { opacity: 0, yPercent: 35, filter: "blur(16px)", duration: 1.5, stagger: 0.024 }, 0.35)
       .from(".hero-sub", { opacity: 0, y: 18, filter: "blur(8px)", duration: 1.3 }, 1.05)
