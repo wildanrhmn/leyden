@@ -1,0 +1,17 @@
+{
+  "name": "lightning",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@buildonspark/spark-sdk": "^0.14.0",
+    "light-bolt11-decoder": "^3.2.0"
+  }
+}
