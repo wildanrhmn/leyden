@@ -32,9 +32,50 @@
 </header>
 
 <main class="landing">
-  <!-- Sections are added one at a time. -->
-  <section class="placeholder"></section>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="glow" aria-hidden="true"></div>
+    <a class="live-pill" href="#proof"><span class="dot" aria-hidden="true"></span>Live on Zcash mainnet</a>
+    <h1 id="hero-title">Shielded ZEC,<br><span>at Lightning speed.</span></h1>
+    <p class="hero-sub">Pay any Lightning invoice from the shielded pool, or get paid over Lightning straight into it. No transparent address, no Bitcoin transaction, no account.</p>
+    <div class="hero-actions">
+      <a class="pill pill-bolt" href="/app/">Launch app <span aria-hidden="true">→</span></a>
+      <a class="pill pill-ghost" href="#proof">See the mainnet proof</a>
+    </div>
+
+    <form class="swapcard" id="swapcard" autocomplete="off" aria-label="Quick quote">
+      <div class="leg" id="leg-from">
+        <span class="leg-label">You pay</span>
+        <div class="leg-row">
+          <span class="leg-slot" id="q-from-slot"></span>
+          <span class="token" id="q-from-token"></span>
+        </div>
+        <p class="leg-foot" id="q-from-foot">&nbsp;</p>
+      </div>
+      <button class="flip" type="button" id="q-flip" aria-label="Switch direction">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="leg" id="leg-to">
+        <span class="leg-label">They receive</span>
+        <div class="leg-row">
+          <span class="leg-slot" id="q-to-slot"></span>
+          <span class="token" id="q-to-token"></span>
+        </div>
+        <p class="leg-foot" id="q-to-foot">&nbsp;</p>
+      </div>
+      <input class="leg-amount leg-input" id="q-amount" type="number" inputmode="numeric" min="1" step="1" value="1000" aria-label="Amount in sats">
+      <output class="leg-amount" id="q-zec" aria-label="Amount in ZEC">0</output>
+      <button class="pill pill-bolt pill-block" type="submit" id="q-go">Continue</button>
+    </form>
+
+    <dl class="stats" aria-label="Network facts">
+      <div><dt>Transparent addresses used</dt><dd>0</dd></div>
+      <div><dt>Bitcoin transactions per swap</dt><dd>0</dd></div>
+      <div><dt>Typical swap</dt><dd>~1 min</dd></div>
+      <div><dt>Live rate</dt><dd id="stat-rate">…</dd></div>
+    </dl>
+  </section>
 </main>
 <script src="/nav.js"></script>
+<script src="/landing.js"></script>
 </body>
 </html>

@@ -48,6 +48,7 @@ code, .mono { font-family: var(--mono); font-size: .9em; }
 
 /* --- Navbar: logo, a floating capsule of links, one action ---------------------- */
 .nav { position: sticky; top: 0; z-index: 20; padding: 14px clamp(16px, 4vw, 32px); pointer-events: none; }
+.nav::before { content: ""; position: absolute; inset: 0 0 -28px; z-index: -1; pointer-events: none; background: linear-gradient(to bottom, var(--bg) 0%, rgb(5 6 10 / .86) 55%, rgb(5 6 10 / 0) 100%); }
 .nav-in { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; }
 .nav-in > * { pointer-events: auto; }
 

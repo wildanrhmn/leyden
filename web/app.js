@@ -299,6 +299,14 @@ function note(text, kind) {
 
 loadInfo();
 setInterval(loadInfo, 60000);
+// Links from the landing page: /app/?dir=pay|receive&sats=N
+const params = new URLSearchParams(location.search);
+if (params.get("dir") === "receive") {
+  selectTab("receive");
+  if (Number(params.get("sats")) > 0) $("#rcv-amount").value = Number(params.get("sats"));
+} else if (params.get("dir") === "pay") {
+  selectTab("pay");
+}
 const m = location.hash.match(/swap=([0-9a-f]+)/);
 if (m) {
   api(`/api/swaps/${m[1]}`).then((s) => {
