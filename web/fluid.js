@@ -16,13 +16,14 @@
     dyeRes: 224,          // colour grid (short side)
     pressureIters: 22,
     velocityDissipation: 0.972,
-    dyeDissipation: 0.982,
+    dyeDissipation: 0.986,
     pressureDecay: 0.8,
     splatRadius: 0.024,   // gaussian width, in uv² units
     force: 1700,
     curlStrength: 0,      // left at 0: smooth, Katana-like smoke rather than swirly
-    autoSpeed: 0.26,
+    autoSpeed: 0.5,
     idleMs: 1600,
+    autoRamp: 1.4,        // seconds for the ghost to fade in after the cursor rests
   };
   // Shield palette: deep indigo, electric blue, a little violet. Scaled down; it accumulates.
   const PALETTE = [[0.16, 0.2, 1.0], [0.08, 0.32, 1.0], [0.34, 0.2, 1.0], [0.12, 0.14, 0.9]];
@@ -237,8 +238,10 @@ o=vec4(col,1.); }`),
   let ghostT = Math.random() * 100;
   function ghost(t, dt) {
     ghostT += dt * CFG.autoSpeed;
-    // A slow, wandering figure-eight across the upper hero.
-    return [0.5 + 0.34 * Math.sin(ghostT * 1.1) * Math.cos(ghostT * 0.37), 0.68 + 0.16 * Math.sin(ghostT * 1.7)];
+    // Long, wandering sweeps across the whole hero; the inner sine keeps the path from repeating.
+    const x = 0.5 + 0.44 * Math.sin(ghostT * 0.9 + Math.sin(ghostT * 0.31) * 1.3);
+    const y = 0.58 + 0.24 * Math.sin(ghostT * 1.27 + 0.7 + Math.cos(ghostT * 0.23));
+    return [x, y];
   }
 
   // A burst from the swap card when the direction flips.
@@ -263,10 +266,11 @@ o=vec4(col,1.); }`),
     const now = t - pointer.lastMove < CFG.idleMs ? "cursor" : "ghost";
     if (now === "cursor") {
       [x, y] = [pointer.x, pointer.y];
-      k = 0.018;
+      k = 0.026;
     } else {
       [x, y] = ghost(t, dt);
-      k = 0.009;
+      const since = (t - Math.max(pointer.lastMove, 0) - CFG.idleMs) / 1000;
+      k = 0.022 * Math.min(1, Math.max(0, since / CFG.autoRamp));
     }
     // Switching between the real and ghost cursor must not draw a streak between them.
     if (now !== mode) { mode = now; pointer.px = x; pointer.py = y; }
