@@ -135,14 +135,21 @@
               <p class="cap center">or <code>demo@43-134-116-188.sslip.io</code></p>
             </div>
 
-            <!-- Get paid in ZEC · 02: one route across Lightning -->
+            <!-- Get paid in ZEC · 02: onion routing, one layer per hop -->
             <div class="vis" data-dir="get" data-step="1">
-              <div class="route-wide" aria-hidden="true">
-                <span class="end">Any wallet</span>
-                <div class="hops"><i></i><i></i><i></i><i></i><b class="hop"></b></div>
-                <span class="end">Shieldbolt</span>
+              <div class="ends">
+                <div><p class="cap">From</p><p class="end-name"><span class="wallet">Phoenix</span></p></div>
+                <div class="to"><p class="cap">To</p><p class="end-name">Shieldbolt</p></div>
               </div>
-              <p class="cap center">Off-chain. Nothing is written to the Bitcoin chain.</p>
+              <div class="onion-route" aria-hidden="true">
+                <i class="node end-node"></i><i class="node"></i><i class="node"></i><i class="node"></i><i class="node end-node"></i>
+                <span class="onion"><b class="ring r3"></b><b class="ring r2"></b><b class="ring r1"></b><b class="core"></b></span>
+              </div>
+              <div class="ends status-row">
+                <p class="big-num"><b data-count="600" data-decimals="0">600</b> <em>sat</em></p>
+                <p class="status" aria-live="off"><span class="st-routing">routing</span><span class="st-done">settled</span></p>
+              </div>
+              <p class="cap route-cap">Each hop peels one layer and learns only the next step. Nothing touches the Bitcoin chain.</p>
             </div>
 
             <!-- Get paid in ZEC · 03: it lands, with its note -->

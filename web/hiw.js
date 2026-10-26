@@ -132,15 +132,38 @@
         .from(one(".cap"), { opacity: 0, duration: 0.6 }, 0.8);
       count(tl, nums[0], 0.35, 0.9);
     } else if (key === "get-1") {
-      const hop = one(".hop"), hops = one(".hops");
-      tl.from(q(".route-wide > *"), { opacity: 0, y: 6, stagger: 0.12, duration: 0.5 }, 0)
-        .from(one(".cap"), { opacity: 0, duration: 0.6 }, 0.6);
-      // The payment hops node to node, then starts over.
-      const span = () => hops.clientWidth - hop.offsetWidth;
-      const run = gsap.timeline({ repeat: -1, repeatDelay: 0.6 });
-      run.set(hop, { x: 0, opacity: 1 });
-      for (let k = 1; k <= 3; k++) run.to(hop, { x: () => (span() * k) / 3, duration: 0.5, ease: "power2.inOut" }, ">0.12");
-      run.to(hop, { opacity: 0, duration: 0.3 }, ">0.25");
+      // Onion routing: the payment carries one layer per hop; each hop peels its layer.
+      const route = one(".onion-route"), onion = one(".onion"), nodes = q(".node");
+      const rings = [one(".r3"), one(".r2"), one(".r1")];
+      const wallet = one(".wallet"), routing = one(".st-routing"), done = one(".st-done");
+      const names = ["Phoenix", "Strike", "Cash App", "Wallet of Satoshi"];
+      const xAt = (k) => (route.clientWidth - 12) * (k / 4);
+      tl.from(q(".ends > div, .status-row > *"), { opacity: 0, y: 8, stagger: 0.06, duration: 0.45 }, 0)
+        .from(route, { opacity: 0, duration: 0.4 }, 0.15)
+        .from(one(".route-cap"), { opacity: 0, duration: 0.5 }, 0.5);
+      count(tl, one("[data-count]"), 0.1, 0.8);
+
+      let n = 0;
+      const run = gsap.timeline({ repeat: -1, repeatDelay: 0.9, onRepeat: () => {
+        n = (n + 1) % names.length;
+        gsap.fromTo(wallet, { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.45, ease: "power3.out", onStart: () => { wallet.textContent = names[n]; } });
+      } });
+      run.set(onion, { x: 0, opacity: 1 })
+        .set(rings, { scale: 1, opacity: 1 })
+        .set(nodes, { className: "node" })
+        .add(() => { nodes[0].classList.add("end-node", "lit"); nodes[4].classList.add("end-node"); })
+        .set(routing, { opacity: 1 })
+        .set(done, { opacity: 0 });
+      for (let k = 1; k <= 3; k++) {
+        run.to(onion, { x: () => xAt(k), duration: 0.55, ease: "power2.inOut" }, ">0.15")
+          .add(() => nodes[k].classList.add("lit"))
+          .to(rings[k - 1], { scale: 1.6, opacity: 0, duration: 0.35, ease: "power2.out" }, "<");
+      }
+      run.to(onion, { x: () => xAt(4), duration: 0.55, ease: "power2.inOut" }, ">0.15")
+        .add(() => nodes[4].classList.add("lit"))
+        .to(routing, { opacity: 0, duration: 0.2 }, "<0.3")
+        .to(done, { opacity: 1, duration: 0.3 }, "<0.1")
+        .to(onion, { opacity: 0, duration: 0.3 }, ">0.5");
       tl.add(run, 0.5);
     } else if (key === "get-2") {
       const memo = one("[data-decrypt]");
