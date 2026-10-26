@@ -40,8 +40,8 @@
 
   function shieldedError(addr) {
     if (!addr) return "Add your shielded address.";
-    if (/^t[13]/i.test(addr)) return "That's a transparent address. Use a shielded one: it starts with u1 or zs1.";
-    if (!/^(u1|zs1)[0-9a-z]{20,}$/i.test(addr)) return "That doesn't look like a Zcash shielded address.";
+    if (/^t[13]/i.test(addr)) return "That's a transparent (public) Zcash address. Use your wallet's shielded address.";
+    if (!/^(u1|zs1)[0-9a-z]{20,}$/i.test(addr)) return "That doesn't look like a shielded Zcash address.";
     return null;
   }
 
@@ -147,39 +147,58 @@
   function fieldError(input, message) {
     const row = input.closest(".drow");
     row.classList.toggle("bad", !!message);
-    if (message) { row.classList.add("editing"); throw new Error(message); }
+    if (message) throw new Error(message);
   }
 
-  // Detail rows show their value until tapped; then they turn into an input. Addresses are
-  // checked when you leave the field, and an invalid one stays open, underlined in red.
+  // Detail rows show a short form of their value; the full invoice or address is never on
+  // screen. Invoices and addresses are pasted, not typed, so a paste closes the field at once.
+  // A filled invoice offers Clear; a filled address offers Change, which opens an empty field
+  // and puts the old address back if nothing new is pasted. Memos are short and just edit.
   function setupRow(row) {
     const input = row.querySelector(".d-input");
     const shown = row.querySelector(".d-show");
     const kind = row.dataset.kind ?? "address";
+    let previous = "";
+    const check = () => {
+      const v = input.value.trim();
+      row.classList.toggle("bad", kind === "address" && !!v && !!shieldedError(v));
+    };
     const paint = () => {
       const v = input.value.trim();
+      check();
       if (!v) { shown.className = "d-show empty"; shown.textContent = row.dataset.empty; return; }
       shown.className = "d-show";
-      shown.replaceChildren(el("span", null, kind === "memo" ? v : kind === "invoice" ? short(v, 12, 6) : short(v, 10, 8)), el("small", null, "Edit"));
+      const text = kind === "memo" ? v : kind === "invoice" ? short(v, 12, 6) : short(v, 10, 8);
+      const action = kind === "memo" ? "Edit" : kind === "invoice" ? "Clear" : "Change";
+      shown.replaceChildren(el("span", null, text), el("small", null, action));
     };
-    const edit = () => { row.classList.add("editing"); input.focus(); };
+    const close = () => { row.classList.remove("editing"); paint(); };
+    const set = (value) => { input.value = value; input.dispatchEvent(new Event("input")); close(); };
+
     shown.addEventListener("click", async () => {
-      // An empty invoice row pastes straight from the clipboard, if the browser allows it.
-      if (kind === "invoice" && !input.value.trim()) {
+      const v = input.value.trim();
+      if (kind === "invoice" && v) { set(""); return; }
+      if (kind === "invoice") {
+        // An empty invoice row pastes straight from the clipboard, if the browser allows it.
         try {
           const text = (await navigator.clipboard.readText()).trim();
-          if (text) { input.value = text; input.dispatchEvent(new Event("input")); paint(); return; }
-        } catch { /* fall back to typing */ }
+          if (text) { set(text); return; }
+        } catch { /* fall back to the field */ }
       }
-      edit();
+      if (kind === "address" && v) { previous = v; input.value = ""; }
+      row.classList.add("editing");
+      input.focus();
     });
+    input.addEventListener("paste", () => setTimeout(() => { if (input.value.trim()) input.blur(); }));
     input.addEventListener("blur", () => {
-      const v = input.value.trim();
-      const bad = kind === "address" && v && shieldedError(v);
-      row.classList.toggle("bad", !!bad);
-      if (!bad) { row.classList.remove("editing"); paint(); }
+      if (kind === "address" && !input.value.trim() && previous) set(previous);
+      previous = "";
+      close();
     });
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); input.blur(); } });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); input.blur(); }
+      if (e.key === "Escape") { if (previous) input.value = previous; input.blur(); }
+    });
     row.paint = paint;
     paint();
   }
