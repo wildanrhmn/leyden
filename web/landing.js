@@ -67,8 +67,8 @@
     render();
   }
 
-  amount.addEventListener("input", render);
-  $("q-flip").addEventListener("click", () => { dir = dir === "pay" ? "receive" : "pay"; render(); });
+  amount.addEventListener("input", () => { render(); dispatchEvent(new Event("shieldbolt:pulse")); });
+  $("q-flip").addEventListener("click", () => { dir = dir === "pay" ? "receive" : "pay"; render(); dispatchEvent(new Event("shieldbolt:flip")); });
   card.addEventListener("submit", (e) => {
     e.preventDefault();
     location.href = `/app/?dir=${dir}&sats=${Math.floor(Number(amount.value) || 0)}`;

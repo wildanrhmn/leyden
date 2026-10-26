@@ -1,22 +1,28 @@
 /* --- Hero ------------------------------------------------------------------- */
 .landing { overflow-x: clip; }
 
-.hero { position: relative; max-width: 1200px; margin: 0 auto; padding: clamp(56px, 11vh, 120px) clamp(16px, 4vw, 32px) 72px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.hero { position: relative; max-width: 1200px; margin: 0 auto; padding: clamp(40px, 8vh, 96px) clamp(16px, 4vw, 32px) 72px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+/* The crossing: a beam that runs through the swap card (drawn by hero.js). */
+.beam { position: absolute; z-index: -1; top: 0; left: 50%; width: 100vw; height: 100%; transform: translateX(-50%); pointer-events: none; display: block; }
+
+/* Film grain and a vignette, for depth. */
+.grain { position: absolute; z-index: 0; top: -64px; left: 50%; width: 100vw; height: calc(100% + 64px); transform: translateX(-50%); pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.hero > :not(.beam):not(.glow):not(.grain) { position: relative; z-index: 1; }
 
 /* One soft light source behind the headline, in the shield's indigo. */
 .glow { position: absolute; z-index: -1; inset: -140px 0 auto; height: 760px; pointer-events: none;
   background:
-    radial-gradient(38% 46% at 50% 30%, rgb(76 86 255 / .30), transparent 70%),
-    radial-gradient(22% 26% at 64% 58%, rgb(255 194 26 / .07), transparent 70%);
+    radial-gradient(34% 40% at 50% 26%, rgb(76 86 255 / .26), transparent 70%);
   filter: blur(20px); }
 
-.live-pill { display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: rgb(255 255 255 / .03); color: var(--ink-2); text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: -.005em; transition: color .15s, border-color .15s; }
-.live-pill:hover { color: var(--ink); border-color: var(--line-strong); }
-.live-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px rgb(74 222 128 / .18); }
+.hero h1 { margin: 12px 0 0; font-weight: 300; font-size: clamp(42px, 6.6vw, 84px); line-height: 1.02; letter-spacing: -.045em; }
+.hero h1 .h-line { display: block; }
+.hero h1 .h-dim { color: var(--ink-3); }
+.hero h1 { font-kerning: none; }
 
-.hero h1 { margin: 28px 0 0; font-weight: 300; font-size: clamp(44px, 7.4vw, 92px); line-height: 1.02; letter-spacing: -.045em; }
-.hero h1 span { color: var(--ink-3); }
-
+.hero-copy { display: flex; flex-direction: column; align-items: center; will-change: transform; }
 .hero-sub { margin: 24px 0 0; max-width: 560px; color: var(--ink-2); font-size: clamp(16px, 1.6vw, 18px); line-height: 1.55; letter-spacing: -.01em; }
 
 .hero-actions { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
@@ -30,7 +36,7 @@
 .pill:disabled { background: rgb(255 255 255 / .06); color: var(--ink-3); cursor: not-allowed; }
 
 /* --- Quick-quote card -------------------------------------------------------- */
-.swapcard { position: relative; margin-top: 72px; width: 100%; max-width: 460px; padding: 6px; border-radius: 28px; background: rgb(255 255 255 / .02); border: 1px solid var(--line); box-shadow: 0 40px 80px -40px rgb(0 0 0 / .8); text-align: left; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.swapcard { position: relative; margin-top: 52px; width: 100%; max-width: 460px; padding: 6px; border-radius: 28px; background: rgb(255 255 255 / .02); border: 1px solid var(--line); box-shadow: 0 40px 80px -40px rgb(0 0 0 / .8); text-align: left; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 
 .leg { padding: 18px 20px 16px; border-radius: 22px; background: rgb(255 255 255 / .045); border: 1px solid rgb(255 255 255 / .05); transition: border-color .15s; }
 .leg:focus-within { border-color: var(--line-strong); }
@@ -58,8 +64,14 @@ output.leg-amount { color: var(--ink); }
 
 .swapcard > .pill-block { margin-top: 6px; }
 
+/* A quiet pointer to the proof, under the card. */
+.proof-link { margin-top: 22px; color: var(--ink-2); text-decoration: none; font-size: 14px; letter-spacing: -.005em; transition: color .15s; }
+.proof-link span { display: inline-block; transition: transform .15s; }
+.proof-link:hover { color: var(--ink); }
+.proof-link:hover span { transform: translateX(3px); }
+
 /* --- Stats row --------------------------------------------------------------- */
-.stats { margin: 88px 0 0; width: 100%; max-width: 980px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.stats { margin: 96px 0 0; width: 100%; max-width: 980px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 .stats div { display: flex; flex-direction: column-reverse; align-items: center; gap: 10px; }
 .stats dd { margin: 0; font: 300 clamp(26px, 3vw, 34px)/1 var(--sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .stats dt { font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
@@ -74,3 +86,9 @@ output.leg-amount { color: var(--ink); }
   .token { padding-right: 12px; }
   .leg { padding: 16px 16px 14px; }
 }
+
+/* Before the intro runs, the revealed pieces are hidden. If scripts fail, they appear anyway after 2.5 s. */
+html.motion .hero [data-reveal] { opacity: 0; animation: reveal-fallback .6s 2.5s forwards; }
+html.motion .hero .beam { opacity: 0; }
+@keyframes reveal-fallback { to { opacity: 1; } }
+html.motion.intro-ready .hero [data-reveal] { animation: none; }
