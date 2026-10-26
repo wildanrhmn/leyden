@@ -32,6 +32,7 @@
     takeoverDuration: 0.25,
     autoResumeDelay: 350,
     autoRampDuration: 1.4,
+    strength: 0.6,          // ours: how strongly the flow shows over the background (Katana is 1)
   };
   // Speed is mapped onto this gradient (slow → fast): Katana's own indigo-to-blue.
   const PALETTE = ["#1b2fbf", "#1b2fbf", "#0059bf"];
@@ -84,11 +85,11 @@ void main(){
   o = vec4(texture(velocity, uv).xy - vec2(p0 - p1, p2 - p3) * .5 * dt, 0., 1.);
 }`)],
     // Colour by speed. A touch of noise keeps the dark gradients from banding.
-    display: [FULL_VS, FS(`uniform sampler2D velocity, palette; uniform vec3 bg; uniform float time;
+    display: [FULL_VS, FS(`uniform sampler2D velocity, palette; uniform vec3 bg; uniform float time, strength;
 float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 void main(){
   float l = clamp(length(texture(velocity, uv).xy), 0., 1.);
-  vec3 c = mix(bg, texture(palette, vec2(l, .5)).rgb, l);
+  vec3 c = mix(bg, texture(palette, vec2(l, .5)).rgb, l * strength);
   c += (h(gl_FragCoord.xy + fract(time)) - .5) * (2. / 255.);
   o = vec4(c, 1.);
 }`)],
@@ -236,6 +237,7 @@ void main(){
     tex(u.palette, paletteTex);
     gl.uniform3fv(u.bg, BG);
     gl.uniform1f(u.time, t * 0.001);
+    gl.uniform1f(u.strength, CFG.strength);
     draw();
   }
 
