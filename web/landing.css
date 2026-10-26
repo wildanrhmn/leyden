@@ -27,7 +27,7 @@
 .hero h1 { font-kerning: none; }
 
 .hero-copy { display: flex; flex-direction: column; align-items: center; will-change: transform; }
-.hero-sub { margin: 24px 0 0; max-width: 560px; color: var(--ink-2); font-size: clamp(16px, 1.6vw, 18px); line-height: 1.55; letter-spacing: -.01em; }
+.hero-sub { margin: 22px 0 0; max-width: 640px; color: var(--ink-2); font-size: clamp(16px, 1.6vw, 18px); line-height: 1.55; letter-spacing: -.01em; }
 
 .hero-actions { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
