@@ -186,53 +186,85 @@
 
   <section class="priv" id="privacy" aria-labelledby="priv-title">
     <header class="sec-head">
-      <h2 id="priv-title">Who sees what. <span>Six observers, one swap.</span></h2>
+      <h2 id="priv-title">Who sees what. <span>Look it up yourself.</span></h2>
+      <p class="sec-sub">Two real cross-chain moves from October 26, and what the public chains recorded for each.</p>
     </header>
 
-    <div class="lens">
-      <div class="observers" role="tablist" aria-label="Observer">
-        <button type="button" role="tab" data-obs="0">Zcash chain</button>
-        <button type="button" role="tab" data-obs="1">Light-wallet server</button>
-        <button type="button" role="tab" data-obs="2">Bitcoin chain</button>
-        <button type="button" role="tab" data-obs="3">Lightning routers</button>
-        <button type="button" role="tab" data-obs="4">The payee</button>
-        <button type="button" role="tab" data-obs="5">Shieldbolt</button>
-      </div>
+    <div class="record">
+      <!-- The usual route: this demo's own funding through NEAR Intents -->
+      <article class="rec rec-open">
+        <header class="rec-head">
+          <p class="rec-kicker">The usual route</p>
+          <h3>Bridged through transparent addresses</h3>
+        </header>
+        <div class="xcard">
+          <p class="x-top"><img src="/brand/tokens/zec.svg" alt="" width="18" height="18"><span>Zcash</span><a class="x-hash" href="https://blockchair.com/zcash/transaction/3a1bc25994587eced601d5a49c35943b5cfe853e89f8ec02c2402e5c64f1371b" target="_blank" rel="noopener noreferrer">3a1bc259…5c64f1371b ↗</a></p>
+          <dl class="x-rows">
+            <div><dt>From</dt><dd data-public>t1YeLXSb…NaVE, t1Kfwsnw…x5Ua</dd></div>
+            <div><dt>Into shielded pool</dt><dd data-public>0.00364677 ZEC</dd></div>
+            <div><dt>Change to</dt><dd data-public>t1Kfwsnw…x5Ua</dd></div>
+            <div><dt>Block</dt><dd data-public>3,530,968 · 06:27 UTC</dd></div>
+          </dl>
+        </div>
+        <div class="xcard">
+          <p class="x-top"><img src="/brand/tokens/btc.svg" alt="" width="18" height="18"><span>Bitcoin</span><a class="x-hash" href="https://mempool.space/tx/edf1677350c84ca55b8152828be740b4a7977ec6cab728a7bbea88e6cc774724" target="_blank" rel="noopener noreferrer">edf16773…88e6cc774724 ↗</a></p>
+          <dl class="x-rows">
+            <div><dt>From</dt><dd data-public>bc1qp42j…6gy7sk</dd></div>
+            <div><dt>To</dt><dd data-public>bc1pmz5j…gae46v</dd></div>
+            <div><dt>Amount</dt><dd data-public>8,121 sat</dd></div>
+            <div><dt>Block</dt><dd data-public>973,201</dd></div>
+          </dl>
+        </div>
+        <p class="rec-foot">Addresses, amounts and times: public, permanent, and searchable by anyone.</p>
+      </article>
 
-      <div class="lens-stage">
-        <div class="spot" aria-hidden="true"></div>
-        <ol class="path" aria-label="One swap, end to end">
-          <li class="pnode" data-node="0">
-            <span class="pname">You</span><span class="pdot"></span>
-            <span class="field" data-f="ip" data-v="your IP address">your IP address</span>
-          </li>
-          <li class="pnode" data-node="1">
-            <span class="pname">Zcash, shielded</span><span class="pdot"></span>
-            <span class="field" data-f="zaddr" data-v="u1chuw3z…ydgnvap">u1chuw3z…ydgnvap</span>
-            <span class="field" data-f="zec" data-v="0.00067778 ZEC">0.00067778 ZEC</span>
-          </li>
-          <li class="pnode" data-node="2">
-            <span class="pname">Shieldbolt</span><span class="pdot"></span>
-            <span class="field" data-f="link" data-v="swap f7264019">swap f7264019</span>
-          </li>
-          <li class="pnode" data-node="3">
-            <span class="pname">Lightning</span><span class="pdot"></span>
-            <span class="field" data-f="sats" data-v="1,000 sat">1,000 sat</span>
-          </li>
-          <li class="pnode" data-node="4">
-            <span class="pname">Payee</span><span class="pdot"></span>
-            <span class="field" data-f="invoice" data-v="lnbc10u1p4daa…cwcu">lnbc10u1p4daa…cwcu</span>
-          </li>
-        </ol>
-      </div>
-
-      <div class="lens-foot">
-        <p class="count"><span class="count-lbl">sees</span> <b>0</b> <em>of 6</em></p>
-        <p class="verdict" aria-live="polite"></p>
-      </div>
+      <!-- Shieldbolt: the first mainnet swap -->
+      <article class="rec rec-sealed">
+        <header class="rec-head">
+          <p class="rec-kicker">Shieldbolt</p>
+          <h3>Shielded ZEC, paid over Lightning</h3>
+        </header>
+        <div class="xcard">
+          <p class="x-top"><img src="/brand/tokens/zec.svg" alt="" width="18" height="18"><span>Zcash</span><a class="x-hash" href="https://blockchair.com/zcash/transaction/0c54e2b885e9faa475d89030a7f5e28f22ab7f534d2e57e629e82cf98249a004" target="_blank" rel="noopener noreferrer">0c54e2b8…e29e82cf98249a004 ↗</a></p>
+          <dl class="x-rows">
+            <div><dt>From</dt><dd data-sealed="u1chuw3zehsktx…">u1chuw3zehsktx…</dd></div>
+            <div><dt>Amount</dt><dd data-sealed="0.00067778 ZEC">0.00067778 ZEC</dd></div>
+            <div><dt>To</dt><dd data-sealed="u13sms2z4vt2u8…">u13sms2z4vt2u8…</dd></div>
+            <div><dt>Block</dt><dd>3,530,991 · 06:48 UTC</dd></div>
+          </dl>
+        </div>
+        <div class="xcard x-empty">
+          <p class="x-top"><img src="/brand/tokens/btc.svg" alt="" width="18" height="18"><span>Bitcoin</span></p>
+          <p class="x-none">No transaction</p>
+          <p class="x-none-sub">The 1,000 sat payment went over Lightning.</p>
+        </div>
+        <p class="rec-foot">The explorer shows 0 inputs, 0 outputs, 0 value. There is nothing to search for.</p>
+      </article>
     </div>
 
-    <p class="promises"><span>Linking data erased 24 h after a swap</span><i></i><span>No access logs</span><i></i><span>A fresh shielded address for every quote</span><i></i><span>Open source, run your own</span></p>
+    <div class="grid-wrap">
+      <h3 class="grid-title">And everyone along the way</h3>
+      <div class="sees" role="table" aria-label="What each party can see during a swap">
+        <div class="sees-row sees-head" role="row">
+          <span role="columnheader"></span>
+          <span role="columnheader">Your IP</span>
+          <span role="columnheader">Your Zcash address</span>
+          <span role="columnheader">ZEC amount</span>
+          <span role="columnheader">Invoice</span>
+          <span role="columnheader">Sats amount</span>
+          <span role="columnheader">Both sides linked</span>
+        </div>
+        <div class="sees-row" role="row"><span role="rowheader">Zcash chain</span><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i></div>
+        <div class="sees-row" role="row"><span role="rowheader">Bitcoin chain</span><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i></div>
+        <div class="sees-row" role="row"><span role="rowheader">Light-wallet server</span><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i></div>
+        <div class="sees-row" role="row"><span role="rowheader">Lightning routers</span><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="1"></i><i data-v="0"></i></div>
+        <div class="sees-row" role="row"><span role="rowheader">The payee</span><i data-v="0"></i><i data-v="0"></i><i data-v="0"></i><i data-v="1"></i><i data-v="1"></i><i data-v="0"></i></div>
+        <div class="sees-row is-us" role="row"><span role="rowheader">Shieldbolt<small>while the swap runs</small></span><i data-v="t"></i><i data-v="1"></i><i data-v="1"></i><i data-v="1"></i><i data-v="1"></i><i data-v="d"></i></div>
+      </div>
+      <p class="grid-note"><span><i data-v="1"></i>sees it</span><span><i data-v="t"></i>unless you connect over Tor</span><span><i data-v="d"></i>erased 24 h after the swap</span></p>
+    </div>
+
+    <p class="promises"><span>No access logs</span><i></i><span>A fresh shielded address for every quote</span><i></i><span>Open source, run your own</span></p>
   </section>
 </main>
 <script src="/nav.js"></script>
