@@ -344,3 +344,36 @@ html.motion.intro-ready .hero [data-reveal] { animation: none; }
   .proof { padding-top: 96px; }
   .rail { margin-top: 44px; }
 }
+
+/* --- Footer: one last call to action, quiet links, and the name in the dark ------------ */
+.foot { position: relative; overflow: hidden; border-top: 1px solid var(--line); }
+.foot-inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 120px clamp(16px, 4vw, 32px) 0; }
+.foot-cta { display: flex; flex-direction: column; align-items: center; gap: 32px; text-align: center; }
+.foot-cta h2 { margin: 0; max-width: 760px; text-wrap: balance; font-weight: 300; font-size: clamp(32px, 4.4vw, 54px); line-height: 1.08; letter-spacing: -.04em; }
+.foot-cta h2 span { display: block; color: var(--ink-3); }
+.foot-cols { margin-top: 120px; display: flex; justify-content: space-between; gap: 48px; padding-bottom: 40px; }
+.foot-brand p { margin: 14px 0 0; max-width: 260px; font-size: 14px; line-height: 1.55; color: var(--ink-3); }
+.foot-nav { display: flex; gap: clamp(40px, 7vw, 96px); }
+.foot-nav div { display: flex; flex-direction: column; gap: 10px; }
+.foot-nav p { margin: 0 0 4px; font: 400 12px var(--mono); letter-spacing: .02em; color: var(--ink-3); }
+.foot-nav a { font-size: 14px; color: var(--ink-2); text-decoration: none; transition: color .2s; }
+.foot-nav a:hover { color: var(--ink); }
+.foot-base { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 20px 0; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-3); }
+#foot-terms { font-family: var(--mono); font-size: 12.5px; }
+
+/* The wordmark sits nearly invisible; a charge of amber light passes over it once, then follows the cursor. */
+.foot-mark { position: relative; height: clamp(64px, 17vw, 250px); margin-top: 8px; user-select: none; pointer-events: none; }
+.foot-mark span { position: absolute; left: 50%; top: 0; transform: translateX(-50%); font-weight: 500; font-size: clamp(90px, 25vw, 360px); line-height: .9; letter-spacing: -.065em; white-space: nowrap; color: #0D1017;
+  -webkit-mask: linear-gradient(to bottom, #000 35%, transparent 95%); mask: linear-gradient(to bottom, #000 35%, transparent 95%); }
+.foot-mark .lit { color: rgb(255 194 26 / .5); opacity: var(--glow, 0);
+  -webkit-mask-image: radial-gradient(circle var(--r, 220px) at var(--x, -30%) var(--y, 40%), #000, transparent 70%), linear-gradient(to bottom, #000 35%, transparent 95%);
+          mask-image: radial-gradient(circle var(--r, 220px) at var(--x, -30%) var(--y, 40%), #000, transparent 70%), linear-gradient(to bottom, #000 35%, transparent 95%);
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect; }
+
+@media (max-width: 760px) {
+  .foot-inner { padding-top: 96px; }
+  .foot-cols { margin-top: 88px; flex-direction: column; gap: 40px; }
+  .foot-nav { gap: 32px; flex-wrap: wrap; }
+  .foot-base { flex-direction: column; gap: 6px; }
+}

@@ -62,6 +62,8 @@
       $("stat-rate").textContent = `${info.rate.zat_per_sat.toFixed(1)} zat/sat`;
       amount.max = info.max_sats;
       amount.min = info.min_sats;
+      const n = (v) => v.toLocaleString("en-US");
+      $("foot-terms").textContent = `${n(info.fee_bps / 100)}% fee · ${n(info.min_sats)}–${n(info.max_sats)} sats per swap`;
     } catch {
       $("stat-rate").textContent = "offline";
     }
