@@ -32,6 +32,14 @@ A Lightning wallet pays 500 sats; the recipient gets shielded ZEC with an encryp
 Together with run 1 this is a full round trip: shielded ZEC → Lightning → shielded ZEC,
 with no transparent address and no on-chain Bitcoin transaction at any point.
 
+## 3. Production deployment (https://43-134-116-188.sslip.io)
+
+| Run | Evidence |
+|---|---|
+| ZEC → Lightning, 1,500 sats | Zcash tx `d23d08c04902193c0d34640296d58e4954923d51df71e555a52fc89de10c62e4`; preimage `fd108747d87ca637678be2b00acd56d3385a7ffd9c628c4f71aa6be5c7242e59`; ~40 s from broadcast to preimage |
+| Lightning address `demo@43-134-116-188.sslip.io`, 600 sats with a comment | LNURL-pay invoice `description_hash` = `sha256(metadata)` = `00f801e8…9555ce`; payout Zcash tx `f2686336e1035405c777722f308cd573fa576a952517f9a66b740bbb6158b465`, mined at 3,531,010 |
+| Payer's comment, as received | Encrypted memo in the recipient's wallet: `zap from a Lightning wallet, landing shielded — via Shieldbolt ⚡` |
+
 ## Funding (for reference)
 
 The gateway and test wallets were funded from ~$12 of ETH on Base through NEAR Intents:
