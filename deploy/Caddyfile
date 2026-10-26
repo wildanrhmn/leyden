@@ -8,6 +8,8 @@
 (headers) {
 	encode zstd gzip
 	header {
+		# Revalidate every file on each visit (cheap 304s), so a deploy shows up at once.
+		Cache-Control "no-cache"
 		Referrer-Policy no-referrer
 		X-Content-Type-Options nosniff
 		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'"
