@@ -222,3 +222,64 @@ html.motion.intro-ready .hero [data-reveal] { animation: none; }
   .cv-node b { font-size: 12px; padding: 10px 6px; }
   .chainview { grid-template-columns: 1fr 14px 1fr 14px 1fr; }
 }
+
+/* --- Privacy: one swap, six observers -------------------------------------------- */
+.priv { max-width: 1200px; margin: 0 auto; padding: 120px clamp(16px, 4vw, 32px) 96px; }
+
+.lens { margin-top: 56px; }
+.observers { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 28px; }
+.observers button { position: relative; padding: 10px 0; border: 0; background: none; color: var(--ink-3); font: 500 14px var(--sans); letter-spacing: -.01em; cursor: pointer; transition: color .3s; }
+.observers button:hover { color: var(--ink-2); }
+.observers button[aria-selected="true"] { color: var(--ink); }
+.observers button::after { content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: var(--bolt); transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+.observers button[aria-selected="true"]::after { transform: scaleX(1); }
+
+.lens-stage { position: relative; margin-top: 56px; padding: 40px 0 8px; }
+/* Where the observer sits: a faint column of light, nothing more. */
+.spot { position: absolute; top: 0; left: 0; width: 220px; height: 100%; margin-left: -110px; pointer-events: none; opacity: 0;
+  background: radial-gradient(50% 60% at 50% 42%, rgb(140 146 255 / .10), transparent 75%); }
+.spot::before { content: ""; position: absolute; top: 0; left: 50%; width: 1px; height: 30px; background: linear-gradient(to bottom, transparent, var(--bolt)); }
+
+.path { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
+.path::before { content: ""; position: absolute; left: 10%; right: 10%; top: 35px; height: 1px; background: rgb(255 255 255 / .14); transform-origin: left; }
+.pnode { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.pname { font-size: 13.5px; color: var(--ink-2); height: 18px; transition: color .3s; }
+.pdot { width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 1px solid rgb(255 255 255 / .5); margin-bottom: 12px; transition: border-color .3s, background-color .3s, box-shadow .3s; }
+.pnode.watched .pname { color: var(--ink); }
+.pnode.watched .pdot { border-color: var(--bolt); background: var(--bolt); box-shadow: 0 0 0 4px rgb(255 194 26 / .12); }
+.field { font: 400 13px var(--mono); letter-spacing: -.01em; color: var(--ink); padding: 8px 11px; border-radius: 8px; background: rgb(255 255 255 / .035); border: 1px solid rgb(255 255 255 / .07); white-space: nowrap; transition: color .3s, border-color .3s; }
+.field.hidden { color: #3A3F52; border-color: rgb(255 255 255 / .04); letter-spacing: -.06em; }
+
+.lens-foot { margin-top: 48px; display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 28px; max-width: 760px; margin-left: auto; margin-right: auto; }
+.count { margin: 0; display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+.count-lbl { font-size: 14px; color: var(--ink-3); }
+.count b { font-weight: 300; font-size: 56px; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; transition: color .3s; }
+.count em { font-style: normal; font-size: 16px; color: var(--ink-3); }
+.count.all b { color: var(--bolt); }
+.verdict { margin: 0; font-size: 17px; line-height: 1.55; color: var(--ink-2); min-height: 3.1em; }
+
+.promises { margin: 72px 0 0; display: flex; justify-content: center; flex-wrap: wrap; align-items: center; gap: 10px 16px; font-size: 13.5px; color: var(--ink-3); text-align: center; }
+.promises i { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-3); opacity: .6; }
+
+@media (max-width: 860px) {
+  .priv { padding-top: 96px; }
+  .observers { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; gap: 22px; margin: 0 calc(-1 * clamp(16px, 4vw, 32px)); padding: 0 clamp(16px, 4vw, 32px); scrollbar-width: none; }
+  .observers::-webkit-scrollbar { display: none; }
+  .observers button { white-space: nowrap; flex-shrink: 0; }
+  .lens-stage { margin-top: 32px; padding: 0 0 0 4px; }
+  .path { grid-template-columns: 1fr; gap: 0; }
+  .path::before { left: 9px; right: auto; top: 12px; bottom: 12px; width: 1px; height: auto; }
+  .pnode { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 8px 12px; padding: 14px 0 14px 0; text-align: left; }
+  .pdot { order: -1; margin: 0 4px 0 4px; flex-shrink: 0; }
+  .pname { width: calc(100% - 40px); }
+  .field { margin-left: 32px; }
+  .field + .field { margin-left: 0; }
+  .spot { width: 100%; height: 120px; margin: -60px 0 0; left: 0; top: 0;
+    background: radial-gradient(60% 50% at 30% 50%, rgb(140 146 255 / .10), transparent 75%); }
+  .spot::before { display: none; }
+  .lens-foot { grid-template-columns: 1fr; gap: 12px; margin-top: 32px; }
+  .count b { font-size: 44px; }
+  .verdict { font-size: 16px; }
+  .promises { flex-direction: column; gap: 8px; }
+  .promises i { display: none; }
+}

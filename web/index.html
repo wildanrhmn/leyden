@@ -183,6 +183,57 @@
       </ol>
     </div>
   </section>
+
+  <section class="priv" id="privacy" aria-labelledby="priv-title">
+    <header class="sec-head">
+      <h2 id="priv-title">Who sees what. <span>Six observers, one swap.</span></h2>
+    </header>
+
+    <div class="lens">
+      <div class="observers" role="tablist" aria-label="Observer">
+        <button type="button" role="tab" data-obs="0">Zcash chain</button>
+        <button type="button" role="tab" data-obs="1">Light-wallet server</button>
+        <button type="button" role="tab" data-obs="2">Bitcoin chain</button>
+        <button type="button" role="tab" data-obs="3">Lightning routers</button>
+        <button type="button" role="tab" data-obs="4">The payee</button>
+        <button type="button" role="tab" data-obs="5">Shieldbolt</button>
+      </div>
+
+      <div class="lens-stage">
+        <div class="spot" aria-hidden="true"></div>
+        <ol class="path" aria-label="One swap, end to end">
+          <li class="pnode" data-node="0">
+            <span class="pname">You</span><span class="pdot"></span>
+            <span class="field" data-f="ip" data-v="your IP address">your IP address</span>
+          </li>
+          <li class="pnode" data-node="1">
+            <span class="pname">Zcash, shielded</span><span class="pdot"></span>
+            <span class="field" data-f="zaddr" data-v="u1chuw3z…ydgnvap">u1chuw3z…ydgnvap</span>
+            <span class="field" data-f="zec" data-v="0.00067778 ZEC">0.00067778 ZEC</span>
+          </li>
+          <li class="pnode" data-node="2">
+            <span class="pname">Shieldbolt</span><span class="pdot"></span>
+            <span class="field" data-f="link" data-v="swap f7264019">swap f7264019</span>
+          </li>
+          <li class="pnode" data-node="3">
+            <span class="pname">Lightning</span><span class="pdot"></span>
+            <span class="field" data-f="sats" data-v="1,000 sat">1,000 sat</span>
+          </li>
+          <li class="pnode" data-node="4">
+            <span class="pname">Payee</span><span class="pdot"></span>
+            <span class="field" data-f="invoice" data-v="lnbc10u1p4daa…cwcu">lnbc10u1p4daa…cwcu</span>
+          </li>
+        </ol>
+      </div>
+
+      <div class="lens-foot">
+        <p class="count"><span class="count-lbl">sees</span> <b>0</b> <em>of 6</em></p>
+        <p class="verdict" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <p class="promises"><span>Linking data erased 24 h after a swap</span><i></i><span>No access logs</span><i></i><span>A fresh shielded address for every quote</span><i></i><span>Open source, run your own</span></p>
+  </section>
 </main>
 <script src="/nav.js"></script>
 <script src="/vendor/gsap/gsap.min.js"></script>
@@ -195,5 +246,6 @@
 <script src="/fluid.js"></script>
 <script src="/vendor/qrcode.js"></script>
 <script src="/hiw.js"></script>
+<script src="/priv.js"></script>
 </body>
 </html>
