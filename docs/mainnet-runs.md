@@ -18,6 +18,20 @@ A 1,000-sat Lightning invoice, paid from shielded ZEC.
 On the Zcash chain, the payment is one shielded transaction: no transparent input or
 output, no visible amount, no visible recipient. On Bitcoin, nothing was written to the chain.
 
+## 2. Lightning → ZEC (2026-10-26)
+
+A Lightning wallet pays 500 sats; the recipient gets shielded ZEC with an encrypted memo.
+
+| Step | Evidence |
+|---|---|
+| Quote | 500 sats → 0.00017883 ZEC (after the 1% fee and the Zcash network fee) |
+| Lightning payer pays the gateway's invoice | Spark send request `TRANSFER_COMPLETED` |
+| Gateway sends shielded ZEC, 16 s after the invoice was paid | Zcash tx `91601ee802b41b36046aabc4d3814b00eb386931c6830aef07a22d2cbadc2c8f`, mined at 3,530,999 |
+| Recipient wallet | Ironwood output 0.00017883 ZEC, memo `first Lightning -> shielded ZEC on mainnet — via Shieldbolt ⚡` |
+
+Together with run 1 this is a full round trip: shielded ZEC → Lightning → shielded ZEC,
+with no transparent address and no on-chain Bitcoin transaction at any point.
+
 ## Funding (for reference)
 
 The gateway and test wallets were funded from ~$12 of ETH on Base through NEAR Intents:
