@@ -69,6 +69,21 @@ The payer's sats are held, not taken, until the shielded ZEC has been sent.
 | Gateway sends the ZEC first (16:15:03) | Zcash tx `bae01061fac67226cb2196d9170a944b1d147f864f6de724d6239bd135b93a55` |
 | Gateway reveals the preimage and takes the held payment (16:15:07) | the payer's send turns `TRANSFER_COMPLETED` with preimage `9d8f6bde…0da382`; `sha256(preimage)` = the invoice's payment hash `ee8c91be…122eb7` |
 
+## 7. Both directions from a phone (2026-10-27, https://leydenpay.xyz)
+
+The demo video's swaps, made with two ordinary phone wallets: Wallet of Satoshi for
+Lightning and Zodl (formerly Zashi) for shielded ZEC. The phone's screen recording is in
+the video.
+
+| Step | Evidence |
+|---|---|
+| Get paid: quote | 1,000 sats → 0.00046087 ZEC to the Zodl wallet, memo "Logo design", swap `abb4b354…` |
+| Wallet of Satoshi pays the hold invoice (17:41:29 UTC) | the wallet shows "₿1,000 on the way" for about 20 s while the payment is held |
+| Gateway sends the ZEC first, then takes the payment (17:41:50) | Zcash tx `a072a55ddea38570868e00b3d754ba1fc15fe78af7729417ed04665c8c5ef64a`; the wallet then shows "Payment Sent" |
+| Pay: quote for a 400-sat Wallet of Satoshi invoice | 0.00025359 ZEC to a one-time address, swap `146b5a8f…` |
+| Zodl sends the quoted amount | Zcash tx `d9d011c40960570dd860b2e1c73c3c03f64d3ec9aaa37122ae1a44e2596b8947` |
+| Gateway pays the invoice once the deposit is mined | preimage `170c2fd758ced960c2f5c8b3c6a4b51f59a4e9ec7024fbc3f6f9c7b18c0711ae`; the 400 sats arrive in Wallet of Satoshi |
+
 ## Funding (for reference)
 
 The gateway and test wallets were funded from ~$12 of ETH on Base through NEAR Intents:

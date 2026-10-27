@@ -111,7 +111,7 @@ the gateway's Lightning payments but never the Zcash side.
 
 ## Live on mainnet
 
-Six runs with real money, each Zcash transaction fully shielded. Preimages and hashes are in
+Eight swaps with real money across seven runs, each Zcash transaction fully shielded. Preimages and hashes are in
 [docs/mainnet-runs.md](docs/mainnet-runs.md).
 
 | # | Run | Amount | Zcash tx |
@@ -122,6 +122,8 @@ Six runs with real money, each Zcash transaction fully shielded. Preimages and h
 | 4 | Lightning address, comment arrives as a memo | 600 sats | [`f2686336…b465`](https://blockchair.com/zcash/transaction/f2686336e1035405c777722f308cd573fa576a952517f9a66b740bbb6158b465) |
 | 5 | Underpaid swap, refunded automatically | 0.0003 ZEC | [`d0ee5ca3…f9ed`](https://blockchair.com/zcash/transaction/d0ee5ca35bbda1e0f14493c98b238b26c69e378d0377d8fb38d4cba511dcf9ed) |
 | 6 | Lightning → ZEC with a hold invoice | 500 sats | [`bae01061…3a55`](https://blockchair.com/zcash/transaction/bae01061fac67226cb2196d9170a944b1d147f864f6de724d6239bd135b93a55) |
+| 7a | Lightning → ZEC from phone wallets (Wallet of Satoshi → Zodl), in the demo video | 1,000 sats | [`a072a55d…f64a`](https://blockchair.com/zcash/transaction/a072a55ddea38570868e00b3d754ba1fc15fe78af7729417ed04665c8c5ef64a) |
+| 7b | ZEC → Lightning from phone wallets (Zodl → Wallet of Satoshi), in the demo video | 400 sats | [`d9d011c4…8947`](https://blockchair.com/zcash/transaction/d9d011c40960570dd860b2e1c73c3c03f64d3ec9aaa37122ae1a44e2596b8947) |
 
 ### One payment, held
 
