@@ -422,7 +422,7 @@
 
   const STEPS = {
     zec_to_ln: ["Send ZEC", "ZEC received", "Paying the invoice", "Paid"],
-    ln_to_zec: ["Pay the invoice", "Payment held", "Sending ZEC", "Shielded"],
+    ln_to_zec: ["Pay the invoice", "Payment held", "ZEC sent", "Shielded"],
   };
   const FAILED = ["refunding", "refunded", "expired", "failed"];
   let pollTimer = null;
@@ -435,7 +435,7 @@
       if (s.state === "paying_ln") return 2;
       return s.received_zec ? 1 : 0;
     }
-    return { paying_zec: 2, settling_ln: 3 }[s.state] ?? 0;
+    return { paying_zec: 1, settling_ln: 2, failed: 1 }[s.state] ?? 0;
   }
   const waitingForDeposit = (s) => (s.state === "awaiting_zec" && !s.received_zec) || s.state === "awaiting_ln";
 
