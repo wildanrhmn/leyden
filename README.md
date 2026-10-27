@@ -17,6 +17,7 @@
 
 <p align="center">
   <a href="https://leydenpay.xyz">Live app</a> ·
+  <a href="https://youtu.be/qqIj0wNohBI">Demo video</a> ·
   <a href="https://leydenpay.xyz/#proof">Receipts</a> ·
   <a href="docs/mainnet-runs.md">Mainnet run log</a>
 </p>
