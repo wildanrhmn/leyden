@@ -444,7 +444,7 @@
     clearInterval(clockTimer);
     lastKey = null;
     history.replaceState(null, "", location.pathname + location.search);
-    if (s.final && s.direction === "zec_to_ln") { payInv.value = ""; renderPay(); }
+    if (s.final && s.direction === "zec_to_ln") { payInv.value = ""; payInv.closest(".drow").paint(); renderPay(); }
     show(s.direction === "zec_to_ln" ? "pay" : "receive");
   }
 
